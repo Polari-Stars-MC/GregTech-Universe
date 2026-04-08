@@ -3,7 +3,7 @@ dependencies {
         exclude("info.journeymap")
         exclude("mezz.jei")
     }
-    implementation("com.gregtechceu.gtceu:gtceu-1.21.1:7.5.2-SNAPSHOT")
+    implementation("com.gregtechceu.gtceu:gtceu-1.21.1:7.0.2-SNAPSHOT")
     compileOnly("mezz.jei:jei-1.21.1-neoforge:19.27.0.340")
     localRuntime("mezz.jei:jei-1.21.1-neoforge:19.27.0.340")
 
