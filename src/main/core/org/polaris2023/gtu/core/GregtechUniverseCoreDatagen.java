@@ -3,6 +3,7 @@ package org.polaris2023.gtu.core;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import org.polaris2023.gtu.core.datagen.RecipesProvider;
 import org.polaris2023.gtu.core.datagen.glm.GregtechUniverseCoreLootModifierProvider;
 import org.polaris2023.gtu.core.datagen.lang.EnUs;
 import org.polaris2023.gtu.core.datagen.BlockStateProvider;
@@ -15,5 +16,6 @@ public class GregtechUniverseCoreDatagen {
         event.createProvider(EnUs::new);
         event.createProvider(GregtechUniverseCoreLootModifierProvider::new);
         event.createProvider(output -> new BlockStateProvider(output, event.getExistingFileHelper()));
+        event.createProvider(RecipesProvider::new);
     }
 }
