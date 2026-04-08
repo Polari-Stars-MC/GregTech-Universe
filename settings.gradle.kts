@@ -8,7 +8,7 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version("1.0.0")
 }
 
-val modules = listOf("core")
+val modules = listOf("core", "modpacks")
 
 for (it in modules) {
     include(it)

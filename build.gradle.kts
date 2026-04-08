@@ -91,7 +91,7 @@ allprojects {
                 programArguments.addAll(listOf(
                     "--mod", modId,
                     "--all",
-                    "--output", rootProject.file("src/generated/${project.name}").absolutePath,
+                    "--output", layout.buildDirectory.file("src/generated/").get().asFile.absolutePath,
                     "--existing", rootProject.file("src/res/${project.name}").absolutePath,
                 ))
             }
@@ -126,7 +126,7 @@ allprojects {
         inputs.properties(replaceProperties)
         expand(replaceProperties)
         from(rootProject.file("src/main/templates"))
-        into("$buildDir/generated/sources/modMetadata")
+        into(layout.buildDirectory.dir("generated/sources/modMetadata").get().asFile.absolutePath)
     }
 
     sourceSets {
@@ -135,7 +135,7 @@ allprojects {
                 srcDir(rootProject.file("src/main/${project.name}"))
             }
             resources {
-                srcDir(rootProject.file("src/generated/${project.name}"))
+                srcDir(layout.buildDirectory.file("src/generated/").get().asFile)
                 srcDir(rootProject.file("src/res/${project.name}"))
                 srcDir(generateModMetadata.get())
                 exclude("**/*.bbmodel")
