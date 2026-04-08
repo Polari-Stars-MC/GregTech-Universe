@@ -31,23 +31,19 @@ allprojects {
         return@allprojects
     }
     repositories {
-        maven {
-            url = uri("https://maven.createmod.net:6085/")
-        }
-        maven {
-            url = uri("https://mvn.devos.one/snapshots")
-        }
-        maven {
-            url = uri("https://maven.blamejared.com/")
-        }
-
-        maven {
-            url = uri("https://maven.shedaniel.me/")
-        }
-
-        maven {
-            url = uri("https://modmaven.dev")
-        }
+        maven { url = uri("https://maven.createmod.net:6085/") }
+        maven { url = uri("https://mvn.devos.one/snapshots") }
+        maven { url = uri("https://maven.blamejared.com/") }
+        maven { url = uri("https://maven.shedaniel.me/") }
+        maven { url = uri("https://modmaven.dev") }
+        maven { url = uri("https://api.modrinth.com/maven") }
+        maven { url = uri("https://maven.ftb.dev/releases") }
+        maven { url = uri("https://maven.squiddev.cc") }
+        maven { url = uri("https://maven.theillusivec4.top/") }
+        maven { url = uri("https://www.cursemaven.com") }
+        maven { url = uri("https://maven.gtceu.com") }
+        maven { url = uri("https://maven.firstdark.dev/snapshots") }
+        maven { url = uri("https://repo.repsy.io/mvn/toma/public/") }
     }
 
     dependencies {
@@ -78,7 +74,7 @@ allprojects {
         version = neoVersion
         parchment {
             mappingsVersion = parchmentMappingsVersion
-            minecraftVersion(parchmentMinecraftVersion)
+            minecraftVersion.set(parchmentMinecraftVersion)
         }
 
         runs {
