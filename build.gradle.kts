@@ -34,6 +34,20 @@ allprojects {
         maven {
             url = uri("https://maven.createmod.net:6085/")
         }
+        maven {
+            url = uri("https://mvn.devos.one/snapshots")
+        }
+        maven {
+            url = uri("https://maven.blamejared.com/")
+        }
+
+        maven {
+            url = uri("https://maven.shedaniel.me/")
+        }
+
+        maven {
+            url = uri("https://modmaven.dev")
+        }
     }
 
     dependencies {
@@ -64,7 +78,7 @@ allprojects {
         version = neoVersion
         parchment {
             mappingsVersion = parchmentMappingsVersion
-            minecraftVersion = parchmentMinecraftVersion
+            minecraftVersion(parchmentMinecraftVersion)
         }
 
         runs {
