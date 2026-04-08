@@ -31,7 +31,9 @@ allprojects {
         return@allprojects
     }
     repositories {
-
+        maven {
+            url = uri("https://maven.createmod.net:6085/")
+        }
     }
 
     dependencies {
