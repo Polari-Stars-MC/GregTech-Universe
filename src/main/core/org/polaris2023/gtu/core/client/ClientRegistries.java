@@ -8,7 +8,7 @@ import org.polaris2023.gtu.core.GregtechUniverseCore;
 import org.polaris2023.gtu.core.client.screen.FlintCraftingScreen;
 import org.polaris2023.gtu.core.init.MenuRegistries;
 
-@EventBusSubscriber(modid = GregtechUniverseCore.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = GregtechUniverseCore.MOD_ID)
 public final class ClientRegistries {
     private ClientRegistries() {
     }
