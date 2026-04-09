@@ -14,5 +14,7 @@ public class EnUs extends Lang {
         addItem(ItemRegistries.PLANT_FIBER, "Plant Fiber");
         addItem(ItemRegistries.FLINT_SHARD, "Flint Shard");
         addBlock(BlockRegistries.STONE_CRAFTING_TABLE, "Stone Crafting Table");
+        addBlock(BlockRegistries.FLINT_CRAFTING_TABLE, "Flint Crafting Table");
+        add("gui.gtu_core.flint_crafting.progress", "Progress: %s / %s");
     }
 }

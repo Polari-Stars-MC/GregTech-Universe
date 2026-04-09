@@ -8,8 +8,8 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
+import org.polaris2023.gtu.core.init.BlockRegistries;
 import org.polaris2023.gtu.core.init.ItemRegistries;
 
 import java.util.concurrent.CompletableFuture;
@@ -25,6 +25,15 @@ public class RecipesProvider extends RecipeProvider {
                 .define('#', Items.COBBLESTONE)
                 .pattern("##")
                 .pattern("##")
+                .unlockedBy("unlock_right_away", PlayerTrigger.TriggerInstance.tick())
+                .showNotification(false)
+                .save(recipeOutput);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistries.FLINT_CRAFTING_TABLE)
+                .define('F', Items.FLINT)
+                .define('S', Items.STICK)
+                .pattern("FF")
+                .pattern("SS")
                 .unlockedBy("unlock_right_away", PlayerTrigger.TriggerInstance.tick())
                 .showNotification(false)
                 .save(recipeOutput);
