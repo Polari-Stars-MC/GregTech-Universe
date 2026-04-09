@@ -1,0 +1,26 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "0"
+	group: ""
+	id: "67B0E46760884EB7"
+	order_index: 0
+	quest_links: [ ]
+	quests: [{
+		id: "369E57DDFCA80904"
+		rewards: [{
+			id: "69E6F8C10FFF9DBE"
+			item: {
+				count: 1
+				id: "minecraft:stick"
+			}
+			type: "item"
+		}]
+		tasks: [{
+			id: "3A3833D15B6EEFB7"
+			type: "checkmark"
+		}]
+		x: -1.5d
+		y: -0.5d
+	}]
+}

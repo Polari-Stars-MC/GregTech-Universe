@@ -45,5 +45,6 @@ public class EnUs extends Lang {
         }
         add("itemGroup.gtu_core.main", "GregTech Universe Core");
         add("gui.gtu_core.flint_crafting.progress", "Progress: %s / %s");
+        add("quests.gtu.start", "Start");
     }
 }

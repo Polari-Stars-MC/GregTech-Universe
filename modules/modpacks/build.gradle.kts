@@ -7,4 +7,5 @@ dependencies {
     compileOnly("mezz.jei:jei-1.21.1-neoforge:19.27.0.340")
     localRuntime("mezz.jei:jei-1.21.1-neoforge:19.27.0.340")
     implementation(project(":core"))
+    localRuntime("dev.ftb.mods:ftb-quests-neoforge:2101.1.24")
 }
