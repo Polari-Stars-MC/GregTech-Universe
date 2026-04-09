@@ -25,7 +25,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         itemModels().withExistingParent("gravely_tin", mcLoc("item/generated"))
                 .texture("layer0", mcLoc("item/raw_iron"));
 
-        itemModels().basicItem(ItemRegistries.FLINT_SHARE.asItem());
+        itemModels().basicItem(ItemRegistries.FLINT_SHARD.asItem());
 
         registerCraftingTable(BlockRegistries.FLINT_CRAFTING_TABLE.get(), "flint_crafting_table", GregtechUniverseCore.mid("block/gravel"));
         registerCraftingTable(BlockRegistries.STONE_CRAFTING_TABLE.get(), "stone_crafting_table", GregtechUniverseCore.mid("block/stone"));

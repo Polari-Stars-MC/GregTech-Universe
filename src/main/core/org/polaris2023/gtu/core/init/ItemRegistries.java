@@ -17,13 +17,13 @@ public class ItemRegistries {
 
     public static final DeferredItem<Item> FLINT_SHARD =
             REGISTER.registerItem("flint_shard", Item::new);
+    public static final DeferredItem<Item> STONE_SHARD =
+            REGISTER.registerItem("stone_shard", Item::new);
     public static final DeferredItem<Item> GRAVELY_COPPER =
             REGISTER.registerItem("gravely_copper", Item::new);
     public static final DeferredItem<Item> GRAVELY_TIN =
             REGISTER.registerItem("gravely_tin", Item::new);
 
-    public static final DeferredItem<Item> FLINT_SHARE =
-            REGISTER.registerItem("flint_share", Item::new);
 
 
     public static final DeferredItem<BlockItem> STONE_CRAFTING_TABLE =

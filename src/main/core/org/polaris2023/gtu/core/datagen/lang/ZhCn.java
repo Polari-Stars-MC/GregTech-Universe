@@ -12,7 +12,7 @@ public class ZhCn extends Lang {
     @Override
     protected void addTranslations() {
         addItem(ItemRegistries.PLANT_FIBER, "植物纤维");
-        addItem(ItemRegistries.FLINT_SHARE, "燧石碎片");
+        addItem(ItemRegistries.FLINT_SHARD, "燧石碎片");
         addItem(ItemRegistries.GRAVELY_COPPER, "含沙砾铜");
         addItem(ItemRegistries.GRAVELY_TIN, "含沙砾锡");
         addBlock(BlockRegistries.STONE_CRAFTING_TABLE, "石制工作台");

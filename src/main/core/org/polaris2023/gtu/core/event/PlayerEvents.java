@@ -27,7 +27,7 @@ public class PlayerEvents {
         ItemStack stack = entity.getItemInHand(event.getHand());
         // 100 25 15 0.2
         if (destroyTime >= 1.5F && stack.is(Items.FLINT)) {
-            ItemStack result = ItemRegistries.FLINT_SHARE.toStack();
+            ItemStack result = ItemRegistries.FLINT_SHARD.toStack();
             RandomSource random = level.random;
             float v = random.nextFloat();
             if (v <= 0.2F) {

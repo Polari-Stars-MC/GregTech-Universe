@@ -32,58 +32,58 @@ public class RecipesProvider extends RecipeProvider {
                 .pattern(" # ")
                 .pattern("#A#")
                 .pattern("B  ")
-                .define('#', ItemRegistries.FLINT_SHARE)
+                .define('#', ItemRegistries.FLINT_SHARD)
                 .define('A', ItemRegistries.PLANT_FIBER)
                 .define('B', Items.STICK)
-                .unlockedBy("gtceu_unlock_fint_share_axe",has(ItemRegistries.FLINT_SHARE.get()))
+                .unlockedBy("gtceu_unlock_fint_share_axe",has(ItemRegistries.FLINT_SHARD.get()))
                 .save(recipeOutput, GregtechUniverseCore.id("shaped/gtceu/flint_axe"));
         ShapedRecipeBuilder
                 .shaped(RecipeCategory.TOOLS, item.get(ResourceLocation.fromNamespaceAndPath("gtceu", "flint_pickaxe")))
                 .pattern("## ")
                 .pattern(" A#")
                 .pattern("B #")
-                .define('#', ItemRegistries.FLINT_SHARE)
+                .define('#', ItemRegistries.FLINT_SHARD)
                 .define('A', ItemRegistries.PLANT_FIBER)
                 .define('B', Items.STICK)
-                .unlockedBy("gtceu_unlock_fint_share_pickaxe",has(ItemRegistries.FLINT_SHARE.get()))
+                .unlockedBy("gtceu_unlock_fint_share_pickaxe",has(ItemRegistries.FLINT_SHARD.get()))
                 .save(recipeOutput, GregtechUniverseCore.id("shaped/gtceu/flint_pickaxe"));
         ShapedRecipeBuilder
                 .shaped(RecipeCategory.TOOLS, item.get(ResourceLocation.fromNamespaceAndPath("gtceu", "flint_hoe")))
                 .pattern("## ")
                 .pattern(" A ")
                 .pattern("B  ")
-                .define('#', ItemRegistries.FLINT_SHARE)
+                .define('#', ItemRegistries.FLINT_SHARD)
                 .define('A', ItemRegistries.PLANT_FIBER)
                 .define('B', Items.STICK)
-                .unlockedBy("gtceu_unlock_fint_share_hoe",has(ItemRegistries.FLINT_SHARE.get()))
+                .unlockedBy("gtceu_unlock_fint_share_hoe",has(ItemRegistries.FLINT_SHARD.get()))
                 .save(recipeOutput, GregtechUniverseCore.id("shaped/gtceu/flint_hoe"));
         ShapedRecipeBuilder
                 .shaped(RecipeCategory.TOOLS, item.get(ResourceLocation.fromNamespaceAndPath("gtceu", "flint_sword")))
                 .pattern("  #")
                 .pattern(" A ")
                 .pattern("B  ")
-                .define('#', ItemRegistries.FLINT_SHARE)
+                .define('#', ItemRegistries.FLINT_SHARD)
                 .define('A', ItemRegistries.PLANT_FIBER)
                 .define('B', Items.STICK)
-                .unlockedBy("gtceu_unlock_fint_share_sword",has(ItemRegistries.FLINT_SHARE.get()))
+                .unlockedBy("gtceu_unlock_fint_share_sword",has(ItemRegistries.FLINT_SHARD.get()))
                 .save(recipeOutput, GregtechUniverseCore.id("shaped/gtceu/flint_sword"));
         ShapedRecipeBuilder
                 .shaped(RecipeCategory.TOOLS, item.get(ResourceLocation.fromNamespaceAndPath("gtceu", "flint_shovel")))
                 .pattern("#  ")
                 .pattern(" A ")
                 .pattern("  B")
-                .define('#', ItemRegistries.FLINT_SHARE)
+                .define('#', ItemRegistries.FLINT_SHARD)
                 .define('A', ItemRegistries.PLANT_FIBER)
                 .define('B', Items.STICK)
-                .unlockedBy("gtceu_unlock_fint_share_shovel",has(ItemRegistries.FLINT_SHARE.get()))
+                .unlockedBy("gtceu_unlock_fint_share_shovel",has(ItemRegistries.FLINT_SHARD.get()))
                 .save(recipeOutput, GregtechUniverseCore.id("shaped/gtceu/flint_shovel"));
         ShapedRecipeBuilder
                 .shaped(RecipeCategory.TOOLS, item.get(ResourceLocation.fromNamespaceAndPath("gtceu", "flint_knife")))
                 .pattern(" #")
                 .pattern("B ")
-                .define('#', ItemRegistries.FLINT_SHARE)
+                .define('#', ItemRegistries.FLINT_SHARD)
                 .define('B', Items.STICK)
-                .unlockedBy("gtceu_unlock_fint_share_knife",has(ItemRegistries.FLINT_SHARE.get()))
+                .unlockedBy("gtceu_unlock_fint_share_knife",has(ItemRegistries.FLINT_SHARD.get()))
                 .save(recipeOutput, GregtechUniverseCore.id("shaped/gtceu/flint_knife"));
 
     }

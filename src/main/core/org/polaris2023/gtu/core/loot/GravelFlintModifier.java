@@ -31,7 +31,7 @@ public class GravelFlintModifier extends LootModifier {
                                                  LootContext context) {
         var flint = generatedLoot.stream().filter(stack -> stack.is(Items.FLINT)).findFirst();
         if (flint.isEmpty()) {
-            generatedLoot.add(ItemRegistries.FLINT_SHARE.toStack());
+            generatedLoot.add(ItemRegistries.FLINT_SHARD.toStack());
         }
         return generatedLoot;
     }
