@@ -86,7 +86,5 @@ public class RecipesProvider extends RecipeProvider {
                 .unlockedBy("gtceu_unlock_fint_share_knife",has(ItemRegistries.FLINT_SHARE.get()))
                 .save(recipeOutput, GregtechUniverseCore.id("shaped/gtceu/flint_knife"));
 
-
-
     }
 }
