@@ -18,6 +18,7 @@ public class PlayerEvents {
     public static void breakBlock(BlockEvent.BreakEvent event) {
         BlockState state = event.getState();
         Player player = event.getPlayer();
+        if (player.isCreative()) return;
         ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (stack.isEmpty() && !state.is(BlockTags.WHITE_LIST_BREAK)) {
             event.setCanceled(true);
