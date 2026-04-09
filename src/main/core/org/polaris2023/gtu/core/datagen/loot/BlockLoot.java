@@ -2,24 +2,26 @@ package org.polaris2023.gtu.core.datagen.loot;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.NotNull;
 import org.polaris2023.gtu.core.init.BlockRegistries;
 import org.polaris2023.gtu.core.init.ItemRegistries;
 
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class BlockLoot extends BlockLootSubProvider {
 
-    private static final Set<Item> EXPLOSION_RESISTANT = new HashSet<>();
+
 
     public BlockLoot(HolderLookup.Provider registries) {
-        super(EXPLOSION_RESISTANT, FeatureFlags.DEFAULT_FLAGS, registries);
+        super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+    }
+
+    @Override
+    protected @NotNull Iterable<Block> getKnownBlocks() {
+        return BlockRegistries.REGISTER.getEntries()
+                .stream().map(h -> (Block) h.value()).toList();
     }
 
     @Override

@@ -1,8 +1,10 @@
 package org.polaris2023.gtu.core;
 
+import net.minecraft.core.RegistrySetBuilder;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import org.polaris2023.gtu.core.datagen.DatapackBuiltinEntriesProvider;
 import org.polaris2023.gtu.core.datagen.LootProvider;
 import org.polaris2023.gtu.core.datagen.RecipesProvider;
 import org.polaris2023.gtu.core.datagen.glm.GregtechUniverseCoreLootModifierProvider;
@@ -33,5 +35,6 @@ public class GregtechUniverseCoreDatagen {
         });
         event.createProvider((output, future) -> new ItemTagProvider(output, future, blockTagProvider.get().contentsGetter()));
         event.createProvider(LootProvider::new);
+        event.createProvider(DatapackBuiltinEntriesProvider::new);
     }
 }
