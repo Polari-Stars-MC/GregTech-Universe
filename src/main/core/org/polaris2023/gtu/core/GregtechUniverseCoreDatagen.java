@@ -10,6 +10,9 @@ import org.polaris2023.gtu.core.datagen.BlockStateProvider;
 
 @EventBusSubscriber(modid = GregtechUniverseCore.MOD_ID)
 public class GregtechUniverseCoreDatagen {
+
+
+
     @SubscribeEvent
     public static void datagen(GatherDataEvent event) {
         // GLM 数据生成

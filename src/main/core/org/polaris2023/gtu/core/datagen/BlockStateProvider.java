@@ -18,6 +18,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     protected void registerStatesAndModels() {
         // 物品模型
         itemModels().basicItem(ItemRegistries.PLANT_FIBER.asItem());
+        itemModels().basicItem(ItemRegistries.FLINT_SHARE.asItem());
 
         // 石制工作台 - 使用自定义模型
         ModelFile modelFile = craftingTableModel();

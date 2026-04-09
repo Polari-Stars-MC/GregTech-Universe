@@ -12,7 +12,7 @@ public class EnUs extends Lang {
     @Override
     protected void addTranslations() {
         addItem(ItemRegistries.PLANT_FIBER, "Plant Fiber");
-        addItem(ItemRegistries.FLINT_SHARD, "Flint Shard");
+        addItem(ItemRegistries.FLINT_SHARE, "Flint Share");
         addBlock(BlockRegistries.STONE_CRAFTING_TABLE, "Stone Crafting Table");
     }
 }
