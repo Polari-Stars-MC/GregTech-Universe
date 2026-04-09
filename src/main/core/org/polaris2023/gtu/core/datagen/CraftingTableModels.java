@@ -14,6 +14,7 @@ public final class CraftingTableModels {
                                                        ResourceLocation texture) {
         return provider.models()
                 .cube("block/" + name, texture, texture, texture, texture, texture, texture)
+                .texture("particle", texture)
                 .parent(craftingTableTemplate(provider, name));
     }
 

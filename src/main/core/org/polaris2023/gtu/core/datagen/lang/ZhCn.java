@@ -21,9 +21,6 @@ public class ZhCn extends Lang {
         addBlock(BlockRegistries.GRAVEL_TIN_ORE, "沙砾锡矿");
         add("itemGroup.gtu_core.main", "GregTech Universe Core");
         add("gui.gtu_core.flint_crafting.progress", "进度：%s / %s");
-
-
-
-
+        
     }
 }

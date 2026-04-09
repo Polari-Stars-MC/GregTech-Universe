@@ -32,6 +32,7 @@ public final class OreModels {
         return provider.models()
                 .cubeAll("block/" + name, all)
                 .texture("ore_all", ore_all)
+                .texture("particle", all)
                 .parent(oreGravelModel(provider, name));
     }
 
