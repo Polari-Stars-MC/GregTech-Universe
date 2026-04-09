@@ -1,6 +1,7 @@
 package org.polaris2023.gtu.core.datagen.lang;
 
 import net.minecraft.data.PackOutput;
+import org.polaris2023.gtu.core.init.BlockRegistries;
 import org.polaris2023.gtu.core.init.ItemRegistries;
 
 public class EnUs extends Lang {
@@ -11,5 +12,7 @@ public class EnUs extends Lang {
     @Override
     protected void addTranslations() {
         addItem(ItemRegistries.PLANT_FIBER, "Plant Fiber");
+        addItem(ItemRegistries.FLINT_SHARD, "Flint Shard");
+        addBlock(BlockRegistries.STONE_CRAFTING_TABLE, "Stone Crafting Table");
     }
 }
