@@ -21,5 +21,10 @@ public class ZhCn extends Lang {
         addBlock(BlockRegistries.GRAVEL_TIN_ORE, "\u6c99\u783e\u9521\u77ff");
         add("itemGroup.gtu_core.main", "GregTech Universe Core");
         add("gui.gtu_core.flint_crafting.progress", "\u8fdb\u5ea6\uff1a%s / %s");
+
+        addItem(ItemRegistries.PLANT_FIBER, "植物纤维");
+        addItem(ItemRegistries.FLINT_SHARE, "燧石碎片");
+        addBlock(BlockRegistries.STONE_CRAFTING_TABLE, "石制合成台");
+
     }
 }

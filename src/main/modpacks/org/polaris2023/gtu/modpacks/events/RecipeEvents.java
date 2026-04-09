@@ -43,9 +43,15 @@ public class RecipeEvents {
                             switch (id.getNamespace()) {
                                 case "gtceu" -> {
                                     switch (id.getPath()) {
-                                        case "shaped/axe_flint":
+                                        case "shaped/axe_flint",
+                                             "shaped/knife_flint",
+                                             "shaped/pickaxe_flint",
+                                             "shaped/shovel_flint",
+                                             "shaped/hoe_flint",
+                                             "shaped/sword_flint"
+                                             -> {
                                             return true;
-                                        default:
+                                        }
                                     }
                                 }
                                 default -> {

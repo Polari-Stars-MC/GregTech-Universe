@@ -12,9 +12,13 @@ public class EnUs extends Lang {
     @Override
     protected void addTranslations() {
         addItem(ItemRegistries.PLANT_FIBER, "Plant Fiber");
+
         addItem(ItemRegistries.FLINT_SHARD, "Flint Shard");
         addItem(ItemRegistries.GRAVELY_COPPER, "Gravely Copper");
         addItem(ItemRegistries.GRAVELY_TIN, "Gravely Tin");
+
+        addItem(ItemRegistries.FLINT_SHARE, "Flint Share");
+
         addBlock(BlockRegistries.STONE_CRAFTING_TABLE, "Stone Crafting Table");
         addBlock(BlockRegistries.FLINT_CRAFTING_TABLE, "Flint Crafting Table");
         addBlock(BlockRegistries.GRAVEL_COPPER_ORE, "Gravel Copper Ore");

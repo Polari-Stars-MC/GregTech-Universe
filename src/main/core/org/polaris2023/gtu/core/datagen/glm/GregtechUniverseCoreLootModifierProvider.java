@@ -8,6 +8,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
 import org.polaris2023.gtu.core.GregtechUniverseCore;
 import org.polaris2023.gtu.core.loot.GrassFiberModifier;
+import org.polaris2023.gtu.core.loot.GravelFlintModifier;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -51,6 +52,13 @@ public class GregtechUniverseCoreLootModifierProvider extends GlobalLootModifier
                 new LootItemCondition[]{
                         LootItemBlockStatePropertyCondition
                                 .hasBlockStateProperties(Blocks.LARGE_FERN)
+                                .build()
+                }
+        ));
+        add("gravel_flint", new GravelFlintModifier(
+                new LootItemCondition[] {
+                        LootItemBlockStatePropertyCondition
+                                .hasBlockStateProperties(Blocks.GRAVEL)
                                 .build()
                 }
         ));

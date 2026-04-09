@@ -16,12 +16,16 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     @Override
     protected void registerStatesAndModels() {
         itemModels().basicItem(ItemRegistries.PLANT_FIBER.asItem());
+
         itemModels().withExistingParent("flint_shard", mcLoc("item/generated"))
                 .texture("layer0", mcLoc("item/flint"));
         itemModels().withExistingParent("gravely_copper", mcLoc("item/generated"))
                 .texture("layer0", mcLoc("item/raw_copper"));
         itemModels().withExistingParent("gravely_tin", mcLoc("item/generated"))
                 .texture("layer0", mcLoc("item/raw_iron"));
+
+        itemModels().basicItem(ItemRegistries.FLINT_SHARE.asItem());
+
 
         registerCraftingTable(BlockRegistries.STONE_CRAFTING_TABLE.get(), "stone_crafting_table", GregtechUniverseCore.mid("block/stone"));
         simpleBlockWithItem(BlockRegistries.GRAVEL_COPPER_ORE.get(), models().cubeAll("gravel_copper_ore", modLoc("block/gravel_copper_ore")));

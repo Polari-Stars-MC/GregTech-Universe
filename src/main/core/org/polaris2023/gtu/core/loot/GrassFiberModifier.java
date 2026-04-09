@@ -46,7 +46,7 @@ public class GrassFiberModifier extends LootModifier {
         }
 
         if (context.getRandom().nextFloat() < DROP_CHANCE) {
-            generatedLoot.add(new ItemStack(ItemRegistries.PLANT_FIBER.get()));
+            generatedLoot.add(ItemRegistries.PLANT_FIBER.toStack());
         }
 
         return generatedLoot;
