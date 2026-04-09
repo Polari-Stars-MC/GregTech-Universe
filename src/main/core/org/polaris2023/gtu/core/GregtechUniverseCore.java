@@ -5,6 +5,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import org.polaris2023.gtu.core.init.AttachmentRegistries;
 import org.polaris2023.gtu.core.init.BlockRegistries;
+import org.polaris2023.gtu.core.init.CreativeTabRegistries;
 import org.polaris2023.gtu.core.init.GLMRegistries;
 import org.polaris2023.gtu.core.init.ItemRegistries;
 import org.polaris2023.gtu.core.init.MenuRegistries;
@@ -29,6 +30,7 @@ public class GregtechUniverseCore {
         AttachmentRegistries.register(modBus);
         BlockRegistries.register(modBus);
         ItemRegistries.register(modBus);
+        CreativeTabRegistries.register(modBus);
         MenuRegistries.register(modBus);
         GLMRegistries.register(modBus);
     }

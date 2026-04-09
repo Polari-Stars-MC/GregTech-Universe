@@ -13,8 +13,13 @@ public class EnUs extends Lang {
     protected void addTranslations() {
         addItem(ItemRegistries.PLANT_FIBER, "Plant Fiber");
         addItem(ItemRegistries.FLINT_SHARD, "Flint Shard");
+        addItem(ItemRegistries.GRAVELY_COPPER, "Gravely Copper");
+        addItem(ItemRegistries.GRAVELY_TIN, "Gravely Tin");
         addBlock(BlockRegistries.STONE_CRAFTING_TABLE, "Stone Crafting Table");
         addBlock(BlockRegistries.FLINT_CRAFTING_TABLE, "Flint Crafting Table");
+        addBlock(BlockRegistries.GRAVEL_COPPER_ORE, "Gravel Copper Ore");
+        addBlock(BlockRegistries.GRAVEL_TIN_ORE, "Gravel Tin Ore");
+        add("itemGroup.gtu_core.main", "GregTech Universe Core");
         add("gui.gtu_core.flint_crafting.progress", "Progress: %s / %s");
     }
 }
