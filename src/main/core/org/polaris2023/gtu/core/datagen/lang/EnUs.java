@@ -1,9 +1,16 @@
 package org.polaris2023.gtu.core.datagen.lang;
 
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import org.apache.commons.lang3.StringUtils;
 import org.polaris2023.gtu.core.init.BlockRegistries;
 import org.polaris2023.gtu.core.init.ItemRegistries;
 
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 public class EnUs extends Lang {
     public EnUs(PackOutput output) {
         super(output, "en_us");
@@ -11,18 +18,31 @@ public class EnUs extends Lang {
 
     @Override
     protected void addTranslations() {
-        addItem(ItemRegistries.PLANT_FIBER, "Plant Fiber");
+        for (DeferredHolder<Item, ? extends Item> entry : ItemRegistries.REGISTER.getEntries()) {
+            ResourceLocation id = entry.getId();
+            Item item = entry.get();
+            switch (item) {
+                case BlockItem ignored -> {}
+                default -> {
+                    String[] s = id.getPath().split("_");
+                    StringBuilder t = new StringBuilder();
+                    for (String string : s) {
+                        t.append(StringUtils.capitalize(string));
+                    }
+                    addItem(entry, t.toString());
+                }
+            }
+        }
 
-        addItem(ItemRegistries.FLINT_SHARD, "Flint Shard");
-        addItem(ItemRegistries.GRAVELY_COPPER, "Gravely Copper");
-        addItem(ItemRegistries.GRAVELY_TIN, "Gravely Tin");
-
-        addItem(ItemRegistries.FLINT_SHARE, "Flint Share");
-
-        addBlock(BlockRegistries.STONE_CRAFTING_TABLE, "Stone Crafting Table");
-        addBlock(BlockRegistries.FLINT_CRAFTING_TABLE, "Flint Crafting Table");
-        addBlock(BlockRegistries.GRAVEL_COPPER_ORE, "Gravel Copper Ore");
-        addBlock(BlockRegistries.GRAVEL_TIN_ORE, "Gravel Tin Ore");
+        for (DeferredHolder<Block, ? extends Block> entry : BlockRegistries.REGISTER.getEntries()) {
+            ResourceLocation id = entry.getId();
+            String[] s = id.getPath().split("_");
+            StringBuilder t = new StringBuilder();
+            for (String string : s) {
+                t.append(StringUtils.capitalize(string));
+            }
+            addBlock(entry, t.toString());
+        }
         add("itemGroup.gtu_core.main", "GregTech Universe Core");
         add("gui.gtu_core.flint_crafting.progress", "Progress: %s / %s");
     }

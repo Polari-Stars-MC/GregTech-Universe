@@ -27,11 +27,13 @@ public class ItemRegistries {
 
 
     public static final DeferredItem<BlockItem> STONE_CRAFTING_TABLE =
-            ItemRegistries.REGISTER.registerSimpleBlockItem(BlockRegistries.STONE_CRAFTING_TABLE);
+            REGISTER.registerSimpleBlockItem(BlockRegistries.STONE_CRAFTING_TABLE);
     public static final DeferredItem<BlockItem> GRAVEL_COPPER_ORE =
-            ItemRegistries.REGISTER.registerSimpleBlockItem(BlockRegistries.GRAVEL_COPPER_ORE);
+            REGISTER.registerSimpleBlockItem(BlockRegistries.GRAVEL_COPPER_ORE);
     public static final DeferredItem<BlockItem> GRAVEL_TIN_ORE =
-            ItemRegistries.REGISTER.registerSimpleBlockItem(BlockRegistries.GRAVEL_TIN_ORE);
+            REGISTER.registerSimpleBlockItem(BlockRegistries.GRAVEL_TIN_ORE);
+    public static final DeferredItem<BlockItem> FLINT_CRAFTING_TABLE =
+            REGISTER.registerSimpleBlockItem(BlockRegistries.FLINT_CRAFTING_TABLE);
 
     public static void register(IEventBus bus) {
         REGISTER.register(bus);

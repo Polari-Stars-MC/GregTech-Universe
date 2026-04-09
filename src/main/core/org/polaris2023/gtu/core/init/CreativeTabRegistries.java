@@ -23,6 +23,7 @@ public class CreativeTabRegistries {
                         output.accept(ItemRegistries.GRAVELY_COPPER.get());
                         output.accept(ItemRegistries.GRAVELY_TIN.get());
                         output.accept(ItemRegistries.STONE_CRAFTING_TABLE.get());
+                        output.accept(ItemRegistries.FLINT_CRAFTING_TABLE.get());
                         output.accept(ItemRegistries.GRAVEL_COPPER_ORE.get());
                         output.accept(ItemRegistries.GRAVEL_TIN_ORE.get());
                     })

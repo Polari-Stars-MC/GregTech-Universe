@@ -30,6 +30,5 @@ public class BlockTagProvider extends BlockTagsProvider {
         white_list_break.add(Blocks.LARGE_FERN);
         white_list_break.add(Blocks.SHORT_GRASS);
         white_list_break.add(Blocks.TALL_GRASS);
-
     }
 }
