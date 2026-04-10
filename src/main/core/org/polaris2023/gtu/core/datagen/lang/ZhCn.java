@@ -13,6 +13,7 @@ public class ZhCn extends Lang {
     protected void addTranslations() {
         addItem(ItemRegistries.PLANT_FIBER, "植物纤维");
         addItem(ItemRegistries.FLINT_SHARD, "燧石碎片");
+        addItem(ItemRegistries.STONE_SHARD, "石片");
         addItem(ItemRegistries.GRAVELY_COPPER, "含沙砾铜");
         addItem(ItemRegistries.GRAVELY_TIN, "含沙砾锡");
         addBlock(BlockRegistries.STONE_CRAFTING_TABLE, "石制工作台");
@@ -21,6 +22,5 @@ public class ZhCn extends Lang {
         addBlock(BlockRegistries.GRAVEL_TIN_ORE, "沙砾锡矿");
         add("itemGroup.gtu_core.main", "GregTech Universe Core");
         add("gui.gtu_core.flint_crafting.progress", "进度：%s / %s");
-        add("quests.gtu.start", "开始");
     }
 }

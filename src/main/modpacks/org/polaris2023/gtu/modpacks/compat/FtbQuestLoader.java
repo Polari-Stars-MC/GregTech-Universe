@@ -63,7 +63,7 @@ public class FtbQuestLoader {
 
     @SubscribeEvent
     public static void saveToDevelopment(ServerStoppingEvent event) {
-        if (!FMLEnvironment.production && System.getProperty("neoforge.enabledGameTestNamespaces").equals(MOD_ID)) {
+        if (!FMLEnvironment.production && MOD_ID.equals(System.getProperty("neoforge.enabledGameTestNamespaces"))) {
             Path ftbEnvPath = Paths.get(System.getProperty("user.dir"))
                     .getParent()
                     .getParent()
@@ -123,10 +123,17 @@ public class FtbQuestLoader {
                 .getResources(QUEST_RESOURCE_PATH);
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
-            if (url.getProtocol().equals(".jar")) {
+            String protocol = url.getProtocol();
+            LOGGER.info("Scanning protocol: {}", protocol);
+
+            if (protocol.equals("jar")) {
                 scanJarFiles(url, files);
-            } else if (url.getProtocol().equals("file")) {
+            } else if (protocol.equals("union")) {
+                scanUnionFiles(url, files);
+            } else if (protocol.equals("file")) {
                 scanDirectoryFiles(Paths.get(url.getPath()), files);
+            } else {
+                LOGGER.warn("Unknown protocol: {}", protocol);
             }
         }
         return files;
@@ -143,6 +150,7 @@ public class FtbQuestLoader {
                     .filter(p -> p.toString().endsWith(".snbt"))
                     .forEach(p -> {
                         String relativePath = directory.relativize(p).toString().replace(File.pathSeparator, "/");
+                        LOGGER.info("ScanDirFiles {}", relativePath);
                         files.add(QUEST_RESOURCE_PATH + "/" + relativePath);
                     });
         }
@@ -155,10 +163,25 @@ public class FtbQuestLoader {
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
                 String name = entry.getName();
+                LOGGER.info("scanJarFile {}", name);
                 if (name.startsWith(QUEST_RESOURCE_PATH) && name.endsWith(".snbt") && !entry.isDirectory()) {
                     files.add(name);
                 }
             }
+        }
+    }
+
+    private static void scanUnionFiles(URL url, Set<String> files) throws IOException {
+        // union 协议是 NeoForge 开发环境使用的联合文件系统
+        // 尝试将其转换为 URI 并作为目录扫描
+        try {
+            URI uri = url.toURI();
+            Path path = Paths.get(uri);
+            if (Files.isDirectory(path)) {
+                scanDirectoryFiles(path, files);
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Failed to scan union URL: {}", url, e);
         }
     }
 

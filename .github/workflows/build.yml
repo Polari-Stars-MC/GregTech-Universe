@@ -26,5 +26,7 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: Data Core with Gradle
+        run: ./gradlew core:runData
+      - name: Data Modpacks with Gradle
+        run: ./gradlew modpacks:runData

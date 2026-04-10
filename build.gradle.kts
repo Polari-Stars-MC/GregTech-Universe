@@ -81,7 +81,7 @@ allprojects {
             register("client") {
                 client()
                 gameDirectory = layout.buildDirectory.file("runs/client").get().asFile
-                systemProperty("neoforge.enableGameTestNamespaces", modId)
+                systemProperty("neoforge.enabledGameTestNamespaces", modId)
             }
 
             register("server") {
@@ -94,7 +94,7 @@ allprojects {
             register("gameTestServer") {
                 type = "gameTestServer"
                 gameDirectory = layout.buildDirectory.file("runs/gts").get().asFile
-                systemProperty("neoforge.enableGameTestNamespaces", modId)
+                systemProperty("neoforge.enabledGameTestNamespaces", modId)
             }
 
             register("data") {
