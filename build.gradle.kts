@@ -44,6 +44,7 @@ allprojects {
         maven { url = uri("https://maven.gtceu.com") }
         maven { url = uri("https://maven.firstdark.dev/snapshots") }
         maven { url = uri("https://repo.repsy.io/mvn/toma/public/") }
+        maven { url = uri("https://nexus.resourcefulbees.com/repository/maven-public/") }
     }
 
     dependencies {
