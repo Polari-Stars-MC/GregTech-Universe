@@ -14,9 +14,9 @@ public class ZhCn extends Lang {
         addItem(ItemRegistries.PLANT_FIBER, "植物纤维");
         addItem(ItemRegistries.FLINT_SHARD, "燧石碎片");
         addItem(ItemRegistries.STONE_SHARD, "石片");
-        addItem(ItemRegistries.GRAVELY_COPPER, "含沙砾铜");
-        addItem(ItemRegistries.GRAVELY_TIN, "含锡沙砾");
-        addItem(ItemRegistries.GRAVELY_IRON, "含铁沙砾");
+        addItem(ItemRegistries.GRAVELY_COPPER, "掺砾沙铜");
+        addItem(ItemRegistries.GRAVELY_TIN, "掺砾沙锡");
+        addItem(ItemRegistries.GRAVELY_IRON, "掺砾沙铁");
         addBlock(BlockRegistries.STONE_CRAFTING_TABLE, "石制工作台");
         addBlock(BlockRegistries.FLINT_CRAFTING_TABLE, "燧石工作台");
         addBlock(BlockRegistries.GRAVEL_COPPER_ORE, "沙砾铜矿");
