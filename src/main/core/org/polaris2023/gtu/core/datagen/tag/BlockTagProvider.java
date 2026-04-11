@@ -29,6 +29,7 @@ public class BlockTagProvider extends BlockTagsProvider {
         IntrinsicTagAppender<Block> shovelMine = tag(BlockTags.MINEABLE_WITH_SHOVEL);
         shovelMine.add(BlockRegistries.GRAVEL_COPPER_ORE.get());
         shovelMine.add(BlockRegistries.GRAVEL_TIN_ORE.get());
+        shovelMine.add(BlockRegistries.GRAVEL_IRON_ORE.get());
 
     }
 }

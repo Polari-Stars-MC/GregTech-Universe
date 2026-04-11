@@ -31,6 +31,12 @@ public class BlockRegistries {
                             .strength(0.6F)
                             .sound(SoundType.GRAVEL)
                             .requiresCorrectToolForDrops());
+    public static final DeferredBlock<GravelOreBlock> GRAVEL_IRON_ORE =
+            REGISTER.registerBlock("gravel_iron_ore", GravelOreBlock::new,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL)
+                            .strength(0.6F)
+                            .sound(SoundType.GRAVEL)
+                            .requiresCorrectToolForDrops());
 
     public static final DeferredBlock<FlintCraftingTableBlock> FLINT_CRAFTING_TABLE =
             REGISTER

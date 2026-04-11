@@ -31,6 +31,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         registerCraftingTable(BlockRegistries.STONE_CRAFTING_TABLE.get(), "stone_crafting_table", GregtechUniverseCore.mid("block/stone"));
         registerCopperOre(BlockRegistries.GRAVEL_COPPER_ORE.get(), "gravel_copper_ore");
         registerTinOre(BlockRegistries.GRAVEL_TIN_ORE.get(), "gravel_tin_ore");
+        registerTinOre(BlockRegistries.GRAVEL_IRON_ORE.get(), "gravel_iron_ore");
 //        registerCopperOre(BlockRegistries.GRAVEL_COPPER_ORE.get(), "gravel_iron_ore", GregtechUniverseCore.mid("block/gravel"));
     }
 

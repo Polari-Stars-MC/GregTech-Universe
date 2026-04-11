@@ -25,8 +25,12 @@ public class ConfiguredFeatures {
         List<OreConfiguration.TargetBlockState> targets = List.of(
                 OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_COPPER_ORE.get().defaultBlockState()),
                 OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_COPPER_ORE.get().defaultBlockState()),
+                OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_COPPER_ORE.get().defaultBlockState()),
+                OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_COPPER_ORE.get().defaultBlockState()),
                 OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_TIN_ORE.get().defaultBlockState()),
-                OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_TIN_ORE.get().defaultBlockState())
+                OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_TIN_ORE.get().defaultBlockState()),
+                OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_IRON_ORE.get().defaultBlockState()),
+                OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_IRON_ORE.get().defaultBlockState())
         );
 
         // 矿脉大小（原版沙砾矿石是33）

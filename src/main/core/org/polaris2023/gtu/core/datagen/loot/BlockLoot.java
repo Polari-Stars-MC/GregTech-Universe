@@ -30,5 +30,6 @@ public class BlockLoot extends BlockLootSubProvider {
         dropSelf(BlockRegistries.STONE_CRAFTING_TABLE.get());
         dropOther(BlockRegistries.GRAVEL_COPPER_ORE.get(), ItemRegistries.GRAVELY_COPPER);
         dropOther(BlockRegistries.GRAVEL_TIN_ORE.get(), ItemRegistries.GRAVELY_TIN);
+        dropOther(BlockRegistries.GRAVEL_IRON_ORE.get(), ItemRegistries.GRAVELY_IRON);
     }
 }

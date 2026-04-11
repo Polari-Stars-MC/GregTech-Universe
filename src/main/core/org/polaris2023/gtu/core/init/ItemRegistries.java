@@ -23,6 +23,8 @@ public class ItemRegistries {
             REGISTER.registerItem("gravely_copper", Item::new);
     public static final DeferredItem<Item> GRAVELY_TIN =
             REGISTER.registerItem("gravely_tin", Item::new);
+    public static final DeferredItem<Item> GRAVELY_IRON =
+            REGISTER.registerItem("gravely_iron", Item::new);
 
 
 
