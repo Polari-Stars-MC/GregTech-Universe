@@ -10,7 +10,6 @@ import org.polaris2023.gtu.core.GregtechUniverseCore;
 public class BiomeModifiers {
     public static final DeferredRegister<MapCodec<? extends BiomeModifier>> REGISTER =
             DeferredRegister.create(NeoForgeRegistries.BIOME_MODIFIER_SERIALIZERS, GregtechUniverseCore.MOD_ID);
-
     public static void register(IEventBus bus) {
         REGISTER.register(bus);
     }

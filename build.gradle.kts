@@ -45,6 +45,7 @@ allprojects {
         maven { url = uri("https://maven.firstdark.dev/snapshots") }
         maven { url = uri("https://repo.repsy.io/mvn/toma/public/") }
         maven { url = uri("https://nexus.resourcefulbees.com/repository/maven-public/") }
+        maven { url = uri("https://maven.minecraftforge.net/") }
     }
 
     dependencies {
@@ -83,12 +84,14 @@ allprojects {
             register("client") {
                 client()
                 gameDirectory = layout.buildDirectory.file("runs/client").get().asFile
+                jvmArgument("-Dmixin.debug.export=true")
                 systemProperty("neoforge.enabledGameTestNamespaces", modId)
             }
 
             register("server") {
                 server()
                 programArgument("--nogui")
+                jvmArgument("-Dmixin.debug.export=true")
                 gameDirectory = layout.buildDirectory.file("runs/server").get().asFile
                 systemProperty("neoforge.enabledGameTestNamespaces", modId)
             }
