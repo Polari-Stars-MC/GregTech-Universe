@@ -6,21 +6,174 @@
 	id: "67B0E46760884EB7"
 	order_index: 0
 	quest_links: [ ]
-	quests: [{
-		id: "369E57DDFCA80904"
-		rewards: [{
-			id: "69E6F8C10FFF9DBE"
-			item: {
-				count: 1
-				id: "minecraft:stick"
-			}
-			type: "item"
-		}]
-		tasks: [{
-			id: "3A3833D15B6EEFB7"
-			type: "checkmark"
-		}]
-		x: -1.5d
-		y: -0.5d
-	}]
+	quests: [
+		{
+			id: "369E57DDFCA80904"
+			rewards: [{
+				id: "69E6F8C10FFF9DBE"
+				item: {
+					count: 1
+					id: "minecraft:stick"
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "3A3833D15B6EEFB7"
+				type: "checkmark"
+			}]
+			x: -1.5d
+			y: -0.5d
+		}
+		{
+			dependencies: ["369E57DDFCA80904"]
+			id: "77F3CA79628A3D17"
+			rewards: [{
+				id: "739307334E0938DF"
+				item: {
+					count: 1
+					id: "minecraft:flint"
+				}
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				id: "1C2059C18100A96E"
+				item: { count: 1, id: "minecraft:gravel" }
+				type: "item"
+			}]
+			x: 0.0d
+			y: -0.5d
+		}
+		{
+			dependencies: ["369E57DDFCA80904"]
+			id: "17F22E69962911B3"
+			rewards: [{
+				id: "6B84E21F8B8E0A3F"
+				item: {
+					count: 1
+					id: "minecraft:stick"
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "3ED934114081BB3B"
+				item: { count: 1, id: "minecraft:stick" }
+				type: "item"
+			}]
+			x: -0.5d
+			y: 1.5d
+		}
+		{
+			dependencies: ["6625912C131A8CC2"]
+			id: "70B1146D820B4C5F"
+			rewards: [{
+				id: "324D63BA08CD31BA"
+				item: {
+					count: 1
+					id: "gtu_core:plant_fiber"
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "5FB9DA5D1FA062CA"
+				item: { count: 1, id: "gtu_core:plant_fiber" }
+				type: "item"
+			}]
+			x: 3.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["77F3CA79628A3D17"]
+			id: "4C65AAA2A86A04B1"
+			rewards: [{
+				id: "322DFD4C16B1936E"
+				item: {
+					count: 1
+					id: "gtu_core:flint_shard"
+				}
+				type: "item"
+			}]
+			tasks: [{
+				count: 2L
+				id: "22BE37F1452F633D"
+				item: { count: 1, id: "gtu_core:flint_shard" }
+				type: "item"
+			}]
+			x: 1.5d
+			y: -0.5d
+		}
+		{
+			dependencies: [
+				"77F3CA79628A3D17"
+				"17F22E69962911B3"
+			]
+			id: "6625912C131A8CC2"
+			tasks: [{
+				id: "2CDE3E9EC5000963"
+				item: { count: 1, id: "farmersdelight:flint_knife" }
+				type: "item"
+			}]
+			x: 1.5d
+			y: 1.5d
+		}
+		{
+			dependencies: [
+				"17F22E69962911B3"
+				"70B1146D820B4C5F"
+				"4C65AAA2A86A04B1"
+			]
+			id: "2BCF18F0AE6EF29F"
+			rewards: [{
+				id: "6E6BC878524BF26B"
+				item: {
+					count: 1
+					id: "farmersdelight:flint_knife"
+				}
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "3F66797AB0547FBE"
+					item: { count: 1, id: "gtceu:flint_pickaxe" }
+					type: "item"
+				}
+				{
+					id: "308EABE35576FD8C"
+					item: { count: 1, id: "gtceu:flint_axe" }
+					type: "item"
+				}
+				{
+					id: "0EAB41D462BD0D8B"
+					item: { count: 1, id: "gtceu:flint_shovel" }
+					type: "item"
+				}
+				{
+					id: "2E02175DCC7BA5E2"
+					item: { count: 1, id: "gtceu:flint_sword" }
+					type: "item"
+				}
+				{
+					id: "5BC922577FDF1E42"
+					item: { count: 1, id: "gtceu:flint_hoe" }
+					type: "item"
+				}
+			]
+			x: 3.0d
+			y: 0.5d
+		}
+		{
+			dependencies: [
+				"77F3CA79628A3D17"
+				"17F22E69962911B3"
+			]
+			id: "79B572D8F12A08DC"
+			tasks: [{
+				id: "7556BBCF2D3330B6"
+				item: { count: 1, id: "gtu_core:flint_crafting_table" }
+				type: "item"
+			}]
+			x: 3.0d
+			y: -0.5d
+		}
+	]
 }
