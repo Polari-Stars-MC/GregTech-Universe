@@ -24,6 +24,8 @@ public class ConfiguredFeatures {
         // 定义替换规则列表
         List<OreConfiguration.TargetBlockState> targets = List.of(
                 OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_COPPER_ORE.get().defaultBlockState()),
+                OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_COPPER_ORE.get().defaultBlockState()),
+                OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_TIN_ORE.get().defaultBlockState()),
                 OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_TIN_ORE.get().defaultBlockState())
         );
 

@@ -9,4 +9,5 @@ dependencies {
     implementation(project(":core"))
     localRuntime("dev.ftb.mods:ftb-quests-neoforge:2101.1.24")
     localRuntime("curse.maven:commandstructures-565119:6428806")
+//    implementation("curse.maven:simply-improved-terrain-472872:6112229")
 }
