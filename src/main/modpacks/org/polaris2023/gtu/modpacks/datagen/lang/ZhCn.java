@@ -1,6 +1,7 @@
 package org.polaris2023.gtu.modpacks.datagen.lang;
 
 import net.minecraft.data.PackOutput;
+import org.polaris2023.gtu.modpacks.init.ItemRegistries;
 
 public class ZhCn extends Lang {
     public ZhCn(PackOutput output) {
@@ -9,10 +10,10 @@ public class ZhCn extends Lang {
 
     @Override
     protected void addTranslations() {
-        add("item.gtu_modpacks.flint_rope_axe", "燧石绳绑斧");
-        add("item.gtu_modpacks.flint_rope_pickaxe", "燧石绳绑镐");
-        add("item.gtu_modpacks.flint_rope_hoe", "燧石绳绑锄");
-        add("item.gtu_modpacks.flint_rope_sword", "燧石绳绑剑");
-        add("item.gtu_modpacks.flint_rope_shovel", "燧石绳绑锹");
+        addItem(ItemRegistries.FLINT_ROPE_AXE, "燧石绳绑斧");
+        addItem(ItemRegistries.FLINT_ROPE_PICKAXE, "燧石绳绑镐");
+        addItem(ItemRegistries.FLINT_ROPE_HOE, "燧石绳绑锄");
+        addItem(ItemRegistries.FLINT_ROPE_SWORD, "燧石绳绑剑");
+        addItem(ItemRegistries.FLINT_ROPE_SHOVEL, "燧石绳绑锹");
     }
 }

@@ -30,5 +30,12 @@ public class BlockTagProvider extends BlockTagsProvider {
         white_list_break.add(Blocks.LARGE_FERN);
         white_list_break.add(Blocks.SHORT_GRASS);
         white_list_break.add(Blocks.TALL_GRASS);
+        IntrinsicTagAppender<Block> tag = tag(BlockTags.INCORRECT_FOR_FLINT_TOOL);
+        tag.addTag(Tags.Blocks.NEEDS_NETHERITE_TOOL);
+        tag.addTag(Tags.Blocks.NEEDS_GOLD_TOOL);
+        tag.addTag(Tags.Blocks.NEEDS_WOOD_TOOL);
+        tag.addTag(net.minecraft.tags.BlockTags.NEEDS_DIAMOND_TOOL);
+        tag.addTag(net.minecraft.tags.BlockTags.NEEDS_IRON_TOOL);
+        tag.addTag(net.minecraft.tags.BlockTags.NEEDS_STONE_TOOL);
     }
 }

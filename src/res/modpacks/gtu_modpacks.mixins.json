@@ -3,6 +3,7 @@
   "package": "org.polaris2023.gtu.modpacks.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "MixinSecondDegreeMaterials"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -80,7 +80,6 @@ allprojects {
             minecraftVersion.set(parchmentMinecraftVersion)
         }
         accessTransformers.from(rootProject.file("src/res/${project.name}/META-INF/accesstransformer.cfg"))
-
         runs {
             register("client") {
                 client()
