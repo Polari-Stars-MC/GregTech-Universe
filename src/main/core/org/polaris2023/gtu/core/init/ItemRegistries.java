@@ -25,7 +25,8 @@ public class ItemRegistries {
             REGISTER.registerItem("gravely_tin", Item::new);
     public static final DeferredItem<Item> GRAVELY_IRON =
             REGISTER.registerItem("gravely_iron", Item::new);
-
+    public static final DeferredItem<Item> ROPE =
+            REGISTER.registerItem("rope", Item::new);
 
 
     public static final DeferredItem<BlockItem> STONE_CRAFTING_TABLE =
@@ -36,6 +37,8 @@ public class ItemRegistries {
             REGISTER.registerSimpleBlockItem(BlockRegistries.GRAVEL_TIN_ORE);
     public static final DeferredItem<BlockItem> FLINT_CRAFTING_TABLE =
             REGISTER.registerSimpleBlockItem(BlockRegistries.FLINT_CRAFTING_TABLE);
+
+
 
     public static void register(IEventBus bus) {
         REGISTER.register(bus);

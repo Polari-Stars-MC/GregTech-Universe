@@ -17,6 +17,7 @@ public class ZhCn extends Lang {
         addItem(ItemRegistries.GRAVELY_COPPER, "掺砾沙铜");
         addItem(ItemRegistries.GRAVELY_TIN, "掺砾沙锡");
         addItem(ItemRegistries.GRAVELY_IRON, "掺砾沙铁");
+        addItem(ItemRegistries.ROPE, "绳子");
         addBlock(BlockRegistries.STONE_CRAFTING_TABLE, "石制工作台");
         addBlock(BlockRegistries.FLINT_CRAFTING_TABLE, "燧石工作台");
         addBlock(BlockRegistries.GRAVEL_COPPER_ORE, "沙砾铜矿");

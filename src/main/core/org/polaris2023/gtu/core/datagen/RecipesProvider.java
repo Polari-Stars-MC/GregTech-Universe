@@ -37,5 +37,11 @@ public class RecipesProvider extends RecipeProvider {
                 .unlockedBy("unlock_right_away", PlayerTrigger.TriggerInstance.tick())
                 .showNotification(false)
                 .save(recipeOutput);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ItemRegistries.ROPE)
+                .pattern("# #")
+                .pattern(" # ")
+                .define('#', ItemRegistries.PLANT_FIBER)
+                .unlockedBy("has_plant_fiber",has(ItemRegistries.PLANT_FIBER))
+                .save(recipeOutput);
     }
 }

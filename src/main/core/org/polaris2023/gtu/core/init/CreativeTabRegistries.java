@@ -18,14 +18,9 @@ public class CreativeTabRegistries {
                     .title(Component.translatable("itemGroup.gtu_core.main"))
                     .icon(() -> new ItemStack(BlockRegistries.GRAVEL_COPPER_ORE.get()))
                     .displayItems((parameters, output) -> {
-                        output.accept(ItemRegistries.PLANT_FIBER.get());
-                        output.accept(ItemRegistries.FLINT_SHARD.get());
-                        output.accept(ItemRegistries.GRAVELY_COPPER.get());
-                        output.accept(ItemRegistries.GRAVELY_TIN.get());
-                        output.accept(ItemRegistries.STONE_CRAFTING_TABLE.get());
-                        output.accept(ItemRegistries.FLINT_CRAFTING_TABLE.get());
-                        output.accept(ItemRegistries.GRAVEL_COPPER_ORE.get());
-                        output.accept(ItemRegistries.GRAVEL_TIN_ORE.get());
+                        ItemRegistries.REGISTER.getEntries().forEach(h -> {
+                            output.accept(h.get());
+                        });
                     })
                     .build());
 
