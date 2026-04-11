@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> SURFACE_GRAVEL_ORE =
-            ResourceKey.create(Registries.CONFIGURED_FEATURE, GregtechUniverseCore.id("gravel_ore"));
+            ResourceKey.create(Registries.CONFIGURED_FEATURE, GregtechUniverseCore.id("surface_gravel_ore"));
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
         // 精准匹配沙砾方块
         RuleTest gravelReplacement = new BlockMatchTest(Blocks.GRAVEL);
@@ -27,7 +27,7 @@ public class ConfiguredFeatures {
                 OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_TIN_ORE.get().defaultBlockState())
         );
 
-        // 矿脉大小
-        context.register(SURFACE_GRAVEL_ORE, new ConfiguredFeature<>(Feature.ORE, new OreConfiguration(targets, 2)));
+        // 矿脉大小（原版沙砾矿石是33）
+        context.register(SURFACE_GRAVEL_ORE, new ConfiguredFeature<>(Feature.ORE, new OreConfiguration(targets, 33)));
     }
 }

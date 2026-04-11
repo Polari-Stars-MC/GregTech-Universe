@@ -1,5 +1,6 @@
 package org.polaris2023.gtu.core.worldgen;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;

@@ -17,8 +17,8 @@ public class DatapackBuiltinEntriesProvider extends net.neoforged.neoforge.commo
     public DatapackBuiltinEntriesProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries,
                 new RegistrySetBuilder()
-                        .add(Registries.PLACED_FEATURE, PlacedFeatures::bootstrap)
                         .add(Registries.CONFIGURED_FEATURE, ConfiguredFeatures::bootstrap)
+                        .add(Registries.PLACED_FEATURE, PlacedFeatures::bootstrap)
                         .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, BiomeModifiers::bootstrap)
                 , Set.of(GregtechUniverseCore.MOD_ID, "minecraft"));
     }
