@@ -7,9 +7,11 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.polaris2023.gtu.core.block.ClayCauldronBlock;
 import org.polaris2023.gtu.core.GregtechUniverseCore;
 import org.polaris2023.gtu.core.block.FlintCraftingTableBlock;
 import org.polaris2023.gtu.core.block.GravelOreBlock;
+import org.polaris2023.gtu.core.block.WaterClayCauldronBlock;
 
 public class BlockRegistries {
     public static final DeferredRegister.Blocks REGISTER =
@@ -42,11 +44,22 @@ public class BlockRegistries {
             REGISTER
                     .registerBlock("flint_crafting_table", properties -> new FlintCraftingTableBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.CRAFTING_TABLE).noCollission()))
             ;
-    ;
-
-
-
-
+    public static final DeferredBlock<ClayCauldronBlock> CLAY_CAULDRON =
+            REGISTER.registerBlock(
+                    "clay_cauldron",
+                    ClayCauldronBlock::new,
+                    BlockBehaviour.Properties.ofLegacyCopy(Blocks.CAULDRON)
+                            .sound(SoundType.DECORATED_POT)
+                            .strength(1.8F)
+            );
+    public static final DeferredBlock<WaterClayCauldronBlock> WATER_CLAY_CAULDRON =
+            REGISTER.registerBlock(
+                    "water_clay_cauldron",
+                    WaterClayCauldronBlock::new,
+                    BlockBehaviour.Properties.ofLegacyCopy(Blocks.WATER_CAULDRON)
+                            .sound(SoundType.DECORATED_POT)
+                            .strength(1.8F)
+            );
 
     public static void register(IEventBus bus) {
         REGISTER.register(bus);

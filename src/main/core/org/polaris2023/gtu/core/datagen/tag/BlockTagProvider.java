@@ -26,6 +26,9 @@ public class BlockTagProvider extends BlockTagsProvider {
         IntrinsicTagAppender<Block> axeMine = tag(BlockTags.MINEABLE_WITH_AXE);
         axeMine.add(BlockRegistries.FLINT_CRAFTING_TABLE.get());
         axeMine.add(BlockRegistries.STONE_CRAFTING_TABLE.get());
+        IntrinsicTagAppender<Block> pickaxeMine = tag(BlockTags.MINEABLE_WITH_PICKAXE);
+        pickaxeMine.add(BlockRegistries.CLAY_CAULDRON.get());
+        pickaxeMine.add(BlockRegistries.WATER_CLAY_CAULDRON.get());
         IntrinsicTagAppender<Block> shovelMine = tag(BlockTags.MINEABLE_WITH_SHOVEL);
         shovelMine.add(BlockRegistries.GRAVEL_COPPER_ORE.get());
         shovelMine.add(BlockRegistries.GRAVEL_TIN_ORE.get());

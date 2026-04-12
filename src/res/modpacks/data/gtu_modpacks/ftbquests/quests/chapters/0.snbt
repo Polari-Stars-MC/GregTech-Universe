@@ -175,5 +175,123 @@
 			x: 3.0d
 			y: -0.5d
 		}
+		{
+			dependencies: ["2BCF18F0AE6EF29F"]
+			id: "1CABADF864BE3B17"
+			rewards: [{
+				id: "6271965D68240CF2"
+				type: "xp"
+				xp: 100
+			}]
+			tasks: [
+				{
+					id: "1AA7950B11E8B36E"
+					item: { count: 1, id: "gtu_core:gravely_iron" }
+					type: "item"
+				}
+				{
+					id: "2C15EFF7D537CD90"
+					item: { count: 1, id: "gtu_core:gravely_copper" }
+					type: "item"
+				}
+			]
+			x: 4.5d
+			y: -1.5d
+		}
+		{
+			dependencies: ["2BCF18F0AE6EF29F"]
+			id: "17D14E6B5FE243C9"
+			tasks: [{
+				count: 12L
+				id: "4C22A39FFD407E20"
+				item: { count: 1, id: "minecraft:cobblestone" }
+				type: "item"
+			}]
+			x: 6.0d
+			y: -0.5d
+		}
+		{
+			dependencies: ["2BCF18F0AE6EF29F"]
+			id: "29CBD54EE06D9DF3"
+			tasks: [{
+				count: 10L
+				id: "606980C9A40FEB1A"
+				item: { count: 1, id: "minecraft:clay_ball" }
+				type: "item"
+			}]
+			x: 6.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["29CBD54EE06D9DF3"]
+			id: "5BB1E6772974F232"
+			tasks: [
+				{
+					id: "74980F8ABB0D7A18"
+					item: { count: 1, id: "gtu_core:unfired_clay_cauldron" }
+					type: "item"
+				}
+				{
+					id: "0771234B19BD69DF"
+					item: { count: 1, id: "gtu_core:unfired_clay_bucket" }
+					type: "item"
+				}
+			]
+			x: 6.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["17D14E6B5FE243C9"]
+			id: "6C91809894906A35"
+			tasks: [{
+				id: "17B30602E164BC9F"
+				item: { count: 1, id: "minecraft:furnace" }
+				type: "item"
+			}]
+			x: 7.5d
+			y: -0.5d
+		}
+		{
+			dependencies: [
+				"5BB1E6772974F232"
+				"6C91809894906A35"
+			]
+			id: "76F720F3338D9879"
+			tasks: [
+				{
+					id: "185BD3B6D28A64DD"
+					item: { count: 1, id: "gtu_core:clay_bucket" }
+					type: "item"
+				}
+				{
+					id: "457253DA5E08D79C"
+					item: { count: 1, id: "gtu_core:clay_cauldron" }
+					type: "item"
+				}
+			]
+			x: 7.5d
+			y: 0.5d
+		}
+		{
+			dependencies: [
+				"76F720F3338D9879"
+				"1CABADF864BE3B17"
+			]
+			id: "3AEFF0D86B995012"
+			tasks: [
+				{
+					id: "7D75757B5536AC96"
+					item: { count: 1, id: "gtu_core:washed_tin_concentrate" }
+					type: "item"
+				}
+				{
+					id: "7075478039C9FDF8"
+					item: { count: 1, id: "gtu_core:washed_copper_concentrate" }
+					type: "item"
+				}
+			]
+			x: 7.5d
+			y: 3.5d
+		}
 	]
 }

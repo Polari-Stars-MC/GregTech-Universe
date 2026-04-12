@@ -1,10 +1,10 @@
 {
 	chapter.67B0E46760884EB7.title: "Chapter 0: Age of Machinery"
-	quest.369E57DDFCA80904.title: "Start"
-	quest.77F3CA79628A3D17.quest_subtitle: "Mining gravel drops flint and has a chance to drop flint shards.\\nTo prevent bad luck, we'll help you exchange once for free"
 	quest.17F22E69962911B3.quest_subtitle: "Leaves are a good source of sticks"
 	quest.2BCF18F0AE6EF29F.quest_subtitle: "Flint five-piece set, the first step to success"
+	quest.369E57DDFCA80904.title: "Start"
 	quest.4C65AAA2A86A04B1.quest_subtitle: "Your luck is already incredible. You figured out on your own that high-hardness blocks can break flint, without me telling you."
 	quest.6625912C131A8CC2.quest_subtitle: "Craft a flint knife to cut grass"
 	quest.70B1146D820B4C5F.quest_subtitle: "Breaking grass has a 70% chance to drop plant fibers.\\nOf course, ferns and tall grass work too."
+	quest.77F3CA79628A3D17.quest_subtitle: "Mining gravel drops flint and has a chance to drop flint shards.\\nTo prevent bad luck, we'll help you exchange once for free"
 }

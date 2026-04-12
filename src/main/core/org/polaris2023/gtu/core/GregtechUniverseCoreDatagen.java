@@ -24,7 +24,7 @@ public class GregtechUniverseCoreDatagen {
     public static void datagen(GatherDataEvent event) {
         
         event.createProvider(EnUs::new);
-        event.createProvider(ZhCn::new);
+        event.createProvider(ZhCnFixed::new);
         event.createProvider(GregtechUniverseCoreLootModifierProvider::new);
         event.createProvider(output -> new BlockStateProvider(output, event.getExistingFileHelper()));
         event.createProvider(RecipesProvider::new);

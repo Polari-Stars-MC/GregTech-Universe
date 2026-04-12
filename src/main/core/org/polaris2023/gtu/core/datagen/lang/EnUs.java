@@ -21,6 +21,9 @@ public class EnUs extends Lang {
         for (DeferredHolder<Item, ? extends Item> entry : ItemRegistries.REGISTER.getEntries()) {
             ResourceLocation id = entry.getId();
             Item item = entry.get();
+            if (shouldUseExplicitTranslation(id)) {
+                continue;
+            }
             switch (item) {
                 case BlockItem ignored -> {}
                 default -> {
@@ -36,6 +39,9 @@ public class EnUs extends Lang {
 
         for (DeferredHolder<Block, ? extends Block> entry : BlockRegistries.REGISTER.getEntries()) {
             ResourceLocation id = entry.getId();
+            if (shouldUseExplicitTranslation(id)) {
+                continue;
+            }
             String[] s = id.getPath().split("_");
             StringBuilder t = new StringBuilder();
             for (String string : s) {
@@ -43,8 +49,32 @@ public class EnUs extends Lang {
             }
             addBlock(entry, t.toString());
         }
+        addItem(ItemRegistries.UNFIRED_CLAY_BUCKET, "Unfired Clay Bucket");
+        addItem(ItemRegistries.UNFIRED_CLAY_CAULDRON, "Unfired Clay Cauldron");
+        addItem(ItemRegistries.CLAY_BUCKET, "Clay Bucket");
+        addItem(ItemRegistries.WATER_CLAY_BUCKET, "Water Clay Bucket");
+        addItem(ItemRegistries.WASHED_COPPER_CONCENTRATE, "Washed Copper Concentrate");
+        addItem(ItemRegistries.WASHED_TIN_CONCENTRATE, "Washed Tin Concentrate");
+        addItem(ItemRegistries.WASHED_IRON_CONCENTRATE, "Washed Iron Concentrate");
+        addBlock(BlockRegistries.CLAY_CAULDRON, "Clay Cauldron");
+        addBlock(BlockRegistries.WATER_CLAY_CAULDRON, "Water Clay Cauldron");
         add("itemGroup.gtu_core.main", "GregTech Universe Core");
         add("gui.gtu_core.flint_crafting.progress", "Progress: %s / %s");
         add("quests.gtu.start", "Start");
+    }
+
+    private static boolean shouldUseExplicitTranslation(ResourceLocation id) {
+        return switch (id.getPath()) {
+            case "unfired_clay_bucket",
+                 "unfired_clay_cauldron",
+                 "clay_bucket",
+                 "water_clay_bucket",
+                 "washed_copper_concentrate",
+                 "washed_tin_concentrate",
+                 "washed_iron_concentrate",
+                 "clay_cauldron",
+                 "water_clay_cauldron" -> true;
+            default -> false;
+        };
     }
 }

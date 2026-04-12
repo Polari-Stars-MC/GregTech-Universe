@@ -3,8 +3,11 @@ package org.polaris2023.gtu.core;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import org.polaris2023.gtu.core.block.ClayCauldronInteractions;
 import org.polaris2023.gtu.core.init.AttachmentRegistries;
 import org.polaris2023.gtu.core.init.BlockRegistries;
+import org.polaris2023.gtu.core.init.ClayCauldronFluidRegistries;
 import org.polaris2023.gtu.core.init.CreativeTabRegistries;
 import org.polaris2023.gtu.core.init.FeatureRegistries;
 import org.polaris2023.gtu.core.init.GLMRegistries;
@@ -31,8 +34,14 @@ public class GregtechUniverseCore {
         AttachmentRegistries.register(modBus);
         BlockRegistries.register(modBus);
         ItemRegistries.register(modBus);
+        modBus.addListener(GregtechUniverseCore::commonSetup);
+        modBus.addListener(ClayCauldronFluidRegistries::register);
         CreativeTabRegistries.register(modBus);
         MenuRegistries.register(modBus);
         GLMRegistries.register(modBus);
+    }
+
+    private static void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(ClayCauldronInteractions::bootstrap);
     }
 }

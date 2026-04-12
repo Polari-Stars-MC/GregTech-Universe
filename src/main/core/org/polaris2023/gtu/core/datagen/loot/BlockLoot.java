@@ -28,6 +28,8 @@ public class BlockLoot extends BlockLootSubProvider {
     protected void generate() {
         dropSelf(BlockRegistries.FLINT_CRAFTING_TABLE.get());
         dropSelf(BlockRegistries.STONE_CRAFTING_TABLE.get());
+        dropSelf(BlockRegistries.CLAY_CAULDRON.get());
+        dropOther(BlockRegistries.WATER_CLAY_CAULDRON.get(), ItemRegistries.CLAY_CAULDRON);
         dropOther(BlockRegistries.GRAVEL_COPPER_ORE.get(), ItemRegistries.GRAVELY_COPPER);
         dropOther(BlockRegistries.GRAVEL_TIN_ORE.get(), ItemRegistries.GRAVELY_TIN);
         dropOther(BlockRegistries.GRAVEL_IRON_ORE.get(), ItemRegistries.GRAVELY_IRON);

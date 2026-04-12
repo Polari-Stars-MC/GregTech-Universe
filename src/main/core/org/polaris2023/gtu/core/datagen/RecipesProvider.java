@@ -7,8 +7,11 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
+import org.polaris2023.gtu.core.GregtechUniverseCore;
 import org.polaris2023.gtu.core.init.BlockRegistries;
 import org.polaris2023.gtu.core.init.ItemRegistries;
 
@@ -43,5 +46,34 @@ public class RecipesProvider extends RecipeProvider {
                 .define('#', ItemRegistries.PLANT_FIBER)
                 .unlockedBy("has_plant_fiber",has(ItemRegistries.PLANT_FIBER))
                 .save(recipeOutput);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistries.UNFIRED_CLAY_BUCKET)
+                .pattern("# #")
+                .pattern(" # ")
+                .define('#', Items.CLAY_BALL)
+                .unlockedBy("has_clay_ball", has(Items.CLAY_BALL))
+                .save(recipeOutput);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ItemRegistries.UNFIRED_CLAY_CAULDRON)
+                .pattern("# #")
+                .pattern("# #")
+                .pattern("###")
+                .define('#', Items.CLAY_BALL)
+                .unlockedBy("has_clay_ball", has(Items.CLAY_BALL))
+                .save(recipeOutput);
+
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ItemRegistries.UNFIRED_CLAY_BUCKET), RecipeCategory.TOOLS, ItemRegistries.CLAY_BUCKET, 0.1F, 200)
+                .unlockedBy("has_unfired_clay_bucket", has(ItemRegistries.UNFIRED_CLAY_BUCKET))
+                .save(recipeOutput, GregtechUniverseCore.id("smelting/clay_bucket"));
+        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ItemRegistries.UNFIRED_CLAY_BUCKET), RecipeCategory.TOOLS, ItemRegistries.CLAY_BUCKET, 0.1F, 600)
+                .unlockedBy("has_unfired_clay_bucket", has(ItemRegistries.UNFIRED_CLAY_BUCKET))
+                .save(recipeOutput, GregtechUniverseCore.id("campfire/clay_bucket"));
+
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ItemRegistries.UNFIRED_CLAY_CAULDRON), RecipeCategory.DECORATIONS, ItemRegistries.CLAY_CAULDRON, 0.1F, 200)
+                .unlockedBy("has_unfired_clay_cauldron", has(ItemRegistries.UNFIRED_CLAY_CAULDRON))
+                .save(recipeOutput, GregtechUniverseCore.id("smelting/clay_cauldron"));
+        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ItemRegistries.UNFIRED_CLAY_CAULDRON), RecipeCategory.DECORATIONS, ItemRegistries.CLAY_CAULDRON, 0.1F, 600)
+                .unlockedBy("has_unfired_clay_cauldron", has(ItemRegistries.UNFIRED_CLAY_CAULDRON))
+                .save(recipeOutput, GregtechUniverseCore.id("campfire/clay_cauldron"));
     }
 }
