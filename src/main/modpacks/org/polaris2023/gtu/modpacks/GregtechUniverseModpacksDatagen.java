@@ -6,7 +6,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.polaris2023.gtu.modpacks.datagen.ItemModelProvider;
 import org.polaris2023.gtu.modpacks.datagen.RecipesProvider;
 import org.polaris2023.gtu.modpacks.datagen.lang.EnUs;
-import org.polaris2023.gtu.modpacks.datagen.lang.ZhCn;
+import org.polaris2023.gtu.modpacks.datagen.lang.ZhCnFixed;
 import org.polaris2023.gtu.modpacks.datagen.tag.BlockTagProvider;
 import org.polaris2023.gtu.modpacks.datagen.tag.ItemTagProvider;
 
@@ -23,7 +23,7 @@ public class GregtechUniverseModpacksDatagen {
             return blockTagProvider.get();
         });
         event.createProvider((packOutput, completableFuture) -> new ItemTagProvider(packOutput, completableFuture, blockTagProvider.get().contentsGetter()));
-        event.createProvider(ZhCn::new);
+        event.createProvider(ZhCnFixed::new);
         event.createProvider(EnUs::new);
         event.createProvider(output -> new ItemModelProvider(output, event.getExistingFileHelper()));
     }

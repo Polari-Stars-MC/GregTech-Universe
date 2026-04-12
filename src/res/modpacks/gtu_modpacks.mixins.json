@@ -1,9 +1,11 @@
 {
   "required": true,
   "package": "org.polaris2023.gtu.modpacks.mixin",
+  "plugin": "org.polaris2023.gtu.modpacks.mixin.plugin.GtuModpacksMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "MixinSecondDegreeMaterials"
+    "MixinSecondDegreeMaterials",
+    "create.MixinWaterWheelBlockEntity"
   ],
   "injectors": {
     "defaultRequire": 1

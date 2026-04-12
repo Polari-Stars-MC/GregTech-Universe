@@ -4,8 +4,10 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.apache.commons.lang3.StringUtils;
+import org.polaris2023.gtu.modpacks.init.BlockRegistries;
 import org.polaris2023.gtu.modpacks.init.ItemRegistries;
 
 public class EnUs extends Lang {
@@ -30,5 +32,19 @@ public class EnUs extends Lang {
                 }
             }
         }
+
+        for (DeferredHolder<Block, ? extends Block> entry : BlockRegistries.REGISTER.getEntries()) {
+            ResourceLocation id = entry.getId();
+            if ("water_dam_controller".equals(id.getPath())) {
+                continue;
+            }
+            String[] s = id.getPath().split("_");
+            StringBuilder t = new StringBuilder();
+            for (String string : s) {
+                t.append(StringUtils.capitalize(string));
+            }
+            addBlock(entry, t.toString());
+        }
+        addBlock(BlockRegistries.WATER_DAM_CONTROLLER, "Water Dam Controller");
     }
 }

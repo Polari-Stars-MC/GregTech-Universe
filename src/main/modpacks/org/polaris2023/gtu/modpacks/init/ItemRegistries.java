@@ -24,6 +24,9 @@ public class ItemRegistries {
     public static final DeferredItem<ShovelItem> FLINT_ROPE_SHOVEL =
                 REGISTER.registerItem("flint_rope_shovel", p -> new ShovelItem(Tiers.FLINT, p.attributes(ShovelItem.createAttributes(Tiers.FLINT, 1.5F, -3.0F))));
 
+    public static final DeferredItem<BlockItem> WATER_DAM_CONTROLLER =
+            REGISTER.registerSimpleBlockItem(BlockRegistries.WATER_DAM_CONTROLLER);
+
 
     public static void register(IEventBus bus) {
         REGISTER.register(bus);
