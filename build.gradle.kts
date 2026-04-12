@@ -31,7 +31,7 @@ allprojects {
         return@allprojects
     }
     repositories {
-        maven { url = uri("https://maven.minecraftforge.net/") }
+        maven { url = uri("https://repo.repsy.io/mvn/toma/public/") }
         maven { url = uri("https://maven.createmod.net:6085/") }
         maven { url = uri("https://mvn.devos.one/snapshots") }
         maven { url = uri("https://maven.blamejared.com/") }
@@ -44,9 +44,12 @@ allprojects {
         maven { url = uri("https://www.cursemaven.com") }
         maven { url = uri("https://maven.gtceu.com") }
         maven { url = uri("https://maven.firstdark.dev/snapshots") }
-        maven { url = uri("https://repo.repsy.io/mvn/toma/public/") }
-        maven { url = uri("https://nexus.resourcefulbees.com/repository/maven-public/") }
 
+        maven { url = uri("https://nexus.resourcefulbees.com/repository/maven-public/") }
+//        maven {
+//            url = uri("https://maven.minecraftforge.net/")
+//
+//        }
     }
 
     dependencies {
