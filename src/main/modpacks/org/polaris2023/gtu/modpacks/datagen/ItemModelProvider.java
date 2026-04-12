@@ -2,6 +2,7 @@ package org.polaris2023.gtu.modpacks.datagen;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.polaris2023.gtu.modpacks.GregtechUniverseModPacks;
 
@@ -20,6 +21,6 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
     }
 
     private void reuseParentModel(String name, ResourceLocation parentModel) {
-        withExistingParent(name, parentModel);
+        getBuilder(name).parent(new ModelFile.UncheckedModelFile(parentModel));
     }
 }
