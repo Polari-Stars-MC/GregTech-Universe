@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -54,7 +55,7 @@ public class ClientRenderHandler {
             PhysicsDebugRenderer.toggle();
             boolean enabled = PhysicsDebugRenderer.isEnabled();
             mc.player.displayClientMessage(
-                    net.minecraft.network.chat.Component.literal(
+                    Component.literal(
                             enabled ? "§a物理调试渲染已启用" : "§c物理调试渲染已禁用"
                     ), true
             );

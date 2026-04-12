@@ -2,10 +2,12 @@ package org.polaris2023.gtu.physics.world;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import org.polaris2023.gtu.physics.collision.EntityCollisionManager;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -18,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PhysicsWorld implements PhysicsTickListener {
 
-    private final PhysicsSpace physicsSpace;
+    private final CustomPhysicsSpace physicsSpace;
     private final Map<Integer, PhysicsRigidBody> entityBodies = new ConcurrentHashMap<>();
     private final Map<Long, PhysicsRigidBody> blockBodies = new ConcurrentHashMap<>();
 
@@ -31,10 +33,7 @@ public class PhysicsWorld implements PhysicsTickListener {
 //     * 初始化 Bullet 原生库
 //     */
 //    public static synchronized void initNative() {
-//        if (!nativeInitialized) {
-//            NativeLibrary.initialize();
-//            nativeInitialized = true;
-//        }
+//
 //    } //我们已经初始化过了
 
     /**
@@ -45,8 +44,8 @@ public class PhysicsWorld implements PhysicsTickListener {
     public PhysicsWorld(DimensionPhysics dimensionPhysics) {
         this.dimensionPhysics = dimensionPhysics;
 
-        // 创建物理空间，使用动态 AABB 检测
-        this.physicsSpace = new PhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
+        // 创建自定义物理空间，使用动态 AABB 检测
+        this.physicsSpace = new CustomPhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
 
         // 设置维度重力
         this.physicsSpace.setGravity(new Vector3f(0, -dimensionPhysics.gravity, 0));
@@ -84,6 +83,14 @@ public class PhysicsWorld implements PhysicsTickListener {
         body.setPhysicsLocation(position);
         // 使用四元数设置Y轴旋转
         body.setPhysicsRotation(new Quaternion().fromAngles(0, yRot, 0));
+
+        // 设置用户数据为实体 ID，用于碰撞检测时识别实体
+        body.setUserObject(entityId);
+
+        // 启用碰撞回调
+        body.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
+        body.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
+
         physicsSpace.addCollisionObject(body);
         entityBodies.put(entityId, body);
         return body;
@@ -113,6 +120,11 @@ public class PhysicsWorld implements PhysicsTickListener {
     public PhysicsRigidBody addBlockBody(long blockKey, CollisionShape shape, Vector3f position) {
         PhysicsRigidBody body = new PhysicsRigidBody(shape, 0.0f); // 静态物体质量为0
         body.setPhysicsLocation(position);
+
+        // 设置碰撞组，确保与实体碰撞
+        body.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
+        body.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
+
         physicsSpace.addCollisionObject(body);
         blockBodies.put(blockKey, body);
         return body;
@@ -177,11 +189,17 @@ public class PhysicsWorld implements PhysicsTickListener {
 
     /**
      * 步进物理模拟
+     * <p>
+     * 启用接触回调以处理实体间碰撞
      *
      * @param timeStep 时间步长 (秒)
      */
     public void step(float timeStep) {
-        physicsSpace.update(timeStep, 1);
+        // 使用带有接触回调的 update 方法
+        // doEnded = true: 启用 onContactEnded 回调
+        // doProcessed = true: 启用 onContactProcessed 回调（主要的碰撞处理）
+        // doStarted = true: 启用 onContactStarted 回调
+        physicsSpace.update(timeStep, 1, true, true, true);
     }
 
     /**
@@ -229,11 +247,13 @@ public class PhysicsWorld implements PhysicsTickListener {
 
     @Override
     public void prePhysicsTick(PhysicsSpace space, float timeStep) {
-        // 物理步进前的回调，用于施加力、重置位置等
+        // 物理步进前的回调，清理上一帧的碰撞记录
+        EntityCollisionManager.getInstance().clearFrameCollisions();
     }
 
     @Override
     public void physicsTick(PhysicsSpace space, float timeStep) {
-        // 物理步进后的回调，用于处理碰撞事件等
+        // 物理步进后的回调，处理碰撞检测
+        EntityCollisionManager.getInstance().processCollisions(space);
     }
 }

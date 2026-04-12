@@ -2,6 +2,7 @@ package org.polaris2023.gtu.physics.mixin;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import org.polaris2023.gtu.physics.inertia.InertiaManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,7 +26,7 @@ public abstract class MixinInertiaMovement {
             method = "travel",
             at = @At("HEAD")
     )
-    private void gtu_physics$onTravelHead(net.minecraft.world.phys.Vec3 travelVector, CallbackInfo ci) {
+    private void gtu_physics$onTravelHead(Vec3 travelVector, CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
 
         // 只对玩家生效

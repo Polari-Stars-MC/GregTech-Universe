@@ -56,7 +56,7 @@ public class ChunkCollisionLoader {
                     BlockState state = section.getBlockState(localX, localY, localZ);
 
                     // 跳过空气和无碰撞方块
-                    if (state.isAir() || !state.getCollisionShape(level, BlockPos.ZERO).isEmpty()) {
+                    if (state.isAir() || state.getCollisionShape(level, BlockPos.ZERO).isEmpty()) {
                         continue;
                     }
 

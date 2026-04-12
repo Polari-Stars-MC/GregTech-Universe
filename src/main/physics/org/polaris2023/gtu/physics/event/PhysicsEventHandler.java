@@ -56,35 +56,45 @@ public class PhysicsEventHandler {
 
     /**
      * 区块加载时加载碰撞
+     * <p>
+     * 暂时禁用，因为遍历所有方块创建碰撞体太慢
+     * TODO: 实现异步/增量加载
      */
     @SubscribeEvent
     public static void onChunkLoad(ChunkEvent.Load event) {
-        if (event.getLevel() instanceof ServerLevel level && event.getChunk() instanceof LevelChunk chunk) {
-            PhysicsWorld physicsWorld = PhysicsManager.getOrCreatePhysicsWorld(level);
-            if (physicsWorld != null) {
-                ChunkCollisionLoader.loadChunkCollisions(physicsWorld, chunk);
-            }
-        }
+        // 暂时禁用区块碰撞加载
+        // if (event.getLevel() instanceof ServerLevel level && event.getChunk() instanceof LevelChunk chunk) {
+        //     PhysicsWorld physicsWorld = PhysicsManager.getOrCreatePhysicsWorld(level);
+        //     if (physicsWorld != null) {
+        //         ChunkCollisionLoader.loadChunkCollisions(physicsWorld, chunk);
+        //     }
+        // }
     }
 
     /**
      * 区块卸载时卸载碰撞
+     * <p>
+     * 暂时禁用，配合区块加载禁用
      */
     @SubscribeEvent
     public static void onChunkUnload(ChunkEvent.Unload event) {
-        if (event.getLevel() instanceof ServerLevel level && event.getChunk() instanceof LevelChunk chunk) {
-            PhysicsWorld physicsWorld = PhysicsManager.getOrCreatePhysicsWorld(level);
-            if (physicsWorld != null) {
-                ChunkCollisionLoader.unloadChunkCollisionsFast(physicsWorld, level, chunk.getPos().x, chunk.getPos().z);
-            }
-        }
+        // 暂时禁用区块碰撞卸载
+        // if (event.getLevel() instanceof ServerLevel level && event.getChunk() instanceof LevelChunk chunk) {
+        //     PhysicsWorld physicsWorld = PhysicsManager.getOrCreatePhysicsWorld(level);
+        //     if (physicsWorld != null) {
+        //         ChunkCollisionLoader.unloadChunkCollisionsFast(physicsWorld, level, chunk.getPos().x, chunk.getPos().z);
+        //     }
+        // }
     }
 
     /**
      * 每tick更新物理世界
+     * <p>
+     * 在服务器 tick 开始时执行物理步进，将上一帧的结果同步回实体。
+     * 这样实体 tick 时可以使用物理引擎计算的位置。
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onServerTick(ServerTickEvent.Post event) {
+    public static void onServerTick(ServerTickEvent.Pre event) {
         // 更新所有已加载世界的物理
         for (ServerLevel level : event.getServer().getAllLevels()) {
             PhysicsManager.tickPhysics(level);

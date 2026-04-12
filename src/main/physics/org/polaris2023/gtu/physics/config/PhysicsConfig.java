@@ -31,6 +31,10 @@ public class PhysicsConfig {
             .comment("主世界安全坠落高度 (米)")
             .defineInRange("overworld.safe_fall_height", 3.0, 0.0, 50.0);
 
+    private static final ModConfigSpec.DoubleValue OVERWORLD_GROUND_FRICTION = BUILDER
+            .comment("主世界地面摩擦系数乘数 (1.0 = 不修改原版，>1 更滑，<1 更粗糙)")
+            .defineInRange("overworld.ground_friction", 1.0, 0.1, 2.0);
+
     // 下界配置
     private static final ModConfigSpec.DoubleValue NETHER_GRAVITY = BUILDER
             .comment("下界重力加速度 (m/s²)")
@@ -47,6 +51,10 @@ public class PhysicsConfig {
     private static final ModConfigSpec.DoubleValue NETHER_SAFE_FALL_HEIGHT = BUILDER
             .comment("下界安全坠落高度 (米)")
             .defineInRange("nether.safe_fall_height", 4.0, 0.0, 50.0);
+
+    private static final ModConfigSpec.DoubleValue NETHER_GROUND_FRICTION = BUILDER
+            .comment("下界地面摩擦系数乘数 (1.0 = 不修改原版)")
+            .defineInRange("nether.ground_friction", 1.0, 0.1, 2.0);
 
     // 末地配置
     private static final ModConfigSpec.DoubleValue END_GRAVITY = BUILDER
@@ -65,6 +73,10 @@ public class PhysicsConfig {
             .comment("末地安全坠落高度 (米)")
             .defineInRange("end.safe_fall_height", 6.0, 0.0, 50.0);
 
+    private static final ModConfigSpec.DoubleValue END_GROUND_FRICTION = BUILDER
+            .comment("末地地面摩擦系数乘数 (1.0 = 不修改原版)")
+            .defineInRange("end.ground_friction", 1.0, 0.1, 2.0);
+
     // 天境配置 (Aether)
     private static final ModConfigSpec.DoubleValue AETHER_GRAVITY = BUILDER
             .comment("天境重力加速度 (m/s²) - 低重力的天空维度")
@@ -81,6 +93,10 @@ public class PhysicsConfig {
     private static final ModConfigSpec.DoubleValue AETHER_SAFE_FALL_HEIGHT = BUILDER
             .comment("天境安全坠落高度 (米) - 低重力减缓下落")
             .defineInRange("aether.safe_fall_height", 5.0, 0.0, 50.0);
+
+    private static final ModConfigSpec.DoubleValue AETHER_GROUND_FRICTION = BUILDER
+            .comment("天境地面摩擦系数乘数 (1.0 = 不修改原版)")
+            .defineInRange("aether.ground_friction", 1.0, 0.1, 2.0);
 
     // 暮色森林配置 (Twilight Forest)
     private static final ModConfigSpec.DoubleValue TWILIGHT_GRAVITY = BUILDER
@@ -99,6 +115,10 @@ public class PhysicsConfig {
             .comment("暮色森林安全坠落高度 (米)")
             .defineInRange("twilight_forest.safe_fall_height", 3.5, 0.0, 50.0);
 
+    private static final ModConfigSpec.DoubleValue TWILIGHT_GROUND_FRICTION = BUILDER
+            .comment("暮色森林地面摩擦系数乘数 (1.0 = 不修改原版)")
+            .defineInRange("twilight_forest.ground_friction", 1.0, 0.1, 2.0);
+
     // 永恒星光配置 (Eternal Starlight)
     private static final ModConfigSpec.DoubleValue STARLIGHT_GRAVITY = BUILDER
             .comment("永恒星光重力加速度 (m/s²) - 镜世界的虚幻漂浮感")
@@ -115,6 +135,10 @@ public class PhysicsConfig {
     private static final ModConfigSpec.DoubleValue STARLIGHT_SAFE_FALL_HEIGHT = BUILDER
             .comment("永恒星光安全坠落高度 (米) - 神秘维度的庇护")
             .defineInRange("eternal_starlight.safe_fall_height", 5.0, 0.0, 50.0);
+
+    private static final ModConfigSpec.DoubleValue STARLIGHT_GROUND_FRICTION = BUILDER
+            .comment("永恒星光地面摩擦系数乘数 (1.0 = 不修改原版)")
+            .defineInRange("eternal_starlight.ground_friction", 1.0, 0.1, 2.0);
 
     // AE2 封闭空间配置 (Spatial Storage)
     private static final ModConfigSpec.DoubleValue SPATIAL_GRAVITY = BUILDER
@@ -133,6 +157,10 @@ public class PhysicsConfig {
             .comment("封闭空间安全坠落高度 (米) - 无重力环境减少坠落伤害")
             .defineInRange("spatial_storage.safe_fall_height", 10.0, 0.0, 100.0);
 
+    private static final ModConfigSpec.DoubleValue SPATIAL_GROUND_FRICTION = BUILDER
+            .comment("封闭空间地面摩擦系数乘数 (1.0 = 不修改原版)")
+            .defineInRange("spatial_storage.ground_friction", 1.0, 0.1, 2.0);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     // 运行时缓存的值
@@ -140,40 +168,47 @@ public class PhysicsConfig {
     private static float overworldAirResistance;
     private static float overworldTerminalVelocity;
     private static float overworldSafeFallHeight;
+    private static float overworldGroundFriction;
 
     private static float netherGravity;
     private static float netherAirResistance;
     private static float netherTerminalVelocity;
     private static float netherSafeFallHeight;
+    private static float netherGroundFriction;
 
     private static float endGravity;
     private static float endAirResistance;
     private static float endTerminalVelocity;
     private static float endSafeFallHeight;
+    private static float endGroundFriction;
 
     // 天境缓存值
     private static float aetherGravity;
     private static float aetherAirResistance;
     private static float aetherTerminalVelocity;
     private static float aetherSafeFallHeight;
+    private static float aetherGroundFriction;
 
     // 暮色森林缓存值
     private static float twilightGravity;
     private static float twilightAirResistance;
     private static float twilightTerminalVelocity;
     private static float twilightSafeFallHeight;
+    private static float twilightGroundFriction;
 
     // 永恒星光缓存值
     private static float starlightGravity;
     private static float starlightAirResistance;
     private static float starlightTerminalVelocity;
     private static float starlightSafeFallHeight;
+    private static float starlightGroundFriction;
 
     // AE2 封闭空间缓存值
     private static float spatialGravity;
     private static float spatialAirResistance;
     private static float spatialTerminalVelocity;
     private static float spatialSafeFallHeight;
+    private static float spatialGroundFriction;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
@@ -187,42 +222,49 @@ public class PhysicsConfig {
         overworldAirResistance = OVERWORLD_AIR_RESISTANCE.get().floatValue();
         overworldTerminalVelocity = OVERWORLD_TERMINAL_VELOCITY.get().floatValue();
         overworldSafeFallHeight = OVERWORLD_SAFE_FALL_HEIGHT.get().floatValue();
+        overworldGroundFriction = OVERWORLD_GROUND_FRICTION.get().floatValue();
 
         // 下界
         netherGravity = NETHER_GRAVITY.get().floatValue();
         netherAirResistance = NETHER_AIR_RESISTANCE.get().floatValue();
         netherTerminalVelocity = NETHER_TERMINAL_VELOCITY.get().floatValue();
         netherSafeFallHeight = NETHER_SAFE_FALL_HEIGHT.get().floatValue();
+        netherGroundFriction = NETHER_GROUND_FRICTION.get().floatValue();
 
         // 末地
         endGravity = END_GRAVITY.get().floatValue();
         endAirResistance = END_AIR_RESISTANCE.get().floatValue();
         endTerminalVelocity = END_TERMINAL_VELOCITY.get().floatValue();
         endSafeFallHeight = END_SAFE_FALL_HEIGHT.get().floatValue();
+        endGroundFriction = END_GROUND_FRICTION.get().floatValue();
 
         // 天境
         aetherGravity = AETHER_GRAVITY.get().floatValue();
         aetherAirResistance = AETHER_AIR_RESISTANCE.get().floatValue();
         aetherTerminalVelocity = AETHER_TERMINAL_VELOCITY.get().floatValue();
         aetherSafeFallHeight = AETHER_SAFE_FALL_HEIGHT.get().floatValue();
+        aetherGroundFriction = AETHER_GROUND_FRICTION.get().floatValue();
 
         // 暮色森林
         twilightGravity = TWILIGHT_GRAVITY.get().floatValue();
         twilightAirResistance = TWILIGHT_AIR_RESISTANCE.get().floatValue();
         twilightTerminalVelocity = TWILIGHT_TERMINAL_VELOCITY.get().floatValue();
         twilightSafeFallHeight = TWILIGHT_SAFE_FALL_HEIGHT.get().floatValue();
+        twilightGroundFriction = TWILIGHT_GROUND_FRICTION.get().floatValue();
 
         // 永恒星光
         starlightGravity = STARLIGHT_GRAVITY.get().floatValue();
         starlightAirResistance = STARLIGHT_AIR_RESISTANCE.get().floatValue();
         starlightTerminalVelocity = STARLIGHT_TERMINAL_VELOCITY.get().floatValue();
         starlightSafeFallHeight = STARLIGHT_SAFE_FALL_HEIGHT.get().floatValue();
+        starlightGroundFriction = STARLIGHT_GROUND_FRICTION.get().floatValue();
 
         // AE2 封闭空间
         spatialGravity = SPATIAL_GRAVITY.get().floatValue();
         spatialAirResistance = SPATIAL_AIR_RESISTANCE.get().floatValue();
         spatialTerminalVelocity = SPATIAL_TERMINAL_VELOCITY.get().floatValue();
         spatialSafeFallHeight = SPATIAL_SAFE_FALL_HEIGHT.get().floatValue();
+        spatialGroundFriction = SPATIAL_GROUND_FRICTION.get().floatValue();
 
         // 初始化模组兼容性
         PhysicsCompatManager.init();
@@ -235,40 +277,47 @@ public class PhysicsConfig {
     public static float getOverworldAirResistance() { return overworldAirResistance; }
     public static float getOverworldTerminalVelocity() { return overworldTerminalVelocity; }
     public static float getOverworldSafeFallHeight() { return overworldSafeFallHeight; }
+    public static float getOverworldGroundFriction() { return overworldGroundFriction; }
 
     public static float getNetherGravity() { return netherGravity; }
     public static float getNetherAirResistance() { return netherAirResistance; }
     public static float getNetherTerminalVelocity() { return netherTerminalVelocity; }
     public static float getNetherSafeFallHeight() { return netherSafeFallHeight; }
+    public static float getNetherGroundFriction() { return netherGroundFriction; }
 
     public static float getEndGravity() { return endGravity; }
     public static float getEndAirResistance() { return endAirResistance; }
     public static float getEndTerminalVelocity() { return endTerminalVelocity; }
     public static float getEndSafeFallHeight() { return endSafeFallHeight; }
+    public static float getEndGroundFriction() { return endGroundFriction; }
 
     // 天境 getter
     public static float getAetherGravity() { return aetherGravity; }
     public static float getAetherAirResistance() { return aetherAirResistance; }
     public static float getAetherTerminalVelocity() { return aetherTerminalVelocity; }
     public static float getAetherSafeFallHeight() { return aetherSafeFallHeight; }
+    public static float getAetherGroundFriction() { return aetherGroundFriction; }
 
     // 暮色森林 getter
     public static float getTwilightGravity() { return twilightGravity; }
     public static float getTwilightAirResistance() { return twilightAirResistance; }
     public static float getTwilightTerminalVelocity() { return twilightTerminalVelocity; }
     public static float getTwilightSafeFallHeight() { return twilightSafeFallHeight; }
+    public static float getTwilightGroundFriction() { return twilightGroundFriction; }
 
     // 永恒星光 getter
     public static float getStarlightGravity() { return starlightGravity; }
     public static float getStarlightAirResistance() { return starlightAirResistance; }
     public static float getStarlightTerminalVelocity() { return starlightTerminalVelocity; }
     public static float getStarlightSafeFallHeight() { return starlightSafeFallHeight; }
+    public static float getStarlightGroundFriction() { return starlightGroundFriction; }
 
     // AE2 封闭空间 getter
     public static float getSpatialGravity() { return spatialGravity; }
     public static float getSpatialAirResistance() { return spatialAirResistance; }
     public static float getSpatialTerminalVelocity() { return spatialTerminalVelocity; }
     public static float getSpatialSafeFallHeight() { return spatialSafeFallHeight; }
+    public static float getSpatialGroundFriction() { return spatialGroundFriction; }
 
     /**
      * 将当前配置应用到所有已加载的 ServerLevel

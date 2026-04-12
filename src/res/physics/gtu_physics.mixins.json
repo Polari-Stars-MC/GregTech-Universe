@@ -3,13 +3,18 @@
   "package": "org.polaris2023.gtu.physics.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "MixinAbstractArrow",
     "MixinEntity",
+    "MixinEntityCollision",
     "MixinFallDamage",
+    "MixinFluidPhysics",
+    "MixinGroundFriction",
     "MixinInertiaMovement",
     "MixinLivingEntity",
     "MixinPlayerInertia",
     "MixinPlayerJump",
-    "MixinPlayerLoad"
+    "MixinPlayerLoad",
+    "MixinThrowableProjectile"
   ],
   "injectors": {
     "defaultRequire": 1

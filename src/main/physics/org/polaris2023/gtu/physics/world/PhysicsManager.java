@@ -4,6 +4,7 @@ import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -12,7 +13,6 @@ import net.minecraft.world.phys.AABB;
 import org.polaris2023.gtu.physics.PhysicsConstants;
 import org.polaris2023.gtu.physics.collision.VoxelShapeConverter;
 import org.polaris2023.gtu.physics.init.DataAttachments;
-import org.polaris2023.gtu.physics.init.DataComponents;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -201,11 +201,15 @@ public class PhysicsManager {
 
     /**
      * 更新物理世界 (每 tick 调用)
+     * <p>
+     * 执行物理步进。位置同步由各个 Mixin 在需要时触发。
      */
     public static void tickPhysics(Level level) {
         PhysicsWorld physicsWorld = worldMap.get(level);
         if (physicsWorld != null) {
             physicsWorld.step(PhysicsConstants.SECONDS_PER_TICK);
+            // 注意：不在此处同步位置，避免物理计算错误影响实体
+            // 位置同步应该由具体的物理效果（如摔落、推挤）在需要时触发
         }
     }
 
