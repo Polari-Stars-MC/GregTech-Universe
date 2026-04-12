@@ -3,6 +3,7 @@ package org.polaris2023.gtu.modpacks;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import org.polaris2023.gtu.modpacks.data.DataAttachmentTypes;
 import org.polaris2023.gtu.modpacks.init.BiomeModifiers;
 import org.polaris2023.gtu.modpacks.init.BlockRegistries;
 import org.polaris2023.gtu.modpacks.init.ItemRegistries;
@@ -15,6 +16,7 @@ public class GregtechUniverseModPacks {
         BlockRegistries.register(modEventBus);
         ItemRegistries.register(modEventBus);
         BiomeModifiers.register(modEventBus);
+        DataAttachmentTypes.register(modEventBus);
 
     }
 

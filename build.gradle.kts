@@ -44,8 +44,14 @@ allprojects {
         maven { url = uri("https://www.cursemaven.com") }
         maven { url = uri("https://maven.gtceu.com") }
         maven { url = uri("https://maven.firstdark.dev/snapshots") }
+        maven { url = uri("https://jitpack.io") }
+        maven { url = uri("https://maven.terraformersmc.com/releases") }
 
         maven { url = uri("https://nexus.resourcefulbees.com/repository/maven-public/") }
+        maven { url = uri("https://maven.tamaized.com/releases") }
+        maven { url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/") }
+        maven { url = uri("https://maven.wispforest.io/releases") }
+
 //        maven {
 //            url = uri("https://maven.minecraftforge.net/")
 //

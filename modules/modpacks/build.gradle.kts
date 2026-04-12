@@ -17,5 +17,8 @@ dependencies {
     localRuntime("curse.maven:tectonic-686836:7903156")
     localRuntime("curse.maven:terralith-513688:6090387")
 
+    implementation(project(":space"))
+    implementation(project(":physics"))
+
 //    implementation("curse.maven:simply-improved-terrain-472872:6112229")
 }
