@@ -6,7 +6,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.apache.commons.lang3.StringUtils;
-import org.polaris2023.gtu.core.init.ItemRegistries;
+import org.polaris2023.gtu.modpacks.init.ItemRegistries;
 
 public class EnUs extends Lang {
     public EnUs(PackOutput output) {

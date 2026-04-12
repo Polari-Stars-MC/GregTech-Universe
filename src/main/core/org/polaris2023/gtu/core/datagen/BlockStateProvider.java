@@ -17,36 +17,38 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     @Override
     protected void registerStatesAndModels() {
         itemModels().basicItem(ItemRegistries.PLANT_FIBER.asItem());
-
-        itemModels().withExistingParent("flint_shard", mcLoc("item/generated"))
-                .texture("layer0", mcLoc("item/flint"));
-        itemModels().withExistingParent("gravely_copper", mcLoc("item/generated"))
-                .texture("layer0", mcLoc("item/raw_copper"));
-        itemModels().withExistingParent("gravely_tin", mcLoc("item/generated"))
-                .texture("layer0", mcLoc("item/raw_iron"));
-
         itemModels().basicItem(ItemRegistries.FLINT_SHARD.asItem());
+        generatedItem("stone_shard", mcLoc("block/stone"));
+        generatedItem("gravely_copper", mcLoc("item/raw_copper"));
+        generatedItem("gravely_tin", mcLoc("item/raw_iron"));
+        generatedItem("gravely_iron", mcLoc("item/raw_iron"));
+        generatedItem("rope", mcLoc("item/string"));
 
         registerCraftingTable(BlockRegistries.FLINT_CRAFTING_TABLE.get(), "flint_crafting_table", GregtechUniverseCore.mid("block/gravel"));
         registerCraftingTable(BlockRegistries.STONE_CRAFTING_TABLE.get(), "stone_crafting_table", GregtechUniverseCore.mid("block/stone"));
         registerCopperOre(BlockRegistries.GRAVEL_COPPER_ORE.get(), "gravel_copper_ore");
         registerTinOre(BlockRegistries.GRAVEL_TIN_ORE.get(), "gravel_tin_ore");
-        registerTinOre(BlockRegistries.GRAVEL_IRON_ORE.get(), "gravel_iron_ore");
-//        registerCopperOre(BlockRegistries.GRAVEL_COPPER_ORE.get(), "gravel_iron_ore", GregtechUniverseCore.mid("block/gravel"));
+        registerIronOre(BlockRegistries.GRAVEL_IRON_ORE.get(), "gravel_iron_ore");
     }
 
     private void registerCraftingTable(Block block, String name, ResourceLocation texture) {
         simpleBlockWithItem(block, CraftingTableModels.craftingTableModel(this, name, texture));
     }
 
+    private void generatedItem(String name, ResourceLocation texture) {
+        itemModels().withExistingParent(name, mcLoc("item/generated"))
+                .texture("layer0", texture);
+    }
+
     private void registerCopperOre(Block block, String name) {
-        simpleBlock(block, OreModels.oreGravelCopperModel(this, name));
+        simpleBlockWithItem(block, OreModels.oreGravelCopperModel(this, name));
     }
 
     private void registerIronOre(Block block, String name) {
-        simpleBlock(block, OreModels.oreGravelIronModel(this, name));
+        simpleBlockWithItem(block, OreModels.oreGravelIronModel(this, name));
     }
+
     private void registerTinOre(Block block, String name) {
-        simpleBlock(block, OreModels.oreGravelTinModel(this, name));
+        simpleBlockWithItem(block, OreModels.oreGravelTinModel(this, name));
     }
 }

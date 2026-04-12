@@ -6,6 +6,7 @@ import net.neoforged.fml.common.Mod;
 import org.polaris2023.gtu.core.init.AttachmentRegistries;
 import org.polaris2023.gtu.core.init.BlockRegistries;
 import org.polaris2023.gtu.core.init.CreativeTabRegistries;
+import org.polaris2023.gtu.core.init.FeatureRegistries;
 import org.polaris2023.gtu.core.init.GLMRegistries;
 import org.polaris2023.gtu.core.init.ItemRegistries;
 import org.polaris2023.gtu.core.init.MenuRegistries;

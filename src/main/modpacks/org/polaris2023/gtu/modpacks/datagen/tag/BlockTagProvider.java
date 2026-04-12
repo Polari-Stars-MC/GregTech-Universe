@@ -2,8 +2,6 @@ package org.polaris2023.gtu.modpacks.datagen.tag;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
@@ -32,8 +30,6 @@ public class BlockTagProvider extends BlockTagsProvider {
         white_list_break.add(Blocks.TALL_GRASS);
         IntrinsicTagAppender<Block> tag = tag(BlockTags.INCORRECT_FOR_FLINT_TOOL);
         tag.addTag(Tags.Blocks.NEEDS_NETHERITE_TOOL);
-        tag.addTag(Tags.Blocks.NEEDS_GOLD_TOOL);
-        tag.addTag(Tags.Blocks.NEEDS_WOOD_TOOL);
         tag.addTag(net.minecraft.tags.BlockTags.NEEDS_DIAMOND_TOOL);
         tag.addTag(net.minecraft.tags.BlockTags.NEEDS_IRON_TOOL);
         tag.addTag(net.minecraft.tags.BlockTags.NEEDS_STONE_TOOL);

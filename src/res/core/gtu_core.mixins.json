@@ -4,7 +4,9 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "MixinAbstractContainerMenu",
-    "MixinCraftingMenu"
+     "MixinCraftingMenu",
+     "worldgen.MixinNoiseBasedChunkGenerator",
+     "worldgen.MixinNoiseChunk"
   ],
   "injectors": {
     "defaultRequire": 1

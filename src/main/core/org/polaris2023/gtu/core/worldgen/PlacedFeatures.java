@@ -27,6 +27,5 @@ public class PlacedFeatures {
                 BiomeFilter.biome() //生物群系过滤
         );
         context.register(PLACED_SURFACE_GRAVEL_ORE, new PlacedFeature(gravelOre, list));
-
     }
 }

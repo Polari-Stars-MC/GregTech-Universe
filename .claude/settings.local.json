@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew :core:compileJava --no-daemon)",
+      "Bash(./gradlew :core:dependencies --no-daemon)",
+      "Bash(./gradlew :core:dependencies --configuration compileClasspath --no-daemon)",
+      "Bash(./gradlew build:*)",
+      "Bash(./gradlew :modpacks:runClient --no-daemon)"
+    ]
+  }
+}
