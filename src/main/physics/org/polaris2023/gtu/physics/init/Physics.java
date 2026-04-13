@@ -36,6 +36,7 @@ public final class Physics {
             LOGGER.info("Loaded bulletjme native library from {}", libraryPath);
         } catch (Exception e) {
             LOGGER.error("Fail init bulletjme.", e);
+            throw new RuntimeException("Failed to initialize Bullet physics native library", e);
         }
     }
 
@@ -48,25 +49,33 @@ public final class Physics {
             return extractedLibrary;
         }
 
+        // 1. 尝试从 jar-in-jar 路径加载（生产环境）
         try (InputStream nestedJarStream = Physics.class.getClassLoader().getResourceAsStream(bundle.jarResource())) {
-            if (nestedJarStream == null) {
-                throw new IOException("Missing native bundle resource: " + bundle.jarResource());
-            }
+            if (nestedJarStream != null) {
+                try (ZipInputStream zipInputStream = new ZipInputStream(nestedJarStream)) {
+                    ZipEntry entry;
+                    while ((entry = zipInputStream.getNextEntry()) != null) {
+                        if (!bundle.libraryEntry().equals(entry.getName())) {
+                            continue;
+                        }
 
-            try (ZipInputStream zipInputStream = new ZipInputStream(nestedJarStream)) {
-                ZipEntry entry;
-                while ((entry = zipInputStream.getNextEntry()) != null) {
-                    if (!bundle.libraryEntry().equals(entry.getName())) {
-                        continue;
+                        Files.copy(zipInputStream, extractedLibrary, StandardCopyOption.REPLACE_EXISTING);
+                        return extractedLibrary;
                     }
-
-                    Files.copy(zipInputStream, extractedLibrary, StandardCopyOption.REPLACE_EXISTING);
-                    return extractedLibrary;
                 }
             }
         }
 
-        throw new IOException("Missing native library entry " + bundle.libraryEntry() + " in " + bundle.jarResource());
+        // 2. 尝试直接从 classpath 加载（开发环境：原生库 jar 直接在 classpath 上）
+        try (InputStream directStream = Physics.class.getClassLoader().getResourceAsStream(bundle.libraryEntry())) {
+            if (directStream != null) {
+                Files.copy(directStream, extractedLibrary, StandardCopyOption.REPLACE_EXISTING);
+                return extractedLibrary;
+            }
+        }
+
+        throw new IOException("Missing native library " + bundle.libraryEntry()
+                + " (tried jar-in-jar: " + bundle.jarResource() + " and direct classpath)");
     }
 
     private static void loadWithLibbulletjmeClassLoader(NativeBundle bundle, Path libraryPath) throws Exception {

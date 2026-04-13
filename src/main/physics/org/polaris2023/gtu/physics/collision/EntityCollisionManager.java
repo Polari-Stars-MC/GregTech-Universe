@@ -13,6 +13,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.polaris2023.gtu.physics.init.DataAttachments;
+import org.polaris2023.gtu.physics.rotation.RotationalPhysics;
+import org.polaris2023.gtu.physics.rotation.RotationalPhysicsCalculator;
 import org.polaris2023.gtu.physics.world.PhysicsManager;
 import org.polaris2023.gtu.physics.world.PhysicsWorld;
 
@@ -267,20 +270,62 @@ public class EntityCollisionManager implements ContactListener {
         Vector3f normal = event.normal;
         float normalVel = event.normalVel;
 
+        // 获取实体
+        Entity entityA = getEntityFromBody(bodyA, event.entityIdA);
+        Entity entityB = getEntityFromBody(bodyB, event.entityIdB);
+
+        // 计算恢复系数（考虑实体类型）
+        float restitution = RESTITUTION;
+        if (entityA != null && entityB != null) {
+            float restA = CollisionEnergy.getRestitution(entityA);
+            float restB = CollisionEnergy.getRestitution(entityB);
+            restitution = (restA + restB) / 2.0f;
+
+            // 史莱姆弹跳增强
+            restitution *= CollisionEnergy.getSlimeBounceMultiplier(entityA);
+            restitution *= CollisionEnergy.getSlimeBounceMultiplier(entityB);
+        }
+
         // 计算冲量大小
         float invMassSum = (massA > 0 ? 1.0f / massA : 0) + (massB > 0 ? 1.0f / massB : 0);
         if (invMassSum == 0) return;
 
-        float impulseMagnitude = -(1.0f + RESTITUTION) * normalVel / invMassSum;
+        float impulseMagnitude = -(1.0f + restitution) * normalVel / invMassSum;
         Vector3f impulse = normal.mult(impulseMagnitude);
 
-        // 应用冲量
+        // 应用冲量到 Bullet 刚体
         if (massA > 0) {
             bodyA.applyCentralImpulse(impulse);
         }
         if (massB > 0) {
             bodyB.applyCentralImpulse(impulse.negate());
         }
+
+        // 将冲量同步回 Minecraft 实体（使碰撞反弹可见）
+        if (entityA != null && massA > 0) {
+            Vec3 velA = entityA.getDeltaMovement();
+            entityA.setDeltaMovement(new Vec3(
+                    velA.x + impulse.x / massA,
+                    velA.y + impulse.y / massA,
+                    velA.z + impulse.z / massA
+            ));
+        }
+        if (entityB != null && massB > 0) {
+            Vec3 velB = entityB.getDeltaMovement();
+            entityB.setDeltaMovement(new Vec3(
+                    velB.x - impulse.x / massB,
+                    velB.y - impulse.y / massB,
+                    velB.z - impulse.z / massB
+            ));
+        }
+
+        // 应用碰撞摩擦力
+        if (entityA != null && entityB != null) {
+            applyCollisionFriction(entityA, entityB, impulseMagnitude, normal);
+        }
+
+        // 应用旋转力矩
+        applyCollisionTorqueToBodies(bodyA, bodyB, event.contactPoint, impulse, entityA, entityB);
 
         // 计算排斥力
         Vector3f posA = event.posA;
@@ -305,6 +350,108 @@ public class EntityCollisionManager implements ContactListener {
                 }
             }
         }
+    }
+
+    /**
+     * 应用碰撞力矩到刚体和旋转物理
+     */
+    private void applyCollisionTorqueToBodies(PhysicsRigidBody bodyA, PhysicsRigidBody bodyB,
+                                               Vector3f contactPoint, Vector3f impulse,
+                                               Entity entityA, Entity entityB) {
+        // 获取旋转物理状态
+        RotationalPhysics rpA = entityA != null ? entityA.getData(DataAttachments.ROTATIONAL_PHYSICS.get()) : null;
+        RotationalPhysics rpB = entityB != null ? entityB.getData(DataAttachments.ROTATIONAL_PHYSICS.get()) : null;
+
+        Vector3f posA = bodyA.getPhysicsLocation(null);
+        Vector3f posB = bodyB.getPhysicsLocation(null);
+
+        // 力矩 = r × F，应用到 Bullet 刚体和旋转物理
+        if (rpA != null && rpA.enabled) {
+            Vector3f rA = contactPoint.subtract(posA);
+            Vector3f torqueA = rA.cross(impulse);
+            bodyA.applyTorque(torqueA);
+            rpA.applyTorque(torqueA.x, torqueA.y, torqueA.z);
+        }
+
+        if (rpB != null && rpB.enabled) {
+            Vector3f rB = contactPoint.subtract(posB);
+            Vector3f torqueB = rB.cross(impulse.negate());
+            bodyB.applyTorque(torqueB);
+            rpB.applyTorque(torqueB.x, torqueB.y, torqueB.z);
+        }
+    }
+
+    /**
+     * 应用碰撞摩擦力
+     * <p>
+     * 库仑摩擦模型：切向摩擦力 ≤ μ × 法向力
+     */
+    private void applyCollisionFriction(Entity entityA, Entity entityB,
+                                        float normalImpulse, Vector3f normal) {
+        float frictionA = CollisionEnergy.getFriction(entityA);
+        float frictionB = CollisionEnergy.getFriction(entityB);
+        float friction = (frictionA + frictionB) / 2.0f;
+
+        // 计算切向相对速度
+        Vec3 velA = entityA.getDeltaMovement();
+        Vec3 velB = entityB.getDeltaMovement();
+        Vec3 relVel = velA.subtract(velB);
+        double normalComp = relVel.dot(toMC(normal));
+        Vec3 tangentVel = relVel.subtract(toMC(normal).scale(normalComp));
+
+        if (tangentVel.lengthSqr() < 0.0001) return;
+
+        // 摩擦冲量：不超过停止切向运动所需的量
+        float maxFriction = friction * Math.abs(normalImpulse);
+        float tangentSpeed = (float) tangentVel.length();
+        float frictionImpulse = Math.min(maxFriction, tangentSpeed * 0.5f);
+
+        Vec3 frictionDir = tangentVel.normalize().scale(-frictionImpulse);
+
+        float massA = CollisionEnergy.getEntityMass(entityA);
+        float massB = CollisionEnergy.getEntityMass(entityB);
+
+        if (massA > 0) {
+            entityA.setDeltaMovement(velA.add(frictionDir.scale(1.0 / massA)));
+        }
+        if (massB > 0) {
+            entityB.setDeltaMovement(velB.subtract(frictionDir.scale(1.0 / massB)));
+        }
+    }
+
+    /**
+     * Bullet Vector3f 转 Minecraft Vec3
+     */
+    private static Vec3 toMC(Vector3f v) {
+        return new Vec3(v.x, v.y, v.z);
+    }
+
+    /**
+     * 从刚体获取实体
+     */
+    private Entity getEntityFromBody(PhysicsRigidBody body, Integer entityId) {
+        if (entityId == null || entityId < 0) return null;
+
+        // 从 PhysicsManager 的 Level 映射中获取 ServerLevel
+        for (ServerLevel level : getCurrentServerLevels()) {
+            Entity entity = level.getEntity(entityId);
+            if (entity != null) return entity;
+        }
+        return null;
+    }
+
+    /**
+     * 获取当前服务器所有世界
+     */
+    private List<ServerLevel> getCurrentServerLevels() {
+        net.minecraft.server.MinecraftServer server =
+                net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        if (server == null) return Collections.emptyList();
+        List<ServerLevel> levels = new ArrayList<>();
+        for (ServerLevel level : server.getAllLevels()) {
+            levels.add(level);
+        }
+        return levels;
     }
 
     /**

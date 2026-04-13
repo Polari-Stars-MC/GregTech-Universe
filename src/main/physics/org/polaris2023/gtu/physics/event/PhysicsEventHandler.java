@@ -115,8 +115,14 @@ public class PhysicsEventHandler {
                 ChunkCollisionLoader.submitPendingCollisions(physicsWorld);
             }
 
+            // 物理步进前：MC 实体 → Bullet 刚体
+            PhysicsManager.syncAllEntitiesToPhysics(level);
+
             // 物理步进（内部会检查暂停状态）
             PhysicsManager.tickPhysics(level);
+
+            // 物理步进后：Bullet 刚体 → MC 实体
+            PhysicsManager.syncAllPhysicsToEntities(level);
 
             // 检测实体堆叠状态
             RigidBodyCollisionDetector.getInstance().detectStacking(level);

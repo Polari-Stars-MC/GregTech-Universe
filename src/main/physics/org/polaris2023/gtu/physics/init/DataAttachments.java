@@ -8,6 +8,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.polaris2023.gtu.physics.GregtechUniversePhysics;
 import org.polaris2023.gtu.physics.entity.EntityPhysics;
 import org.polaris2023.gtu.physics.entity.ProjectilePhysics;
+import org.polaris2023.gtu.physics.rotation.RotationalPhysics;
 import org.polaris2023.gtu.physics.world.DimensionPhysics;
 
 public class DataAttachments {
@@ -48,6 +49,18 @@ public class DataAttachments {
             REGISTER.register("entity_physics", () ->
                     AttachmentType.builder(EntityPhysics::getDefaultFor)
                             .serialize(EntityPhysics.SERIALIZER)
+                            .build()
+            );
+
+    /**
+     * 旋转物理配置附件类型
+     * <p>
+     * 作为 Entity 的数据附件，存储实体的转动惯量、角速度等旋转物理参数
+     */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<RotationalPhysics>> ROTATIONAL_PHYSICS =
+            REGISTER.register("rotational_physics", () ->
+                    AttachmentType.builder(RotationalPhysics::getDefaultFor)
+                            .serialize(RotationalPhysics.SERIALIZER)
                             .build()
             );
 

@@ -3,6 +3,7 @@ package org.polaris2023.gtu.physics.world;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
+import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -207,7 +208,79 @@ public class PhysicsManager {
     // ==================== 位置同步 ====================
 
     /**
-     * 同步实体位置到物理世界
+     * 批量同步：将 MC 实体位置/旋转/速度写入 Bullet 刚体
+     */
+    public static void syncAllEntitiesToPhysics(ServerLevel level) {
+        PhysicsWorld physicsWorld = worldMap.get(level);
+        if (physicsWorld == null || physicsWorld.isDestroyed()) return;
+
+        for (Entity entity : level.getAllEntities()) {
+            if (entity.level().isClientSide()) continue;
+
+            PhysicsRigidBody body = physicsWorld.getEntityBody(entity.getId());
+            if (body == null) continue;
+            if (body.getMass() <= 0) continue;  // 静态体不更新
+
+            // 位置
+            body.setPhysicsLocation(new Vector3f(
+                    (float) entity.getX(),
+                    (float) entity.getY(),
+                    (float) entity.getZ()
+            ));
+
+            // 旋转（Y 轴朝向）
+            float yRotRad = (float) Math.toRadians(entity.getYRot());
+            body.setPhysicsRotation(new com.jme3.math.Quaternion().fromAngles(0, yRotRad, 0));
+
+            // 速度
+            net.minecraft.world.phys.Vec3 mcVel = entity.getDeltaMovement();
+            body.setLinearVelocity(new Vector3f(
+                    (float) mcVel.x,
+                    (float) mcVel.y,
+                    (float) mcVel.z
+            ));
+        }
+    }
+
+    /**
+     * 批量同步：将 Bullet 碰撞产生的速度变化写回 MC 实体
+     * <p>
+     * 不同步位置（MC 自己处理重力和方块碰撞），
+     * 只同步 Bullet 碰撞冲量导致的速度变化。
+     */
+    public static void syncAllPhysicsToEntities(ServerLevel level) {
+        PhysicsWorld physicsWorld = worldMap.get(level);
+        if (physicsWorld == null || physicsWorld.isDestroyed()) return;
+
+        for (Entity entity : level.getAllEntities()) {
+            if (entity.level().isClientSide()) continue;
+
+            PhysicsRigidBody body = physicsWorld.getEntityBody(entity.getId());
+            if (body == null) continue;
+            if (body.getMass() <= 0) continue;
+
+            Vector3f bulletVel = body.getLinearVelocity(null);
+            net.minecraft.world.phys.Vec3 mcVel = entity.getDeltaMovement();
+
+            // 计算碰撞冲量导致的速度差
+            float dx = bulletVel.x - (float) mcVel.x;
+            float dy = bulletVel.y - (float) mcVel.y;
+            float dz = bulletVel.z - (float) mcVel.z;
+
+            // 只有速度差足够大（说明发生了碰撞）才应用
+            double deltaSq = dx * dx + dy * dy + dz * dz;
+            if (deltaSq > 0.001) {
+                entity.setDeltaMovement(
+                        mcVel.x + dx,
+                        mcVel.y + dy,
+                        mcVel.z + dz
+                );
+            }
+        }
+    }
+
+    /**
+     * 同步单个实体位置到物理世界
      */
     public static void syncEntityToPhysics(Entity entity) {
         PhysicsWorld physicsWorld = getOrCreatePhysicsWorld(entity.level());
@@ -220,6 +293,11 @@ public class PhysicsManager {
                     (float) entity.getY(),
                     (float) entity.getZ()
             ));
+            float yRotRad = (float) Math.toRadians(entity.getYRot());
+            body.setPhysicsRotation(new com.jme3.math.Quaternion().fromAngles(0, yRotRad, 0));
+
+            net.minecraft.world.phys.Vec3 mcVel = entity.getDeltaMovement();
+            body.setLinearVelocity(new Vector3f((float) mcVel.x, (float) mcVel.y, (float) mcVel.z));
         }
     }
 

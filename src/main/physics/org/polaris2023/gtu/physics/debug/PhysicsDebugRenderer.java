@@ -46,6 +46,10 @@ public class PhysicsDebugRenderer {
         enabled = !enabled;
     }
 
+    public static void setEnabled(boolean value) {
+        enabled = value;
+    }
+
     public static boolean isEnabled() {
         return enabled;
     }

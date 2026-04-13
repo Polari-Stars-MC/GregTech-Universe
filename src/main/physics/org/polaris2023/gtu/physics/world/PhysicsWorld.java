@@ -8,6 +8,8 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import org.polaris2023.gtu.physics.collision.EntityCollisionManager;
+import org.polaris2023.gtu.physics.rotation.RotationalPhysics;
+import org.polaris2023.gtu.physics.rotation.RotationalPhysicsCalculator;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -96,6 +98,7 @@ public class PhysicsWorld implements PhysicsTickListener {
             body.setUserObject(entityId);
             body.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
             body.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
+            body.setGravity(Vector3f.ZERO);  // MC 自己处理重力，Bullet 不需要
 
             physicsSpace.addCollisionObject(body);
             entityBodies.put(entityId, body);
@@ -307,6 +310,93 @@ public class PhysicsWorld implements PhysicsTickListener {
      */
     public int getEntityBodyCount() {
         return entityBodies.size();
+    }
+
+    // ==================== 旋转物理同步 ====================
+
+    /**
+     * 同步实体的旋转状态到 Bullet 刚体
+     *
+     * @param entityId 实体ID
+     * @param rp       旋转物理状态
+     */
+    public void syncRotationToBody(int entityId, RotationalPhysics rp) {
+        if (destroyed || rp == null) return;
+
+        PhysicsRigidBody body = entityBodies.get(entityId);
+        if (body == null) return;
+
+        // 将角速度转换为 Bullet 坐标系
+        body.setAngularVelocity(new Vector3f(rp.omegaX, rp.omegaY, rp.omegaZ));
+
+        // 更新旋转角度
+        Quaternion rotation = new Quaternion();
+        rotation.fromAngles(rp.rotationX, rp.rotationY, rp.rotationZ);
+        body.setPhysicsRotation(rotation);
+    }
+
+    /**
+     * 从 Bullet 刚体同步旋转状态到实体
+     *
+     * @param entityId 实体ID
+     * @param rp       旋转物理状态（输出）
+     */
+    public void syncBodyToRotation(int entityId, RotationalPhysics rp) {
+        if (destroyed || rp == null) return;
+
+        PhysicsRigidBody body = entityBodies.get(entityId);
+        if (body == null) return;
+
+        // 获取角速度
+        Vector3f omega = body.getAngularVelocity(null);
+        rp.omegaX = omega.x;
+        rp.omegaY = omega.y;
+        rp.omegaZ = omega.z;
+
+        // 获取旋转角度
+        Quaternion rot = body.getPhysicsRotation(null);
+        // 使用 getRotationColumn 获取欧拉角
+        // 简化处理：直接使用四元数的 x, y, z, w 分量
+        // 对于简单的 Y 轴旋转，可以直接从四元数提取
+        rp.rotationX = (float) Math.atan2(2 * (rot.getW() * rot.getX() + rot.getY() * rot.getZ()),
+                1 - 2 * (rot.getX() * rot.getX() + rot.getY() * rot.getY()));
+        rp.rotationY = (float) Math.asin(2 * (rot.getW() * rot.getY() - rot.getZ() * rot.getX()));
+        rp.rotationZ = (float) Math.atan2(2 * (rot.getW() * rot.getZ() + rot.getX() * rot.getY()),
+                1 - 2 * (rot.getY() * rot.getY() + rot.getZ() * rot.getZ()));
+    }
+
+    /**
+     * 应用力矩到刚体
+     *
+     * @param entityId 实体ID
+     * @param torqueX  x轴力矩
+     * @param torqueY  y轴力矩
+     * @param torqueZ  z轴力矩
+     */
+    public void applyTorqueToBody(int entityId, float torqueX, float torqueY, float torqueZ) {
+        if (destroyed) return;
+
+        PhysicsRigidBody body = entityBodies.get(entityId);
+        if (body == null) return;
+
+        body.applyTorque(new Vector3f(torqueX, torqueY, torqueZ));
+    }
+
+    /**
+     * 应用冲量矩到刚体
+     *
+     * @param entityId 实体ID
+     * @param impulseX x轴冲量矩
+     * @param impulseY y轴冲量矩
+     * @param impulseZ z轴冲量矩
+     */
+    public void applyAngularImpulseToBody(int entityId, float impulseX, float impulseY, float impulseZ) {
+        if (destroyed) return;
+
+        PhysicsRigidBody body = entityBodies.get(entityId);
+        if (body == null) return;
+
+        body.applyTorqueImpulse(new Vector3f(impulseX, impulseY, impulseZ));
     }
 
     // ==================== PhysicsTickListener ====================
