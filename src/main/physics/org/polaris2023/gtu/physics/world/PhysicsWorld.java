@@ -12,11 +12,19 @@ import org.polaris2023.gtu.physics.collision.EntityCollisionManager;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Bullet 物理世界管理器
  * <p>
  * 管理单个维度/世界的物理模拟
+ * <p>
+ * <b>线程安全：</b>
+ * <ul>
+ *   <li>使用 ConcurrentHashMap 存储刚体</li>
+ *   <li>使用 ReentrantLock 保护物理操作</li>
+ *   <li>所有物理操作必须在主线程进行</li>
+ * </ul>
  */
 public class PhysicsWorld implements PhysicsTickListener {
 
@@ -25,37 +33,32 @@ public class PhysicsWorld implements PhysicsTickListener {
     private final Map<Long, PhysicsRigidBody> blockBodies = new ConcurrentHashMap<>();
 
     /**
+     * 操作锁（保护 add/remove 操作）
+     */
+    private final ReentrantLock operationLock = new ReentrantLock();
+
+    /**
      * 当前维度的物理配置
      */
     private final DimensionPhysics dimensionPhysics;
 
-//    /**
-//     * 初始化 Bullet 原生库
-//     */
-//    public static synchronized void initNative() {
-//
-//    } //我们已经初始化过了
+    /**
+     * 是否已销毁
+     */
+    private volatile boolean destroyed = false;
 
     /**
      * 创建物理世界
-     *
-     * @param dimensionPhysics 维度物理配置
      */
     public PhysicsWorld(DimensionPhysics dimensionPhysics) {
         this.dimensionPhysics = dimensionPhysics;
-
-        // 创建自定义物理空间，使用动态 AABB 检测
         this.physicsSpace = new CustomPhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
-
-        // 设置维度重力
         this.physicsSpace.setGravity(new Vector3f(0, -dimensionPhysics.gravity, 0));
-
-        // 添加 tick 监听器
         this.physicsSpace.addTickListener(this);
     }
 
     /**
-     * 创建默认物理世界 (使用默认配置)
+     * 创建默认物理世界
      */
     public PhysicsWorld() {
         this(DimensionPhysics.DEFAULT);
@@ -68,42 +71,54 @@ public class PhysicsWorld implements PhysicsTickListener {
         return dimensionPhysics;
     }
 
+    // ==================== 实体刚体管理 ====================
+
     /**
      * 添加实体刚体
-     *
-     * @param entityId    实体 ID
-     * @param shape       碰撞形状
-     * @param mass        质量 (kg)
-     * @param position    初始位置
-     * @param yRot        Y轴旋转角度 (弧度)
      */
     public PhysicsRigidBody addEntityBody(int entityId, CollisionShape shape, float mass,
                                           Vector3f position, float yRot) {
-        PhysicsRigidBody body = new PhysicsRigidBody(shape, mass);
-        body.setPhysicsLocation(position);
-        // 使用四元数设置Y轴旋转
-        body.setPhysicsRotation(new Quaternion().fromAngles(0, yRot, 0));
+        if (destroyed) return null;
 
-        // 设置用户数据为实体 ID，用于碰撞检测时识别实体
-        body.setUserObject(entityId);
+        operationLock.lock();
+        try {
+            // 检查是否已存在
+            PhysicsRigidBody existing = entityBodies.get(entityId);
+            if (existing != null) {
+                // 更新位置
+                existing.setPhysicsLocation(position);
+                return existing;
+            }
 
-        // 启用碰撞回调
-        body.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
-        body.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
+            PhysicsRigidBody body = new PhysicsRigidBody(shape, mass);
+            body.setPhysicsLocation(position);
+            body.setPhysicsRotation(new Quaternion().fromAngles(0, yRot, 0));
+            body.setUserObject(entityId);
+            body.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
+            body.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
 
-        physicsSpace.addCollisionObject(body);
-        entityBodies.put(entityId, body);
-        return body;
+            physicsSpace.addCollisionObject(body);
+            entityBodies.put(entityId, body);
+            return body;
+        } finally {
+            operationLock.unlock();
+        }
     }
 
     /**
      * 移除实体刚体
      */
     public void removeEntityBody(int entityId) {
-        PhysicsRigidBody body = entityBodies.remove(entityId);
-        if (body != null) {
-            physicsSpace.removeCollisionObject(body);
-            // PhysicsRigidBody 由 Java GC 自动回收
+        if (destroyed) return;
+
+        operationLock.lock();
+        try {
+            PhysicsRigidBody body = entityBodies.remove(entityId);
+            if (body != null) {
+                physicsSpace.removeCollisionObject(body);
+            }
+        } finally {
+            operationLock.unlock();
         }
     }
 
@@ -115,58 +130,82 @@ public class PhysicsWorld implements PhysicsTickListener {
     }
 
     /**
+     * 检查实体刚体是否存在
+     */
+    public boolean hasEntityBody(int entityId) {
+        return entityBodies.containsKey(entityId);
+    }
+
+    // ==================== 方块碰撞管理 ====================
+
+    /**
      * 添加静态方块碰撞体
      */
     public PhysicsRigidBody addBlockBody(long blockKey, CollisionShape shape, Vector3f position) {
-        PhysicsRigidBody body = new PhysicsRigidBody(shape, 0.0f); // 静态物体质量为0
-        body.setPhysicsLocation(position);
+        if (destroyed) return null;
 
-        // 设置碰撞组，确保与实体碰撞
-        body.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
-        body.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
+        operationLock.lock();
+        try {
+            // 检查是否已存在
+            PhysicsRigidBody existing = blockBodies.get(blockKey);
+            if (existing != null) {
+                return existing;
+            }
 
-        physicsSpace.addCollisionObject(body);
-        blockBodies.put(blockKey, body);
-        return body;
+            PhysicsRigidBody body = new PhysicsRigidBody(shape, 0.0f);
+            body.setPhysicsLocation(position);
+            body.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
+            body.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
+
+            physicsSpace.addCollisionObject(body);
+            blockBodies.put(blockKey, body);
+            return body;
+        } finally {
+            operationLock.unlock();
+        }
     }
 
     /**
      * 移除方块碰撞体
      */
     public void removeBlockBody(long blockKey) {
-        PhysicsRigidBody body = blockBodies.remove(blockKey);
-        if (body != null) {
-            physicsSpace.removeCollisionObject(body);
-            // PhysicsRigidBody 由 Java GC 自动回收
+        if (destroyed) return;
+
+        operationLock.lock();
+        try {
+            PhysicsRigidBody body = blockBodies.remove(blockKey);
+            if (body != null) {
+                physicsSpace.removeCollisionObject(body);
+            }
+        } finally {
+            operationLock.unlock();
         }
     }
 
     /**
      * 批量移除指定范围内的方块碰撞体
-     *
-     * @param minX 最小 X
-     * @param minY 最小 Y
-     * @param minZ 最小 Z
-     * @param maxX 最大 X
-     * @param maxY 最大 Y
-     * @param maxZ 最大 Z
      */
     public void removeBlockBodiesInRange(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
-        Iterator<Map.Entry<Long, PhysicsRigidBody>> iterator = blockBodies.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Long, PhysicsRigidBody> entry = iterator.next();
-            long key = entry.getKey();
+        if (destroyed) return;
 
-            // 解码方块坐标
-            int x = BlockPos.getX(key);
-            int y = BlockPos.getY(key);
-            int z = BlockPos.getZ(key);
+        operationLock.lock();
+        try {
+            Iterator<Map.Entry<Long, PhysicsRigidBody>> iterator = blockBodies.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<Long, PhysicsRigidBody> entry = iterator.next();
+                long key = entry.getKey();
 
-            // 检查是否在范围内
-            if (x >= minX && x < maxX && y >= minY && y < maxY && z >= minZ && z < maxZ) {
-                physicsSpace.removeCollisionObject(entry.getValue());
-                iterator.remove();
+                int x = BlockPos.getX(key);
+                int y = BlockPos.getY(key);
+                int z = BlockPos.getZ(key);
+
+                if (x >= minX && x < maxX && y >= minY && y < maxY && z >= minZ && z < maxZ) {
+                    physicsSpace.removeCollisionObject(entry.getValue());
+                    iterator.remove();
+                }
             }
+        } finally {
+            operationLock.unlock();
         }
     }
 
@@ -187,19 +226,25 @@ public class PhysicsWorld implements PhysicsTickListener {
         }
     }
 
+    // ==================== 物理步进 ====================
+
     /**
      * 步进物理模拟
-     * <p>
-     * 启用接触回调以处理实体间碰撞
-     *
-     * @param timeStep 时间步长 (秒)
      */
     public void step(float timeStep) {
-        // 使用带有接触回调的 update 方法
-        // doEnded = true: 启用 onContactEnded 回调
-        // doProcessed = true: 启用 onContactProcessed 回调（主要的碰撞处理）
-        // doStarted = true: 启用 onContactStarted 回调
-        physicsSpace.update(timeStep, 1, true, true, true);
+        if (destroyed) return;
+
+        // 检查是否暂停
+        if (PhysicsPauseManager.getInstance().isPaused()) {
+            return;
+        }
+
+        operationLock.lock();
+        try {
+            physicsSpace.update(timeStep, 1, true, true, true);
+        } finally {
+            operationLock.unlock();
+        }
     }
 
     /**
@@ -213,23 +258,42 @@ public class PhysicsWorld implements PhysicsTickListener {
      * 设置重力
      */
     public void setGravity(float x, float y, float z) {
+        if (destroyed) return;
         physicsSpace.setGravity(new Vector3f(x, y, z));
     }
+
+    // ==================== 生命周期 ====================
 
     /**
      * 清理所有物理对象
      */
     public void destroy() {
-        for (PhysicsRigidBody body : entityBodies.values()) {
-            physicsSpace.removeCollisionObject(body);
+        if (destroyed) return;
+        destroyed = true;
+
+        operationLock.lock();
+        try {
+            for (PhysicsRigidBody body : entityBodies.values()) {
+                physicsSpace.removeCollisionObject(body);
+            }
+            for (PhysicsRigidBody body : blockBodies.values()) {
+                physicsSpace.removeCollisionObject(body);
+            }
+            entityBodies.clear();
+            blockBodies.clear();
+        } finally {
+            operationLock.unlock();
         }
-        for (PhysicsRigidBody body : blockBodies.values()) {
-            physicsSpace.removeCollisionObject(body);
-        }
-        entityBodies.clear();
-        blockBodies.clear();
-        // PhysicsSpace 由 Java GC 自动回收
     }
+
+    /**
+     * 是否已销毁
+     */
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
+    // ==================== 统计 ====================
 
     /**
      * 获取方块碰撞体数量
@@ -245,15 +309,15 @@ public class PhysicsWorld implements PhysicsTickListener {
         return entityBodies.size();
     }
 
+    // ==================== PhysicsTickListener ====================
+
     @Override
     public void prePhysicsTick(PhysicsSpace space, float timeStep) {
-        // 物理步进前的回调，清理上一帧的碰撞记录
         EntityCollisionManager.getInstance().clearFrameCollisions();
     }
 
     @Override
     public void physicsTick(PhysicsSpace space, float timeStep) {
-        // 物理步进后的回调，处理碰撞检测
-        EntityCollisionManager.getInstance().processCollisions(space);
+        EntityCollisionManager.getInstance().endFrame(space);
     }
 }

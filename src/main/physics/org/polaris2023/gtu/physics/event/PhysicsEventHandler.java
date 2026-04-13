@@ -12,10 +12,15 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.polaris2023.gtu.physics.GregtechUniversePhysics;
 import org.polaris2023.gtu.physics.collision.ChunkCollisionLoader;
+import org.polaris2023.gtu.physics.collision.EntityCollisionManager;
+import org.polaris2023.gtu.physics.collision.RigidBodyCollisionDetector;
+import org.polaris2023.gtu.physics.collision.VoxelShapeConverter;
 import org.polaris2023.gtu.physics.world.PhysicsManager;
+import org.polaris2023.gtu.physics.world.PhysicsPauseManager;
 import org.polaris2023.gtu.physics.world.PhysicsWorld;
 
 /**
@@ -32,6 +37,21 @@ public class PhysicsEventHandler {
     @SubscribeEvent
     public static void onServerStarting(ServerStartingEvent event) {
         PhysicsManager.initServerPhysics();
+
+        // 默认禁用区块碰撞加载（太慢）
+        ChunkCollisionLoader.setEnabled(false);
+    }
+
+    /**
+     * 服务器停止时清理物理系统
+     */
+    @SubscribeEvent
+    public static void onServerStopping(ServerStoppingEvent event) {
+        EntityCollisionManager.getInstance().shutdown();
+        ChunkCollisionLoader.shutdown();
+        RigidBodyCollisionDetector.getInstance().clearStackingState();
+        VoxelShapeConverter.clearCache();
+        PhysicsManager.shutdown();
     }
 
     /**
@@ -55,59 +75,62 @@ public class PhysicsEventHandler {
     }
 
     /**
-     * 区块加载时加载碰撞
-     * <p>
-     * 暂时禁用，因为遍历所有方块创建碰撞体太慢
-     * TODO: 实现异步/增量加载
+     * 区块加载时异步加载碰撞（默认禁用）
      */
     @SubscribeEvent
     public static void onChunkLoad(ChunkEvent.Load event) {
-        // 暂时禁用区块碰撞加载
-        // if (event.getLevel() instanceof ServerLevel level && event.getChunk() instanceof LevelChunk chunk) {
-        //     PhysicsWorld physicsWorld = PhysicsManager.getOrCreatePhysicsWorld(level);
-        //     if (physicsWorld != null) {
-        //         ChunkCollisionLoader.loadChunkCollisions(physicsWorld, chunk);
-        //     }
-        // }
+        // 区块碰撞加载默认禁用，可通过配置启用
+        // ChunkCollisionLoader.loadChunkCollisionsAsync(physicsWorld, chunk);
     }
 
     /**
      * 区块卸载时卸载碰撞
-     * <p>
-     * 暂时禁用，配合区块加载禁用
      */
     @SubscribeEvent
     public static void onChunkUnload(ChunkEvent.Unload event) {
-        // 暂时禁用区块碰撞卸载
-        // if (event.getLevel() instanceof ServerLevel level && event.getChunk() instanceof LevelChunk chunk) {
-        //     PhysicsWorld physicsWorld = PhysicsManager.getOrCreatePhysicsWorld(level);
-        //     if (physicsWorld != null) {
-        //         ChunkCollisionLoader.unloadChunkCollisionsFast(physicsWorld, level, chunk.getPos().x, chunk.getPos().z);
-        //     }
-        // }
-    }
-
-    /**
-     * 每tick更新物理世界
-     * <p>
-     * 在服务器 tick 开始时执行物理步进，将上一帧的结果同步回实体。
-     * 这样实体 tick 时可以使用物理引擎计算的位置。
-     */
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onServerTick(ServerTickEvent.Pre event) {
-        // 更新所有已加载世界的物理
-        for (ServerLevel level : event.getServer().getAllLevels()) {
-            PhysicsManager.tickPhysics(level);
+        if (event.getLevel() instanceof ServerLevel level && event.getChunk() instanceof LevelChunk chunk) {
+            PhysicsWorld physicsWorld = PhysicsManager.getOrCreatePhysicsWorld(level);
+            if (physicsWorld != null) {
+                ChunkCollisionLoader.unloadChunkCollisionsFast(physicsWorld, level, chunk.getPos().x, chunk.getPos().z);
+            }
         }
     }
 
     /**
-     * 实体加入世界时创建物理体
+     * 每tick更新物理世界
+     */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onServerTick(ServerTickEvent.Pre event) {
+        // 检查暂停状态
+        PhysicsPauseManager pauseManager = PhysicsPauseManager.getInstance();
+
+        for (ServerLevel level : event.getServer().getAllLevels()) {
+            PhysicsWorld physicsWorld = PhysicsManager.getOrCreatePhysicsWorld(level);
+
+            // 处理待创建的实体刚体
+            PhysicsManager.processPendingCreations();
+
+            // 提交异步加载的区块碰撞
+            if (physicsWorld != null) {
+                ChunkCollisionLoader.submitPendingCollisions(physicsWorld);
+            }
+
+            // 物理步进（内部会检查暂停状态）
+            PhysicsManager.tickPhysics(level);
+
+            // 检测实体堆叠状态
+            RigidBodyCollisionDetector.getInstance().detectStacking(level);
+        }
+    }
+
+    /**
+     * 实体加入世界时延迟创建物理体
      */
     @SubscribeEvent
     public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
         if (!event.getLevel().isClientSide()) {
-            PhysicsManager.createEntityBody(event.getEntity());
+            // 使用延迟创建，避免大量实体同时加入时卡顿
+            PhysicsManager.createEntityBodyDeferred(event.getEntity());
         }
     }
 

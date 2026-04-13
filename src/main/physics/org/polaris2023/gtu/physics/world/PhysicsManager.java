@@ -2,6 +2,7 @@ package org.polaris2023.gtu.physics.world;
 
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -16,15 +17,54 @@ import org.polaris2023.gtu.physics.init.DataAttachments;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * 物理管理器
  * <p>
  * 管理所有维度的物理世界，同步 Minecraft 实体与 Bullet 物理引擎
+ * <p>
+ * <b>线程安全优化：</b>
+ * <ul>
+ *   <li>使用 ConcurrentHashMap 存储物理世界</li>
+ *   <li>实体刚体创建使用延迟队列</li>
+ *   <li>形状缓存避免重复创建</li>
+ * </ul>
  */
 public class PhysicsManager {
 
     private static final Map<Level, PhysicsWorld> worldMap = new ConcurrentHashMap<>();
+
+    // ==================== 形状缓存 ====================
+
+    /**
+     * 玩家胶囊形状缓存（半径, 高度 -> 形状）
+     */
+    private static final Map<Long, CapsuleCollisionShape> playerShapeCache = new ConcurrentHashMap<>();
+
+    /**
+     * 实体盒子形状缓存（半宽, 半高, 半深 -> 形状）
+     */
+    private static final Map<Long, BoxCollisionShape> boxShapeCache = new ConcurrentHashMap<>();
+
+    /**
+     * 形状缓存最大大小
+     */
+    private static final int MAX_SHAPE_CACHE = 256;
+
+    // ==================== 延迟创建队列 ====================
+
+    /**
+     * 待创建刚体的实体队列
+     */
+    private static final ConcurrentLinkedQueue<Entity> pendingEntityCreations = new ConcurrentLinkedQueue<>();
+
+    /**
+     * 每帧最大创建数
+     */
+    private static final int MAX_CREATIONS_PER_FRAME = 32;
+
+    // ==================== 世界管理 ====================
 
     /**
      * 获取或创建维度的物理世界
@@ -37,7 +77,6 @@ public class PhysicsManager {
      * 创建物理世界
      */
     private static PhysicsWorld createPhysicsWorld(Level level) {
-        // 从 Level attachment 获取物理配置
         DimensionPhysics config = level.getData(DataAttachments.DIMENSION_PHYSICS.get());
         return new PhysicsWorld(config);
     }
@@ -53,15 +92,46 @@ public class PhysicsManager {
         return level.getData(DataAttachments.DIMENSION_PHYSICS.get());
     }
 
+    // ==================== 实体刚体管理 ====================
+
     /**
-     * 为实体创建刚体
+     * 为实体创建刚体（延迟）
+     * <p>
+     * 将实体加入延迟队列，在下一帧批量创建
+     */
+    public static void createEntityBodyDeferred(Entity entity) {
+        pendingEntityCreations.add(entity);
+    }
+
+    /**
+     * 处理待创建的实体刚体（每帧调用）
+     */
+    public static void processPendingCreations() {
+        int created = 0;
+        Entity entity;
+
+        while ((entity = pendingEntityCreations.poll()) != null && created < MAX_CREATIONS_PER_FRAME) {
+            createEntityBodyImmediate(entity);
+            created++;
+        }
+    }
+
+    /**
+     * 立即为实体创建刚体
      */
     public static void createEntityBody(Entity entity) {
+        createEntityBodyImmediate(entity);
+    }
+
+    /**
+     * 内部方法：立即创建刚体
+     */
+    private static void createEntityBodyImmediate(Entity entity) {
         Level level = entity.level();
         PhysicsWorld physicsWorld = getOrCreatePhysicsWorld(level);
         if (physicsWorld == null) return;
 
-        CollisionShape shape = createEntityShape(entity);
+        CollisionShape shape = getOrCreateEntityShape(entity);
         float mass = calculateEntityMass(entity);
 
         Vector3f position = new Vector3f(
@@ -70,32 +140,52 @@ public class PhysicsManager {
                 (float) entity.getZ()
         );
 
-        // Y轴旋转角度转换为弧度
         float yRot = (float) Math.toRadians(entity.getYRot());
-
         physicsWorld.addEntityBody(entity.getId(), shape, mass, position, yRot);
     }
 
+    // ==================== 形状缓存 ====================
+
     /**
-     * 为实体创建碰撞形状
+     * 获取或创建实体碰撞形状（带缓存）
      */
-    public static CollisionShape createEntityShape(Entity entity) {
+    private static CollisionShape getOrCreateEntityShape(Entity entity) {
         AABB bb = entity.getBoundingBox();
-        double width = bb.getXsize();
-        double height = bb.getYsize();
+        float width = (float) bb.getXsize();
+        float height = (float) bb.getYsize();
+        float depth = (float) bb.getZsize();
 
         if (entity instanceof Player) {
             // 玩家使用胶囊形状
-            float radius = (float) (width / 2.0);
-            float heightWithoutRadius = (float) (height - width);
-            return new CapsuleCollisionShape(radius, heightWithoutRadius);
+            float radius = width / 2.0f;
+            float heightWithoutRadius = height - width;
+
+            // 缓存键
+            long key = Float.floatToRawIntBits(radius) * 31L + Float.floatToRawIntBits(heightWithoutRadius);
+
+            return playerShapeCache.computeIfAbsent(key, k -> {
+                if (playerShapeCache.size() >= MAX_SHAPE_CACHE) {
+                    playerShapeCache.clear();
+                }
+                return new CapsuleCollisionShape(radius, heightWithoutRadius);
+            });
         } else {
             // 其他实体使用盒子形状
-            return VoxelShapeConverter.createBoxShape(
-                    (float) (width / 2.0),
-                    (float) (height / 2.0),
-                    (float) (bb.getZsize() / 2.0)
-            );
+            float halfWidth = width / 2.0f;
+            float halfHeight = height / 2.0f;
+            float halfDepth = depth / 2.0f;
+
+            // 缓存键
+            long key = Float.floatToRawIntBits(halfWidth) * 31L * 31L
+                     + Float.floatToRawIntBits(halfHeight) * 31L
+                     + Float.floatToRawIntBits(halfDepth);
+
+            return boxShapeCache.computeIfAbsent(key, k -> {
+                if (boxShapeCache.size() >= MAX_SHAPE_CACHE) {
+                    boxShapeCache.clear();
+                }
+                return new BoxCollisionShape(halfWidth, halfHeight, halfDepth);
+            });
         }
     }
 
@@ -103,18 +193,18 @@ public class PhysicsManager {
      * 计算实体质量
      */
     public static float calculateEntityMass(Entity entity) {
-        // 基础质量计算，可以根据实体类型调整
-        float baseMass = 70.0f; // 默认 70kg (成人平均体重)
+        float baseMass = 70.0f;
 
         if (entity instanceof Player) {
             return baseMass;
         }
 
-        // 根据实体碰撞箱体积估算质量
         AABB bb = entity.getBoundingBox();
         double volume = bb.getXsize() * bb.getYsize() * bb.getZsize();
         return (float) (volume * PhysicsConstants.KG_PER_MASS_UNIT);
     }
+
+    // ==================== 位置同步 ====================
 
     /**
      * 同步实体位置到物理世界
@@ -150,8 +240,10 @@ public class PhysicsManager {
         }
     }
 
+    // ==================== 方块碰撞 ====================
+
     /**
-     * 添加方块碰撞体（使用 VoxelShape 转换，兼容所有 mod）
+     * 添加方块碰撞体
      */
     public static void addBlockCollision(Level level, BlockPos pos) {
         PhysicsWorld physicsWorld = getOrCreatePhysicsWorld(level);
@@ -169,16 +261,14 @@ public class PhysicsManager {
     }
 
     /**
-     * 更新方块碰撞体（方块放置/改变时调用）
+     * 更新方块碰撞体
      */
     public static void updateBlockCollision(Level level, BlockPos pos, BlockState state) {
         PhysicsWorld physicsWorld = getOrCreatePhysicsWorld(level);
         if (physicsWorld == null) return;
 
-        // 先移除旧的碰撞体
         physicsWorld.removeBlockBody(pos.asLong());
 
-        // 添加新的碰撞体
         CollisionShape shape = VoxelShapeConverter.convert(level, pos, state);
         if (shape == null) return;
 
@@ -199,17 +289,15 @@ public class PhysicsManager {
         physicsWorld.removeBlockBody(pos.asLong());
     }
 
+    // ==================== 物理更新 ====================
+
     /**
      * 更新物理世界 (每 tick 调用)
-     * <p>
-     * 执行物理步进。位置同步由各个 Mixin 在需要时触发。
      */
     public static void tickPhysics(Level level) {
         PhysicsWorld physicsWorld = worldMap.get(level);
         if (physicsWorld != null) {
             physicsWorld.step(PhysicsConstants.SECONDS_PER_TICK);
-            // 注意：不在此处同步位置，避免物理计算错误影响实体
-            // 位置同步应该由具体的物理效果（如摔落、推挤）在需要时触发
         }
     }
 
@@ -227,7 +315,48 @@ public class PhysicsManager {
      * 初始化服务器物理系统
      */
     public static void initServerPhysics() {
-        // 初始化 Bullet 物理引擎
-        // Native 库会在第一次使用时自动加载
+        // 清理缓存
+        playerShapeCache.clear();
+        boxShapeCache.clear();
+        pendingEntityCreations.clear();
+    }
+
+    /**
+     * 关闭物理系统
+     */
+    public static void shutdown() {
+        // 清理所有世界
+        for (PhysicsWorld world : worldMap.values()) {
+            world.destroy();
+        }
+        worldMap.clear();
+
+        // 清理缓存
+        playerShapeCache.clear();
+        boxShapeCache.clear();
+        pendingEntityCreations.clear();
+    }
+
+    // ==================== 统计 ====================
+
+    /**
+     * 获取物理世界数量
+     */
+    public static int getWorldCount() {
+        return worldMap.size();
+    }
+
+    /**
+     * 获取待创建实体数量
+     */
+    public static int getPendingCreationCount() {
+        return pendingEntityCreations.size();
+    }
+
+    /**
+     * 获取形状缓存大小
+     */
+    public static int getShapeCacheSize() {
+        return playerShapeCache.size() + boxShapeCache.size();
     }
 }

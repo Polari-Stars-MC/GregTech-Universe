@@ -1,7 +1,9 @@
 package org.polaris2023.gtu.physics.mixin;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import org.polaris2023.gtu.physics.collision.EntityCollisionManager;
+import org.polaris2023.gtu.physics.collision.RigidBodyCollisionDetector;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,7 +31,10 @@ public abstract class MixinEntityCollision {
             return;
         }
 
-        // 应用玩家推挤力
+        // 应用玩家推挤力（异步）
         EntityCollisionManager.getInstance().applyPlayerPushForce(self, self.level());
+
+        // 应用刚体碰撞推挤力
+        RigidBodyCollisionDetector.getInstance().applyEntityPushForce(self, self.level());
     }
 }

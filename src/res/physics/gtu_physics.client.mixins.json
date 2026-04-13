@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "org.polaris2023.gtu.physics.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "MixinMinecraftPause"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
