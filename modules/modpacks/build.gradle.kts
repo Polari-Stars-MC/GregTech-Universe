@@ -1,3 +1,5 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
 dependencies {
     implementation("com.simibubi.create:create-1.21.1:6.0.10-272:slim") {
         exclude("info.journeymap")
@@ -19,6 +21,15 @@ dependencies {
 
     implementation(project(":space"))
     implementation(project(":physics"))
+
+    val system = DefaultNativePlatform.getCurrentOperatingSystem()
+    if (system.isWindows()) {
+        additionalRuntimeClasspath("com.github.stephengold:Libbulletjme-Windows64:23.0.0")
+    } else if (system.isLinux()) {
+        additionalRuntimeClasspath("com.github.stephengold:Libbulletjme-Linux64:23.0.0")
+    } else if (system.isMacOsX()) {
+        additionalRuntimeClasspath("com.github.stephengold:Libbulletjme-MacOSX_ARM64:23.0.0")
+    }
 
 //    implementation("curse.maven:simply-improved-terrain-472872:6112229")
 }

@@ -138,6 +138,27 @@ allprojects {
     val localRuntime by configurations.registering
     configurations.runtimeClasspath.get().extendsFrom(localRuntime.get())
 
+    val commonMixinConfig = rootProject.file("src/res/${project.name}/${modId}.mixins.json")
+    val clientMixinConfig = rootProject.file("src/res/${project.name}/${modId}.client.mixins.json")
+    val mixinBlocks = buildString {
+        if (commonMixinConfig.exists()) {
+            appendLine("# The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.")
+            appendLine("[[mixins]]")
+            appendLine("config=\"${modId}.mixins.json\"")
+        }
+        if (clientMixinConfig.exists()) {
+            if (isNotEmpty()) {
+                appendLine()
+            }
+            appendLine("# Client-only mixins")
+            appendLine("[[mixins]]")
+            appendLine("config=\"${modId}.client.mixins.json\"")
+        }
+        if (isNotEmpty()) {
+            appendLine()
+        }
+    }
+
     var generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
         var replaceProperties = mapOf(
             "minecraft_version" to minecraftVersion,
@@ -148,6 +169,7 @@ allprojects {
             "mod_name" to modName,
             "mod_version" to modVersion,
             "mod_license" to modLicense,
+            "mixin_blocks" to mixinBlocks,
         )
         inputs.properties(replaceProperties)
         expand(replaceProperties)
