@@ -1,36 +1,134 @@
 package org.polaris2023.gtu.physics.init;
 
-import electrostatic4j.snaploader.LibraryInfo;
-import electrostatic4j.snaploader.LoadingCriterion;
-import electrostatic4j.snaploader.NativeBinaryLoader;
-import electrostatic4j.snaploader.filesystem.DirectoryPath;
-import electrostatic4j.snaploader.platform.NativeDynamicLibrary;
-import electrostatic4j.snaploader.platform.util.PlatformPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Physics {
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Locale;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
-    public static final Logger LOGGER = LoggerFactory.getLogger("physics.init");
+public final class Physics {
 
-    public static void init() {
-        LibraryInfo info = new LibraryInfo(null, "bulletjme", DirectoryPath.USER_DIR);
-        NativeBinaryLoader loader = new NativeBinaryLoader(info);
+    private static final Logger LOGGER = LoggerFactory.getLogger("physics.init");
+    private static final String LIB_VERSION = "23.0.0";
+    private static boolean initialized;
 
-        NativeDynamicLibrary[] libraries = {
-                new NativeDynamicLibrary("native/linux/arm64", PlatformPredicate.LINUX_ARM_64),
-                new NativeDynamicLibrary("native/linux/arm32", PlatformPredicate.LINUX_ARM_32),
-                new NativeDynamicLibrary("native/linux/x86_64", PlatformPredicate.LINUX_X86_64),
-                new NativeDynamicLibrary("native/osx/arm64", PlatformPredicate.MACOS_ARM_64),
-                new NativeDynamicLibrary("native/osx/x86_64", PlatformPredicate.MACOS_X86_64),
-                new NativeDynamicLibrary("native/windows/x86_64", PlatformPredicate.WIN_X86_64)
-        };
-        loader.registerNativeLibraries(libraries).initPlatformLibrary();
+    private Physics() {
+    }
+
+    public static synchronized void init() {
+        if (initialized) {
+            return;
+        }
+
         try {
-            loader.loadLibrary(LoadingCriterion.CLEAN_EXTRACTION);
+            NativeBundle bundle = NativeBundle.detect();
+            Path libraryPath = extractNativeLibrary(bundle);
+            loadWithLibbulletjmeClassLoader(bundle, libraryPath);
+            initialized = true;
+            LOGGER.info("Loaded bulletjme native library from {}", libraryPath);
         } catch (Exception e) {
-            LOGGER.error("Fail init bulletjme.");
+            LOGGER.error("Fail init bulletjme.", e);
         }
     }
 
+    private static Path extractNativeLibrary(NativeBundle bundle) throws IOException {
+        Path cacheDir = Path.of(System.getProperty("java.io.tmpdir"), "gtu_physics", "libbulletjme", LIB_VERSION);
+        Files.createDirectories(cacheDir);
+
+        Path extractedLibrary = cacheDir.resolve(bundle.loaderFileName());
+        if (Files.exists(extractedLibrary)) {
+            return extractedLibrary;
+        }
+
+        try (InputStream nestedJarStream = Physics.class.getClassLoader().getResourceAsStream(bundle.jarResource())) {
+            if (nestedJarStream == null) {
+                throw new IOException("Missing native bundle resource: " + bundle.jarResource());
+            }
+
+            try (ZipInputStream zipInputStream = new ZipInputStream(nestedJarStream)) {
+                ZipEntry entry;
+                while ((entry = zipInputStream.getNextEntry()) != null) {
+                    if (!bundle.libraryEntry().equals(entry.getName())) {
+                        continue;
+                    }
+
+                    Files.copy(zipInputStream, extractedLibrary, StandardCopyOption.REPLACE_EXISTING);
+                    return extractedLibrary;
+                }
+            }
+        }
+
+        throw new IOException("Missing native library entry " + bundle.libraryEntry() + " in " + bundle.jarResource());
+    }
+
+    private static void loadWithLibbulletjmeClassLoader(NativeBundle bundle, Path libraryPath) throws Exception {
+        Class<?> loaderClass = Class.forName("com.jme3.system.NativeLibraryLoader");
+        Method loadMethod = loaderClass.getMethod(
+                "loadLibbulletjme", boolean.class, File.class, String.class, String.class
+        );
+
+        boolean loaded = (boolean) loadMethod.invoke(
+                null,
+                true,
+                libraryPath.getParent().toFile(),
+                bundle.buildType(),
+                bundle.flavor()
+        );
+
+        if (!loaded) {
+            throw new IOException("Libbulletjme native loader returned false for " + libraryPath);
+        }
+    }
+
+    private record NativeBundle(
+            String jarResource,
+            String libraryEntry,
+            String loaderFileName,
+            String buildType,
+            String flavor
+    ) {
+
+        private static NativeBundle detect() throws IOException {
+            String osName = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+            String arch = System.getProperty("os.arch", "").toLowerCase(Locale.ROOT);
+
+            if (osName.contains("win")) {
+                return new NativeBundle(
+                        "META-INF/jarjar/Libbulletjme-Windows64-23.0.0-SpDebug.jar",
+                        "native/windows/x86_64/bulletjme.dll",
+                        "Windows64DebugSp_bulletjme.dll",
+                        "Debug",
+                        "Sp"
+                );
+            }
+            if (osName.contains("linux") && (arch.contains("amd64") || arch.contains("x86_64"))) {
+                return new NativeBundle(
+                        "META-INF/jarjar/Libbulletjme-Linux64-23.0.0-SpDebug.jar",
+                        "native/linux/x86_64/libbulletjme.so",
+                        "Linux64DebugSp_libbulletjme.so",
+                        "Debug",
+                        "Sp"
+                );
+            }
+            if (osName.contains("mac") && (arch.contains("aarch64") || arch.contains("arm64"))) {
+                return new NativeBundle(
+                        "META-INF/jarjar/Libbulletjme-MacOSX_ARM64-23.0.0-SpDebug.jar",
+                        "native/osx/arm64/libbulletjme.dylib",
+                        "MacOSX_ARM64DebugSp_libbulletjme.dylib",
+                        "Debug",
+                        "Sp"
+                );
+            }
+
+            throw new IOException("Unsupported platform for bulletjme: os=" + osName + ", arch=" + arch);
+        }
+    }
 }
