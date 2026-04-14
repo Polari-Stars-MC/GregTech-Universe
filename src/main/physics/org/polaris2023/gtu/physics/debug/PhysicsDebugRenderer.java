@@ -71,10 +71,13 @@ public class PhysicsDebugRenderer {
         Player player = mc.player;
         if (player == null) return;
 
+        Vec3 camera = new Vec3(camX, camY, camZ);
+
+        // 渲染 Bullet 刚体碰撞形状
+        renderBulletCollisionShapes(poseStack, bufferSource, camera);
+
         MotionTracker tracker = trackers.get(player.getId());
         if (tracker == null) return;
-
-        Vec3 camera = new Vec3(camX, camY, camZ);
 
         // 渲染3D轨迹
         renderTrajectory(poseStack, bufferSource, tracker.getPositionHistory(), camera, 1.0f, 1.0f, 0.0f);
@@ -88,6 +91,114 @@ public class PhysicsDebugRenderer {
 
         renderVelocityVector(poseStack, bufferSource, player, tracker, camera);
         renderAccelerationVector(poseStack, bufferSource, player, tracker, camera);
+    }
+
+    /**
+     * 渲染 Bullet 刚体碰撞形状
+     */
+    private static void renderBulletCollisionShapes(PoseStack poseStack, MultiBufferSource bufferSource, Vec3 camera) {
+        var bodies = org.polaris2023.gtu.physics.network.ClientBulletCache.getAll();
+        if (bodies.isEmpty()) return;
+
+        VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
+        PoseStack.Pose last = poseStack.last();
+
+        for (var entry : bodies.entrySet()) {
+            int entityId = entry.getKey();
+            var data = entry.getValue();
+
+            // 相对于相机的位置
+            float relX = (float) (data.x() - camera.x);
+            float relY = (float) (data.y() - camera.y);
+            float relZ = (float) (data.z() - camera.z);
+
+            // 根据形状类型渲染
+            if (data.shapeType() == 1) {
+                // 胶囊形状
+                renderCapsuleWireframe(consumer, last, relX, relY, relZ, data.param1(), data.param2(), 1.0f, 0.5f, 0.0f);
+            } else {
+                // 盒子形状
+                renderBoxWireframe(consumer, last, relX, relY, relZ, data.param1(), data.param2(), data.param3(), 0.0f, 1.0f, 1.0f);
+            }
+        }
+    }
+
+    /**
+     * 渲染盒子碰撞框（线框）
+     */
+    private static void renderBoxWireframe(VertexConsumer consumer, PoseStack.Pose last,
+                                           float cx, float cy, float cz,
+                                           float hx, float hy, float hz,
+                                           float r, float g, float b) {
+        // 8个顶点
+        float x0 = cx - hx, x1 = cx + hx;
+        float y0 = cy - hy, y1 = cy + hy;
+        float z0 = cz - hz, z1 = cz + hz;
+
+        // 12条边
+        // 底面
+        addLine(consumer, last, x0, y0, z0, x1, y0, z0, r, g, b);
+        addLine(consumer, last, x1, y0, z0, x1, y0, z1, r, g, b);
+        addLine(consumer, last, x1, y0, z1, x0, y0, z1, r, g, b);
+        addLine(consumer, last, x0, y0, z1, x0, y0, z0, r, g, b);
+        // 顶面
+        addLine(consumer, last, x0, y1, z0, x1, y1, z0, r, g, b);
+        addLine(consumer, last, x1, y1, z0, x1, y1, z1, r, g, b);
+        addLine(consumer, last, x1, y1, z1, x0, y1, z1, r, g, b);
+        addLine(consumer, last, x0, y1, z1, x0, y1, z0, r, g, b);
+        // 垂直边
+        addLine(consumer, last, x0, y0, z0, x0, y1, z0, r, g, b);
+        addLine(consumer, last, x1, y0, z0, x1, y1, z0, r, g, b);
+        addLine(consumer, last, x1, y0, z1, x1, y1, z1, r, g, b);
+        addLine(consumer, last, x0, y0, z1, x0, y1, z1, r, g, b);
+    }
+
+    /**
+     * 渲染胶囊碰撞框（简化为圆柱+半球）
+     */
+    private static void renderCapsuleWireframe(VertexConsumer consumer, PoseStack.Pose last,
+                                               float cx, float cy, float cz,
+                                               float radius, float cylinderHeight,
+                                               float r, float g, float b) {
+        // 胶囊中心在 cy，总高度 = cylinderHeight + 2*radius
+        float halfHeight = cylinderHeight / 2;
+
+        // 绘制圆环（Y轴方向胶囊）
+        int segments = 12;
+        for (int i = 0; i < segments; i++) {
+            float angle1 = (float) (2 * Math.PI * i / segments);
+            float angle2 = (float) (2 * Math.PI * (i + 1) / segments);
+            float cos1 = (float) Math.cos(angle1) * radius;
+            float sin1 = (float) Math.sin(angle1) * radius;
+            float cos2 = (float) Math.cos(angle2) * radius;
+            float sin2 = (float) Math.sin(angle2) * radius;
+
+            // 顶部圆环
+            addLine(consumer, last, cx + cos1, cy + halfHeight + radius, cz + sin1,
+                    cx + cos2, cy + halfHeight + radius, cz + sin2, r, g, b);
+            // 底部圆环
+            addLine(consumer, last, cx + cos1, cy - halfHeight - radius, cz + sin1,
+                    cx + cos2, cy - halfHeight - radius, cz + sin2, r, g, b);
+            // 中部圆环（圆柱部分上下）
+            addLine(consumer, last, cx + cos1, cy + halfHeight, cz + sin1,
+                    cx + cos2, cy + halfHeight, cz + sin2, r, g, b);
+            addLine(consumer, last, cx + cos1, cy - halfHeight, cz + sin1,
+                    cx + cos2, cy - halfHeight, cz + sin2, r, g, b);
+            // 垂直线
+            addLine(consumer, last, cx + cos1, cy - halfHeight, cz + sin1,
+                    cx + cos1, cy + halfHeight, cz + sin1, r, g, b);
+        }
+    }
+
+    /**
+     * 添加一条线段
+     */
+    private static void addLine(VertexConsumer consumer, PoseStack.Pose last,
+                                float x1, float y1, float z1,
+                                float x2, float y2, float z2,
+                                float r, float g, float b) {
+        consumer.addVertex(last, x1, y1, z1).setColor(r, g, b, 1.0f).setNormal(last, 1.0f, 0.0f, 0.0f);
+        consumer.addVertex(last, x2, y2, z2).setColor(r, g, b, 1.0f).setNormal(last, 1.0f, 0.0f, 0.0f);
     }
 
     /**

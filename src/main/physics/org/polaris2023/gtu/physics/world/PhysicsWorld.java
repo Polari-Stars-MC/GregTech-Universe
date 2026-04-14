@@ -133,6 +133,13 @@ public class PhysicsWorld implements PhysicsTickListener {
     }
 
     /**
+     * 获取所有实体刚体映射
+     */
+    public Map<Integer, PhysicsRigidBody> getEntityBodies() {
+        return entityBodies;
+    }
+
+    /**
      * 检查实体刚体是否存在
      */
     public boolean hasEntityBody(int entityId) {

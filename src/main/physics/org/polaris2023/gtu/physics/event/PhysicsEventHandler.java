@@ -126,6 +126,11 @@ public class PhysicsEventHandler {
 
             // 检测实体堆叠状态
             RigidBodyCollisionDetector.getInstance().detectStacking(level);
+
+            // 同步 Bullet 刚体数据到客户端（用于调试渲染）
+            if (!level.players().isEmpty()) {
+                org.polaris2023.gtu.physics.network.BulletBodySyncSender.syncToClients(level);
+            }
         }
     }
 
