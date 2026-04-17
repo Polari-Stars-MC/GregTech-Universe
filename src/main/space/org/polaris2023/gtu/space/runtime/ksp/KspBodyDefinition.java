@@ -16,6 +16,8 @@ public record KspBodyDefinition(
         double gravitationalParameter,
         double radius,
         double sphereOfInfluence,
+        double rotationPeriodSeconds,
+        SpaceVector rotationAxis,
         double semiMajorAxis,
         double eccentricity,
         double inclinationRadians,
@@ -28,6 +30,20 @@ public record KspBodyDefinition(
 ) {
     public KspBodyDefinition {
         children = List.copyOf(children);
+    }
+
+    public double axialTiltRadians() {
+        return Math.acos(Math.clamp(-rotationAxis.y(), -1.0, 1.0));
+    }
+
+    public double rocheLimit(KspBodyDefinition secondary) {
+        if (radius <= 0.0 || secondary.radius() <= 0.0
+                || gravitationalParameter <= 0.0 || secondary.gravitationalParameter() <= 0.0) {
+            return 0.0;
+        }
+        double densityRatio = (gravitationalParameter * secondary.radius() * secondary.radius() * secondary.radius())
+                / (secondary.gravitationalParameter() * radius * radius * radius);
+        return 2.4554 * radius * Math.cbrt(densityRatio);
     }
 
     public OrbitalState stateAt(double elapsedSeconds) {

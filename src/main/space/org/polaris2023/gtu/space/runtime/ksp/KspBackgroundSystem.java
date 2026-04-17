@@ -1,52 +1,52 @@
 package org.polaris2023.gtu.space.runtime.ksp;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.polaris2023.gtu.space.runtime.math.SpaceVector;
+
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.LockSupport;
 
 public final class KspBackgroundSystem implements AutoCloseable {
-    private static final long STEP_NANOS = 50_000_000L;
-    private static final double STEP_SECONDS = 0.05D;
+    /**
+     * 1 MC day = 24000 ticks = 86400 simulation seconds.
+     * Each MC tick advances the simulation by 3.6 seconds.
+     */
+    private static final double SECONDS_PER_TICK = 86400.0 / 24000.0;
 
     private final KspSystemRuntime runtime;
     private final AtomicReference<KspSnapshot> latestSnapshot;
-    private final AtomicBoolean running = new AtomicBoolean();
-
-    private volatile Thread workerThread;
 
     public KspBackgroundSystem(KspSystemDefinition definition) {
         this.runtime = new KspSystemRuntime(definition);
         this.latestSnapshot = new AtomicReference<>(runtime.snapshot());
     }
 
-    public void ensureStarted() {
-        if (running.compareAndSet(false, true)) {
-            Thread thread = new Thread(this::runLoop, "gtu-space-ksp-runtime");
-            thread.setDaemon(true);
-            thread.start();
-            workerThread = thread;
-        }
+    public void tick() {
+        runtime.step(SECONDS_PER_TICK);
+        latestSnapshot.set(runtime.snapshot());
     }
 
     public KspSnapshot latestSnapshot() {
         return latestSnapshot.get();
     }
 
-    private void runLoop() {
-        while (running.get()) {
-            runtime.step(STEP_SECONDS);
-            latestSnapshot.set(runtime.snapshot());
-            LockSupport.parkNanos(STEP_NANOS);
-        }
+    public void applyBodyThrust(String bodyId, SpaceVector thrustAcceleration) {
+        runtime.applyBodyThrust(bodyId, thrustAcceleration);
+    }
+
+    public void clearBodyThrust(String bodyId) {
+        runtime.clearBodyThrust(bodyId);
+    }
+
+    public KspSaveData exportState() {
+        return runtime.exportState();
+    }
+
+    public void importState(KspSaveData data) {
+        runtime.importState(data);
+        latestSnapshot.set(runtime.snapshot());
     }
 
     @Override
     public void close() {
-        running.set(false);
-        Thread thread = workerThread;
-        if (thread != null) {
-            LockSupport.unpark(thread);
-        }
         runtime.close();
     }
 }

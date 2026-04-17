@@ -1,8 +1,16 @@
 package org.polaris2023.gtu.space.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.polaris2023.gtu.space.runtime.SpaceManager;
 import org.polaris2023.gtu.space.runtime.ksp.KspBackgroundSystem;
@@ -15,8 +23,8 @@ import org.polaris2023.gtu.space.runtime.ksp.KspVesselState;
 import org.polaris2023.gtu.space.runtime.math.SpaceVector;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,6 +69,7 @@ public final class KspDebugWindow {
     private static final int COLOR_VESSEL_ORBIT = 0xFFF7A53D;
     private static final int COLOR_PERIAPSIS = 0xFFFF5E5E;
     private static final int COLOR_APOAPSIS = 0xFF71A6FF;
+    private static final int COLOR_ROTATION_AXIS = 0xAAE8D44D;
     private static final int COLOR_ROOT = 0xFFFFF0A6;
     private static final int COLOR_EARTH = 0xFF62AEFF;
     private static final int COLOR_MOON = 0xFFD3D8E3;
@@ -69,10 +78,12 @@ public final class KspDebugWindow {
     private static final double DEFAULT_CAMERA_PITCH = Math.toRadians(26.0);
     private static final double DISTANCE_UNIT = 1.0E9;
     private static final KspBackgroundSystem FALLBACK = new KspBackgroundSystem(KspSystemDefinition.solarSystem());
+    private static final List<float[]> pendingLines = new ArrayList<>(8192);
 
     private static boolean panning;
     private static boolean rotating;
     private static double zoom = 1.0;
+    private static double bodyScale = 1.0;
     private static double panX;
     private static double panY;
     private static double cameraYaw = DEFAULT_CAMERA_YAW;
@@ -96,7 +107,6 @@ public final class KspDebugWindow {
 
     public static void onScreenOpened() {
         Minecraft minecraft = Minecraft.getInstance();
-        FALLBACK.ensureStarted();
         selectedBodyId = selectedBodyId == null ? "earth" : selectedBodyId;
         minecraft.mouseHandler.releaseMouse();
         lastMouseX = Double.NaN;
@@ -139,6 +149,10 @@ public final class KspDebugWindow {
         }
         double factor = deltaY > 0.0 ? 1.12 : 1.0 / 1.12;
         zoom = clamp(zoom * factor, 0.2, 128.0);
+    }
+
+    public static void adjustBodyScale(double factor) {
+        bodyScale = clamp(bodyScale * factor, 0.1, 10.0);
     }
 
     public static void updateDrag() {
@@ -194,7 +208,7 @@ public final class KspDebugWindow {
 
         drawPanel(graphics, panelX, panelY, panelWidth, panelHeight);
         drawScaledText(graphics, font, "KSP Runtime Debug [F6]", panelX + 16, panelY + 10, COLOR_TEXT, HEADER_TITLE_SCALE);
-        drawScaledText(graphics, font, "Left drag pan, middle drag rotate, wheel zoom, Tab cycle target", panelX + 16, panelY + 21, COLOR_MUTED, HEADER_HINT_SCALE);
+        drawScaledText(graphics, font, "Left drag pan, middle drag rotate, wheel zoom, Tab cycle, +/- body scale", panelX + 16, panelY + 21, COLOR_MUTED, HEADER_HINT_SCALE);
 
         int contentX = panelX + 14;
         int contentY = panelY + HEADER_HEIGHT + 8;
@@ -269,7 +283,7 @@ public final class KspDebugWindow {
             return SpaceManager.get(minecraft.getSingleplayerServer()).latestKspSnapshot();
         }
 
-        FALLBACK.ensureStarted();
+        FALLBACK.tick();
         return FALLBACK.latestSnapshot();
     }
 
@@ -330,6 +344,7 @@ public final class KspDebugWindow {
         currentModelMinY = y + 1;
         currentModelMaxX = x + width - 2;
         currentModelMaxY = y + height - 2;
+        pendingLines.clear();
 
         int centerX = x + width / 2;
         int centerY = y + height / 2;
@@ -347,64 +362,63 @@ public final class KspDebugWindow {
 
         bodies.values().stream()
                 .filter(body -> body.definition().referenceFrameKind() != KspReferenceFrameKind.SYSTEM_CENTER)
-                .forEach(body -> drawReferenceOrbitPath(
-                        graphics,
-                        snapshot,
-                        body,
-                        centerX,
-                        centerY,
-                        scale,
-                        body.definition().id().equals(highlightedBodyId)
-                ));
+                .filter(body -> !body.definition().id().startsWith("asteroid_belt_"))
+                .forEach(body -> drawReferenceOrbitPath(graphics, snapshot, body, centerX, centerY, scale,
+                        body.definition().id().equals(highlightedBodyId)));
 
         bodies.values().stream()
                 .filter(body -> body.definition().referenceFrameKind() != KspReferenceFrameKind.SYSTEM_CENTER)
-                .forEach(body -> drawOrbitPath(
-                        graphics,
-                        snapshot,
-                        body,
-                        snapshot.bodyHistory().get(body.definition().id()),
-                        centerX,
-                        centerY,
-                        scale,
+                .filter(body -> !body.definition().id().startsWith("asteroid_belt_"))
+                .forEach(body -> drawOrbitPath(graphics, snapshot, body,
+                        snapshot.bodyHistory().get(body.definition().id()), centerX, centerY, scale,
                         body.definition().id().equals(highlightedBodyId),
                         highlightedBodyId == null || body.definition().id().equals(highlightedBodyId)
-                                ? bodyColor(body.definition().id())
-                                : COLOR_TRACK
-                ));
+                                ? bodyColor(body.definition().id()) : COLOR_TRACK));
 
         snapshot.vessels().values().stream().findFirst()
                 .flatMap(vessel -> computeOsculatingOrbit(snapshot, vessel))
                 .ifPresent(orbit -> drawVesselOrbit(graphics, orbit, centerX, centerY, scale));
 
-        List<RenderablePoint> points = new ArrayList<>();
         for (KspBodyState body : bodies.values()) {
-            ProjectedPoint projected = projectPoint(body.absolutePosition(), centerX, centerY, scale);
-            points.add(new RenderablePoint(projected, bodySize(body.definition().id()), bodyColor(body.definition().id()), false));
-        }
-        for (KspVesselState vessel : snapshot.vessels().values()) {
-            ProjectedPoint projected = projectPoint(vessel.absolutePosition(), centerX, centerY, scale);
-            points.add(new RenderablePoint(projected, 5, COLOR_VESSEL, true));
+            if (body.definition().id().startsWith("asteroid_belt_")) {
+                continue;
+            }
+            SpaceVector axis = body.definition().rotationAxis();
+            if (axis.lengthSquared() < 1.0E-9) {
+                continue;
+            }
+            float[] c = compressedPosition(body.absolutePosition());
+            float half = cubeHalfSize(body.definition());
+            float axisLen = half * 3.0f;
+            SpaceVector dir = axis.normalize();
+            float[] top = {c[0] + (float)(dir.x() * axisLen), c[1] + (float)(dir.y() * axisLen), c[2] + (float)(dir.z() * axisLen)};
+            float[] bot = {c[0] - (float)(dir.x() * axisLen), c[1] - (float)(dir.y() * axisLen), c[2] - (float)(dir.z() * axisLen)};
+            ProjectedPoint pCenter = projectCompressed(c[0], c[1], c[2], centerX, centerY, scale);
+            ProjectedPoint pTop = projectCompressed(top[0], top[1], top[2], centerX, centerY, scale);
+            ProjectedPoint pBot = projectCompressed(bot[0], bot[1], bot[2], centerX, centerY, scale);
+            drawLine(graphics, pCenter.x, pCenter.y, pTop.x, pTop.y, COLOR_ROTATION_AXIS);
+            drawLine(graphics, pCenter.x, pCenter.y, pBot.x, pBot.y, COLOR_ROTATION_AXIS);
         }
 
-        points.stream()
-                .sorted(Comparator.comparingDouble(point -> point.projected.depth))
-                .forEach(point -> {
-                    if (point.diamond) {
-                        drawDiamond(graphics, point.projected.x, point.projected.y, point.size, point.color);
-                    } else {
-                        drawDot(graphics, point.projected.x, point.projected.y, point.size, point.color);
-                    }
-                });
+        flushLines(graphics);
+
+        List<CubeRenderable> cubes = new ArrayList<>();
+        for (KspBodyState body : bodies.values()) {
+            float[] c = compressedPosition(body.absolutePosition());
+            float half = cubeHalfSize(body.definition());
+            cubes.add(new CubeRenderable(c[0], c[1], c[2], half, bodyColor(body.definition().id())));
+        }
+        for (KspVesselState vessel : snapshot.vessels().values()) {
+            float[] c = compressedPosition(vessel.absolutePosition());
+            cubes.add(new CubeRenderable(c[0], c[1], c[2], 0.025f, COLOR_VESSEL));
+        }
+        renderCubes(graphics, cubes, centerX, centerY, scale);
     }
 
     private static int renderSimulationPage(GuiGraphics graphics, Font font, KspSnapshot snapshot, int x, int y, int textWidth) {
         String highlightedBodyId = resolveSelectedBodyId(snapshot);
         KspBodyState highlightedBody = highlightedBodyId == null ? null : snapshot.bodies().get(highlightedBodyId);
-
         int lineY = y;
-        drawScaledText(graphics, font, "Simulation", x, y, COLOR_TEXT);
-        lineY += SIDE_TITLE;
         drawScaledText(graphics, font, "tick  " + snapshot.simulationTick(), x, lineY, COLOR_MUTED);
         lineY += SIDE_LINE;
         drawScaledText(graphics, font, String.format("time  %.2fs", snapshot.simulationSeconds()), x, lineY, COLOR_MUTED);
@@ -421,6 +435,8 @@ public final class KspDebugWindow {
         lineY += SIDE_LINE;
         drawScaledText(graphics, font, String.format("zoom  %.2fx", zoom), x, lineY, COLOR_MUTED);
         lineY += SIDE_LINE;
+        drawScaledText(graphics, font, String.format("body  %.2fx  [+/-]", bodyScale), x, lineY, COLOR_MUTED);
+        lineY += SIDE_LINE;
         drawScaledText(graphics, font, String.format("pan   %.0f / %.0f", panX, panY), x, lineY, COLOR_MUTED);
         lineY += SIDE_LINE;
         drawScaledText(graphics, font, String.format("rot   %.0f / %.0f", Math.toDegrees(cameraYaw), Math.toDegrees(cameraPitch)), x, lineY, COLOR_MUTED);
@@ -433,7 +449,6 @@ public final class KspDebugWindow {
         KspVesselState vessel = snapshot.vessels().values().stream().findFirst().orElse(null);
         int lineY = y;
 
-        drawScaledText(graphics, font, "Vessel", x, lineY, COLOR_TEXT);
         if (vessel == null) {
             lineY += SIDE_TITLE;
             drawScaledText(graphics, font, "No active vessel", x, lineY, COLOR_MUTED);
@@ -461,7 +476,6 @@ public final class KspDebugWindow {
         String highlightedBodyId = resolveSelectedBodyId(snapshot);
         KspBodyState highlightedBody = highlightedBodyId == null ? null : snapshot.bodies().get(highlightedBodyId);
         if (highlightedBody == null) {
-            drawScaledText(graphics, font, "Selected Body", x, y, COLOR_TEXT);
             drawScaledText(graphics, font, "No selected body", x, y + SIDE_TITLE, COLOR_MUTED);
             return y + SIDE_TITLE;
         }
@@ -469,18 +483,48 @@ public final class KspDebugWindow {
     }
 
     private static int renderSelectedBodyStats(GuiGraphics graphics, Font font, KspBodyState body, KspSnapshot snapshot, int x, int y, int textWidth) {
-        drawScaledText(graphics, font, "Selected Body", x, y, COLOR_TEXT);
         drawScaledText(graphics, font, fitLine(font, body.definition().displayName(), textWidth), x, y + SIDE_TITLE, bodyColor(body.definition().id()));
         drawScaledText(graphics, font, String.format("speed  %.0f m/s", body.absoluteVelocity().length()), x, y + SIDE_TITLE + SIDE_LINE, COLOR_MUTED);
         drawScaledText(graphics, font, "history " + snapshot.bodyHistory().getOrDefault(body.definition().id(), List.of()).size(), x, y + SIDE_TITLE + SIDE_LINE * 2, COLOR_MUTED);
+        int nextLine = 3;
         if (body.referenceBodyId() != null) {
             KspBodyState parent = snapshot.bodies().get(body.referenceBodyId());
             if (parent != null) {
                 double distance = body.absolutePosition().subtract(parent.absolutePosition()).length();
-                drawScaledText(graphics, font, String.format("dist   %.0f km", distance / 1000.0), x, y + SIDE_TITLE + SIDE_LINE * 3, COLOR_MUTED);
+                drawScaledText(graphics, font, String.format("dist   %.0f km", distance / 1000.0), x, y + SIDE_TITLE + SIDE_LINE * nextLine, COLOR_MUTED);
+                nextLine++;
+                double roche = parent.definition().rocheLimit(body.definition());
+                if (roche > 0.0) {
+                    drawScaledText(graphics, font, String.format("roche  %.0f km", roche / 1000.0), x, y + SIDE_TITLE + SIDE_LINE * nextLine, COLOR_MUTED);
+                    nextLine++;
+                    if (distance < roche) {
+                        drawScaledText(graphics, font, "ROCHE VIOLATION", x, y + SIDE_TITLE + SIDE_LINE * nextLine, 0xFFFF4444);
+                        nextLine++;
+                    }
+                }
             }
         }
-        return y + SIDE_TITLE + SIDE_LINE * 3;
+        double rotPeriod = body.definition().rotationPeriodSeconds();
+        if (rotPeriod > 0) {
+            int totalMinutes = (int) Math.round(rotPeriod / 60.0);
+            int hours = totalMinutes / 60;
+            int minutes = totalMinutes % 60;
+            drawScaledText(graphics, font, String.format("rot    %dh %dm", hours, minutes), x, y + SIDE_TITLE + SIDE_LINE * nextLine, COLOR_MUTED);
+            nextLine++;
+            double tiltDeg = Math.toDegrees(body.definition().axialTiltRadians());
+            drawScaledText(graphics, font, String.format("tilt   %.2f\u00B0", tiltDeg), x, y + SIDE_TITLE + SIDE_LINE * nextLine, COLOR_MUTED);
+            nextLine++;
+            double phaseDeg = Math.toDegrees(body.rotationPhaseRadians());
+            drawScaledText(graphics, font, String.format("phase  %.1f\u00B0", phaseDeg), x, y + SIDE_TITLE + SIDE_LINE * nextLine, COLOR_MUTED);
+            nextLine++;
+        }
+        if (body.perturbed()) {
+            drawScaledText(graphics, font, "PERTURBED", x, y + SIDE_TITLE + SIDE_LINE * nextLine, 0xFFFF6644);
+            nextLine++;
+            drawScaledText(graphics, font, String.format("thrust %.4f m/s^2", body.thrustAcceleration().length()), x, y + SIDE_TITLE + SIDE_LINE * nextLine, COLOR_MUTED);
+            nextLine++;
+        }
+        return y + SIDE_TITLE + SIDE_LINE * nextLine;
     }
 
     private static void renderLegendPage(GuiGraphics graphics, Font font, int x, int y, int width) {
@@ -501,9 +545,6 @@ public final class KspDebugWindow {
     private static void renderLegend(GuiGraphics graphics, Font font, int x, int y, int width) {
         int lineY = y;
         int columnWidth = Math.max(120, (width - 12) / 2);
-        drawScaledText(graphics, font, "Legend", x, lineY, COLOR_TEXT);
-
-        lineY += SIDE_SECTION;
         drawScaledText(graphics, font, "Bodies", x, lineY, COLOR_TEXT);
         lineY += SIDE_TITLE;
         legendRow(graphics, font, x, lineY, COLOR_ROOT, "Sun");
@@ -579,53 +620,53 @@ public final class KspDebugWindow {
     }
 
     private static void drawOrbitPath(
-            GuiGraphics graphics,
-            KspSnapshot snapshot,
-            KspBodyState body,
-            List<SpaceVector> history,
-            int centerX,
-            int centerY,
-            double scale,
-            boolean highlighted,
-            int baseColor
+            GuiGraphics graphics, KspSnapshot snapshot, KspBodyState body,
+            List<SpaceVector> history, int centerX, int centerY, double scale,
+            boolean highlighted, int baseColor
     ) {
         if (history == null || history.size() < 2) {
             return;
         }
-
         List<SpaceVector> renderPath = resolveRenderPath(snapshot, body, history);
+        int pathSize = renderPath.size();
+        int step = Math.max(1, pathSize / 512);
         ProjectedPoint previous = null;
-        int segmentCount = renderPath.size() - 1;
-        int index = 0;
-        for (SpaceVector absolute : renderPath) {
-            ProjectedPoint point = projectPoint(absolute, centerX, centerY, scale);
+        int segmentCount = (pathSize - 1) / step;
+        int drawn = 0;
+        for (int i = 0; i < pathSize; i += step) {
+            ProjectedPoint point = projectPoint(renderPath.get(i), centerX, centerY, scale);
             if (previous != null) {
-                float ageFactor = segmentCount <= 0 ? 1.0f : index / (float) segmentCount;
+                float ageFactor = segmentCount <= 0 ? 1.0f : drawn / (float) segmentCount;
                 int color = fadeColor(highlighted ? COLOR_SELECTED_TRACK : baseColor, highlighted ? ageFactor : ageFactor * 0.75f, highlighted ? 0.95f : 0.45f);
                 drawLine(graphics, previous.x, previous.y, point.x, point.y, color);
             }
             previous = point;
-            index++;
+            drawn++;
+        }
+        int lastIndex = pathSize - 1;
+        if (lastIndex % step != 0 && lastIndex > 0) {
+            ProjectedPoint point = projectPoint(renderPath.get(lastIndex), centerX, centerY, scale);
+            if (previous != null) {
+                int color = fadeColor(highlighted ? COLOR_SELECTED_TRACK : baseColor, highlighted ? 1.0f : 0.75f, highlighted ? 0.95f : 0.45f);
+                drawLine(graphics, previous.x, previous.y, point.x, point.y, color);
+            }
         }
     }
 
     private static void drawReferenceOrbitPath(
-            GuiGraphics graphics,
-            KspSnapshot snapshot,
-            KspBodyState body,
-            int centerX,
-            int centerY,
-            double scale,
-            boolean highlighted
+            GuiGraphics graphics, KspSnapshot snapshot, KspBodyState body,
+            int centerX, int centerY, double scale, boolean highlighted
     ) {
         KspBodyDefinition definition = body.definition();
         if (definition.referenceFrameKind() == KspReferenceFrameKind.SYSTEM_CENTER || definition.orbitPeriodSeconds() <= 0.0) {
             return;
         }
-
+        if (body.perturbed()) {
+            return;
+        }
         SpaceVector anchor = resolveReferenceAnchor(snapshot, body);
         double centralMu = resolveCentralMu(snapshot, body);
-        int samples = 144;
+        int samples = 72;
         ProjectedPoint previous = null;
         for (int i = 0; i <= samples; i++) {
             double fraction = i / (double) samples;
@@ -633,9 +674,7 @@ public final class KspDebugWindow {
             SpaceVector absolute = anchor.add(definition.positionAt(seconds, centralMu));
             ProjectedPoint point = projectPoint(absolute, centerX, centerY, scale);
             if (previous != null) {
-                int color = highlighted
-                        ? fadeColor(COLOR_SELECTED_TRACK, 0.45f, 0.55f)
-                        : COLOR_REFERENCE_TRACK;
+                int color = highlighted ? fadeColor(COLOR_SELECTED_TRACK, 0.45f, 0.55f) : COLOR_REFERENCE_TRACK;
                 drawLine(graphics, previous.x, previous.y, point.x, point.y, color);
             }
             previous = point;
@@ -688,11 +727,27 @@ public final class KspDebugWindow {
             }
             previous = point;
         }
-
         ProjectedPoint periapsis = projectPoint(orbit.positionAt(0.0), centerX, centerY, scale);
-        drawDiamond(graphics, periapsis.x, periapsis.y, 4, COLOR_PERIAPSIS);
         ProjectedPoint apoapsis = projectPoint(orbit.positionAt(Math.PI), centerX, centerY, scale);
-        drawDiamond(graphics, apoapsis.x, apoapsis.y, 4, COLOR_APOAPSIS);
+        drawLine(graphics, periapsis.x - 4, periapsis.y, periapsis.x + 4, periapsis.y, COLOR_PERIAPSIS);
+        drawLine(graphics, periapsis.x, periapsis.y - 4, periapsis.x, periapsis.y + 4, COLOR_PERIAPSIS);
+        drawLine(graphics, apoapsis.x - 4, apoapsis.y, apoapsis.x + 4, apoapsis.y, COLOR_APOAPSIS);
+        drawLine(graphics, apoapsis.x, apoapsis.y - 4, apoapsis.x, apoapsis.y + 4, COLOR_APOAPSIS);
+    }
+
+    private static float[] compressedPosition(SpaceVector pos) {
+        double distance = pos.length();
+        if (distance < 1.0) return new float[]{0.0f, 0.0f, 0.0f};
+        double compressed = compressDistance(distance);
+        double s = compressed / distance;
+        return new float[]{(float) (pos.x() * s), (float) (pos.y() * s), (float) (pos.z() * s)};
+    }
+
+    private static float cubeHalfSize(KspBodyDefinition definition) {
+        double radius = definition.radius();
+        if (radius <= 0.0) return 0.01f;
+        float size = (float) (0.012 * Math.log10(radius) * bodyScale);
+        return Math.clamp(size, 0.004f, 0.16f);
     }
 
     private static ProjectedPoint projectPoint(SpaceVector worldPosition, int centerX, int centerY, double scale) {
@@ -717,6 +772,108 @@ public final class KspDebugWindow {
         return new ProjectedPoint(screenX, screenY, z2);
     }
 
+    private static ProjectedPoint projectCompressed(float cx, float cy, float cz, int centerX, int centerY, double scale) {
+        double yawCos = Math.cos(cameraYaw);
+        double yawSin = Math.sin(cameraYaw);
+        double pitchCos = Math.cos(cameraPitch);
+        double pitchSin = Math.sin(cameraPitch);
+
+        double x1 = cx * yawCos - cz * yawSin;
+        double z1 = cx * yawSin + cz * yawCos;
+        double y2 = cy * pitchCos - z1 * pitchSin;
+        double z2 = cy * pitchSin + z1 * pitchCos;
+
+        double perspective = 1.0 / (1.0 + z2 * 0.012);
+        int screenX = centerX + (int) Math.round(panX + x1 * scale * perspective);
+        int screenY = centerY - (int) Math.round(panY + y2 * scale * perspective);
+        return new ProjectedPoint(screenX, screenY, z2);
+    }
+
+    private static void renderCubes(GuiGraphics graphics, List<CubeRenderable> cubes, int centerX, int centerY, double scale) {
+        List<CubeFace> faces = new ArrayList<>();
+        for (CubeRenderable cube : cubes) {
+            float cx = cube.cx, cy = cube.cy, cz = cube.cz, h = cube.half;
+            int color = cube.color;
+            float r = ((color >> 16) & 0xFF) / 255.0f;
+            float g = ((color >> 8) & 0xFF) / 255.0f;
+            float b = (color & 0xFF) / 255.0f;
+            float a = ((color >> 24) & 0xFF) / 255.0f;
+
+            float[][] corners = {
+                    {cx - h, cy - h, cz - h}, {cx + h, cy - h, cz - h},
+                    {cx + h, cy + h, cz - h}, {cx - h, cy + h, cz - h},
+                    {cx - h, cy - h, cz + h}, {cx + h, cy - h, cz + h},
+                    {cx + h, cy + h, cz + h}, {cx - h, cy + h, cz + h}
+            };
+            ProjectedPoint[] p = new ProjectedPoint[8];
+            for (int i = 0; i < 8; i++) {
+                p[i] = projectCompressed(corners[i][0], corners[i][1], corners[i][2], centerX, centerY, scale);
+            }
+
+            // 6 faces: indices + brightness multiplier
+            int[][] faceIndices = {{3, 2, 6, 7}, {0, 1, 5, 4}, {4, 5, 6, 7}, {0, 1, 2, 3}, {1, 2, 6, 5}, {0, 3, 7, 4}};
+            float[] faceBright = {1.0f, 0.45f, 0.8f, 0.6f, 0.7f, 0.55f};
+            for (int f = 0; f < 6; f++) {
+                int[] idx = faceIndices[f];
+                double avgDepth = (p[idx[0]].depth + p[idx[1]].depth + p[idx[2]].depth + p[idx[3]].depth) * 0.25;
+                float m = faceBright[f];
+                faces.add(new CubeFace(p[idx[0]], p[idx[1]], p[idx[2]], p[idx[3]], r * m, g * m, b * m, a, avgDepth));
+            }
+        }
+
+        faces.sort(Comparator.comparingDouble(f -> -f.depth));
+
+        graphics.enableScissor(currentModelMinX, currentModelMinY, currentModelMaxX, currentModelMaxY);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableCull();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        Matrix4f matrix = graphics.pose().last().pose();
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        for (CubeFace face : faces) {
+            buffer.addVertex(matrix, face.pa.x, face.pa.y, 0.0f).setColor(face.cr, face.cg, face.cb, face.ca);
+            buffer.addVertex(matrix, face.pb.x, face.pb.y, 0.0f).setColor(face.cr, face.cg, face.cb, face.ca);
+            buffer.addVertex(matrix, face.pc.x, face.pc.y, 0.0f).setColor(face.cr, face.cg, face.cb, face.ca);
+            buffer.addVertex(matrix, face.pd.x, face.pd.y, 0.0f).setColor(face.cr, face.cg, face.cb, face.ca);
+        }
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
+        RenderSystem.enableCull();
+        graphics.disableScissor();
+    }
+
+    private static void drawAxisLine(GuiGraphics graphics, int centerX, int centerY, SpaceVector axis, double scale, int color) {
+        ProjectedPoint start = projectPoint(SpaceVector.zero(), centerX, centerY, scale);
+        ProjectedPoint end = projectPoint(axis.scale(DISTANCE_UNIT * 120.0), centerX, centerY, scale);
+        drawLine(graphics, start.x, start.y, end.x, end.y, color);
+    }
+
+    private static void drawLine(GuiGraphics graphics, int x0, int y0, int x1, int y1, int color) {
+        float a = ((color >> 24) & 0xFF) / 255.0f;
+        float r = ((color >> 16) & 0xFF) / 255.0f;
+        float g = ((color >> 8) & 0xFF) / 255.0f;
+        float b = (color & 0xFF) / 255.0f;
+        pendingLines.add(new float[]{x0, y0, x1, y1, r, g, b, a});
+    }
+
+    private static void flushLines(GuiGraphics graphics) {
+        if (pendingLines.isEmpty()) {
+            return;
+        }
+        graphics.enableScissor(currentModelMinX, currentModelMinY, currentModelMaxX, currentModelMaxY);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        Matrix4f matrix = graphics.pose().last().pose();
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
+        for (float[] line : pendingLines) {
+            buffer.addVertex(matrix, line[0], line[1], 0.0f).setColor(line[4], line[5], line[6], line[7]);
+            buffer.addVertex(matrix, line[2], line[3], 0.0f).setColor(line[4], line[5], line[6], line[7]);
+        }
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
+        graphics.disableScissor();
+        pendingLines.clear();
+    }
+
     private static double computeMaxDistance(KspSnapshot snapshot) {
         double maxDistance = 1.0;
         for (KspBodyState body : snapshot.bodies().values()) {
@@ -730,60 +887,6 @@ public final class KspDebugWindow {
 
     private static double compressDistance(double distance) {
         return Math.log10(1.0 + distance / DISTANCE_UNIT);
-    }
-
-    private static void drawAxisLine(GuiGraphics graphics, int centerX, int centerY, SpaceVector axis, double scale, int color) {
-        ProjectedPoint start = projectPoint(SpaceVector.zero(), centerX, centerY, scale);
-        ProjectedPoint end = projectPoint(axis.scale(DISTANCE_UNIT * 120.0), centerX, centerY, scale);
-        drawLine(graphics, start.x, start.y, end.x, end.y, color);
-    }
-
-    private static void drawDot(GuiGraphics graphics, int x, int y, int radius, int color) {
-        if (!intersectsModelBounds(x - radius, y - radius, x + radius, y + radius)) {
-            return;
-        }
-        graphics.fill(x - radius, y - radius, x + radius + 1, y + radius + 1, color);
-    }
-
-    private static void drawDiamond(GuiGraphics graphics, int centerX, int centerY, int radius, int color) {
-        if (!intersectsModelBounds(centerX - radius, centerY - radius, centerX + radius, centerY + radius)) {
-            return;
-        }
-        for (int dy = -radius; dy <= radius; dy++) {
-            int span = radius - Math.abs(dy);
-            graphics.fill(centerX - span, centerY + dy, centerX + span + 1, centerY + dy + 1, color);
-        }
-    }
-
-    private static void drawLine(GuiGraphics graphics, int x0, int y0, int x1, int y1, int color) {
-        if (!lineMayIntersectModelBounds(x0, y0, x1, y1)) {
-            return;
-        }
-        int dx = Math.abs(x1 - x0);
-        int dy = Math.abs(y1 - y0);
-        int sx = x0 < x1 ? 1 : -1;
-        int sy = y0 < y1 ? 1 : -1;
-        int err = dx - dy;
-
-        int x = x0;
-        int y = y0;
-        while (true) {
-            if (containsModelPoint(x, y)) {
-                graphics.fill(x, y, x + 1, y + 1, color);
-            }
-            if (x == x1 && y == y1) {
-                break;
-            }
-            int e2 = err * 2;
-            if (e2 > -dy) {
-                err -= dy;
-                x += sx;
-            }
-            if (e2 < dx) {
-                err += dx;
-                y += sy;
-            }
-        }
     }
 
     private static int bodyColor(String id) {
@@ -803,22 +906,6 @@ public final class KspDebugWindow {
             case "neptune" -> 0xFF5B7DDA;
             default -> 0xFFFFFFFF;
         };
-    }
-
-    private static int bodySize(String id) {
-        if (id.startsWith("asteroid_belt_")) {
-            return 2;
-        }
-        return switch (id) {
-            case "sun" -> 7;
-            case "jupiter", "saturn" -> 5;
-            case "earth", "venus", "uranus", "neptune" -> 4;
-            default -> 3;
-        };
-    }
-
-    private static String trim(String text, int maxLength) {
-        return text.length() <= maxLength ? text : text.substring(0, maxLength - 1) + "...";
     }
 
     private static String fitLine(Font font, String text, int maxWidth) {
@@ -852,33 +939,11 @@ public final class KspDebugWindow {
     }
 
     private static double clamp(double value, double min, double max) {
-        return Math.max(min, Math.min(max, value));
+        return Math.clamp(value, min, max);
     }
 
     private static int clampInt(int value, int min, int max) {
-        return Math.max(min, Math.min(max, value));
-    }
-
-    private static boolean containsModelPoint(int x, int y) {
-        return x >= currentModelMinX
-                && x <= currentModelMaxX
-                && y >= currentModelMinY
-                && y <= currentModelMaxY;
-    }
-
-    private static boolean intersectsModelBounds(int minX, int minY, int maxX, int maxY) {
-        return maxX >= currentModelMinX
-                && minX <= currentModelMaxX
-                && maxY >= currentModelMinY
-                && minY <= currentModelMaxY;
-    }
-
-    private static boolean lineMayIntersectModelBounds(int x0, int y0, int x1, int y1) {
-        int minX = Math.min(x0, x1);
-        int minY = Math.min(y0, y1);
-        int maxX = Math.max(x0, x1);
-        int maxY = Math.max(y0, y1);
-        return intersectsModelBounds(minX, minY, maxX, maxY);
+        return Math.clamp(value, min, max);
     }
 
     private static String resolveSelectedBodyId(KspSnapshot snapshot) {
@@ -900,7 +965,7 @@ public final class KspDebugWindow {
     private static int fadeColor(int rgbColor, float ageFactor, float maxAlpha) {
         float clampedAge = (float) clamp(ageFactor, 0.0, 1.0);
         float clampedMaxAlpha = (float) clamp(maxAlpha, 0.0, 1.0);
-        int alpha = Math.max(12, Math.min(255, Math.round((0.08f + clampedAge * 0.92f) * clampedMaxAlpha * 255.0f)));
+        int alpha = Math.clamp(Math.round((0.08f + clampedAge * 0.92f) * clampedMaxAlpha * 255.0f), 12, 255);
         return (alpha << 24) | (rgbColor & 0x00FFFFFF);
     }
 
@@ -955,7 +1020,10 @@ public final class KspDebugWindow {
     private record ProjectedPoint(int x, int y, double depth) {
     }
 
-    private record RenderablePoint(ProjectedPoint projected, int size, int color, boolean diamond) {
+    private record CubeRenderable(float cx, float cy, float cz, float half, int color) {
+    }
+
+    private record CubeFace(ProjectedPoint pa, ProjectedPoint pb, ProjectedPoint pc, ProjectedPoint pd, float cr, float cg, float cb, float ca, double depth) {
     }
 
     private record OsculatingOrbit(

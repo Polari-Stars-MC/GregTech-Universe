@@ -73,46 +73,46 @@ public record KspSystemDefinition(
 
         KspBodyDefinition moon = new KspBodyDefinition("moon", "Moon", KspBodyKind.SATELLITE, KspReferenceFrameKind.PLANET, "earth", true,
                 SpaceVector.zero(), SpaceVector.zero(),
-                4.9048695E12, 1_737.4 * km, 66_100 * km, 384_399 * km, 0.0549, deg(5.145), deg(125.08), deg(318.15), deg(115.3654),
+                4.9048695E12, 1_737.4 * km, 66_100 * km, 27.322 * 24 * 3600, rotationAxis(6.687), 384_399 * km, 0.0549, deg(5.145), deg(125.08), deg(318.15), deg(115.3654),
                 27.321661 * 24 * 3600, 0.0, List.of());
 
         KspBodyDefinition mercury = new KspBodyDefinition("mercury", "Mercury", KspBodyKind.PLANET, KspReferenceFrameKind.STAR, "sun", true,
                 SpaceVector.zero(), SpaceVector.zero(),
-                2.2032E13, 2_439.7 * km, 112_000 * km, 57_909_227 * km, 0.20563593, deg(7.00487), deg(48.33167), deg(29.12478), deg(174.79588),
+                2.2032E13, 2_439.7 * km, 112_000 * km, 58.646 * 24 * 3600, rotationAxis(0.034), 57_909_227 * km, 0.20563593, deg(7.00487), deg(48.33167), deg(29.12478), deg(174.79588),
                 87.9691 * 24 * 3600, 0.0, List.of());
         KspBodyDefinition venus = new KspBodyDefinition("venus", "Venus", KspBodyKind.PLANET, KspReferenceFrameKind.STAR, "sun", true,
                 SpaceVector.zero(), SpaceVector.zero(),
-                3.24859E14, 6_051.8 * km, 616_000 * km, 108_209_475 * km, 0.00677672, deg(3.39471), deg(76.68069), deg(54.85229), deg(50.41611),
+                3.24859E14, 6_051.8 * km, 616_000 * km, 243.025 * 24 * 3600, rotationAxis(177.36), 108_209_475 * km, 0.00677672, deg(3.39471), deg(76.68069), deg(54.85229), deg(50.41611),
                 224.701 * 24 * 3600, 0.0, List.of());
         KspBodyDefinition earth = new KspBodyDefinition("earth", "Earth", KspBodyKind.PLANET, KspReferenceFrameKind.STAR, "sun", true,
                 SpaceVector.zero(), SpaceVector.zero(),
-                3.986004418E14, 6_371.0 * km, 924_000 * km, 149_598_023 * km, 0.0167086, deg(0.00005), deg(-11.26064), deg(114.20783), deg(357.51716),
+                3.986004418E14, 6_371.0 * km, 924_000 * km, 0.99727 * 24 * 3600, rotationAxis(23.44), 149_598_023 * km, 0.0167086, deg(0.00005), deg(-11.26064), deg(114.20783), deg(357.51716),
                 365.256363004 * 24 * 3600, 0.0, List.of(moon));
         KspBodyDefinition mars = new KspBodyDefinition("mars", "Mars", KspBodyKind.PLANET, KspReferenceFrameKind.STAR, "sun", true,
                 SpaceVector.zero(), SpaceVector.zero(),
-                4.282837E13, 3_389.5 * km, 577_000 * km, 227_939_200 * km, 0.0934, deg(1.85061), deg(49.57854), deg(286.46230), deg(19.41248),
+                4.282837E13, 3_389.5 * km, 577_000 * km, 1.02596 * 24 * 3600, rotationAxis(25.19), 227_939_200 * km, 0.0934, deg(1.85061), deg(49.57854), deg(286.46230), deg(19.41248),
                 686.98 * 24 * 3600, 0.0, List.of());
         KspBodyDefinition jupiter = new KspBodyDefinition("jupiter", "Jupiter", KspBodyKind.PLANET, KspReferenceFrameKind.STAR, "sun", true,
                 SpaceVector.zero(), SpaceVector.zero(),
-                1.26686534E17, 69_911 * km, 48_200_000 * km, 778_340_821 * km, 0.0489, deg(1.30530), deg(100.55615), deg(273.8777), deg(20.0202),
+                1.26686534E17, 69_911 * km, 48_200_000 * km, 0.41354 * 24 * 3600, rotationAxis(3.13), 778_340_821 * km, 0.0489, deg(1.30530), deg(100.55615), deg(273.8777), deg(20.0202),
                 4332.59 * 24 * 3600, 0.0, List.of());
         KspBodyDefinition saturn = new KspBodyDefinition("saturn", "Saturn", KspBodyKind.PLANET, KspReferenceFrameKind.STAR, "sun", true,
                 SpaceVector.zero(), SpaceVector.zero(),
-                3.7931187E16, 58_232 * km, 54_800_000 * km, 1_426_666_422 * km, 0.0565, deg(2.48446), deg(113.71504), deg(339.392), deg(317.0207),
+                3.7931187E16, 58_232 * km, 54_800_000 * km, 0.44401 * 24 * 3600, rotationAxis(26.73), 1_426_666_422 * km, 0.0565, deg(2.48446), deg(113.71504), deg(339.392), deg(317.0207),
                 10759.22 * 24 * 3600, 0.0, List.of());
         KspBodyDefinition uranus = new KspBodyDefinition("uranus", "Uranus", KspBodyKind.PLANET, KspReferenceFrameKind.STAR, "sun", true,
                 SpaceVector.zero(), SpaceVector.zero(),
-                5.793939E15, 25_362 * km, 51_900_000 * km, 2_870_658_186.0 * km, 0.04717, deg(0.76986), deg(74.22988), deg(96.998857), deg(142.2386),
+                5.793939E15, 25_362 * km, 51_900_000 * km, 0.71833 * 24 * 3600, rotationAxis(97.77), 2_870_658_186.0 * km, 0.04717, deg(0.76986), deg(74.22988), deg(96.998857), deg(142.2386),
                 30688.5 * 24 * 3600, 0.0, List.of());
         KspBodyDefinition neptune = new KspBodyDefinition("neptune", "Neptune", KspBodyKind.PLANET, KspReferenceFrameKind.STAR, "sun", true,
                 SpaceVector.zero(), SpaceVector.zero(),
-                6.836529E15, 24_622 * km, 86_600_000 * km, 4_498_396_441.0 * km, 0.00858587, deg(1.76917), deg(131.72169), deg(273.187), deg(256.228),
+                6.836529E15, 24_622 * km, 86_600_000 * km, 0.67125 * 24 * 3600, rotationAxis(28.32), 4_498_396_441.0 * km, 0.00858587, deg(1.76917), deg(131.72169), deg(273.187), deg(256.228),
                 60182.0 * 24 * 3600, 0.0, List.of());
         List<KspBodyDefinition> asteroidBelt = createAsteroidBelt(km);
 
         KspBodyDefinition sun = new KspBodyDefinition("sun", "Sun", KspBodyKind.STAR, KspReferenceFrameKind.SYSTEM_CENTER, null, false,
                 SpaceVector.zero(), SpaceVector.zero(),
-                1.32712440018E20, 696_340 * km, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                1.32712440018E20, 696_340 * km, 0.0, 25.05 * 24 * 3600, rotationAxis(7.25), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 mergeChildren(List.of(mercury, venus, earth, mars), asteroidBelt, List.of(jupiter, saturn, uranus, neptune)));
 
         List<KspBodyDefinition> stars = List.of(sun);
@@ -174,7 +174,7 @@ public record KspSystemDefinition(
         double km = 1_000.0;
         KspBodyDefinition alphaCentauriA = new KspBodyDefinition("alpha_centauri_a", "Alpha Centauri A", KspBodyKind.STAR, KspReferenceFrameKind.SYSTEM_CENTER, null, false,
                 SpaceVector.zero(), SpaceVector.zero(),
-                1.519e20, 834_840 * km, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                1.519e20, 834_840 * km, 0.0, 22.0 * 24 * 3600, rotationAxis(0.0), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 List.of());
 
         return new KspSystemDefinition(
@@ -225,6 +225,8 @@ public record KspSystemDefinition(
             double argumentOfPeriapsis = deg((i * 53.0 + 17.0) % 360.0);
             double meanAnomaly = deg((i * 29.0 + 11.0) % 360.0);
             double periodSeconds = Math.sqrt(Math.pow(semiMajorAxis / 149_597_870.7, 3.0)) * 365.256363004 * 24.0 * 3600.0;
+            double asteroidRotationPeriod = (0.1 + (i % 10) * 0.19) * 24.0 * 3600.0;
+            double asteroidTilt = ((i * 41.0 + 7.0) % 180.0);
 
             asteroids.add(new KspBodyDefinition(
                     "asteroid_belt_" + (i + 1),
@@ -238,6 +240,8 @@ public record KspSystemDefinition(
                     1.0E7 + i * 2.5E5,
                     (40.0 + (i % 6) * 18.0) * km,
                     15_000.0 * km,
+                    asteroidRotationPeriod,
+                    rotationAxis(asteroidTilt),
                     semiMajorAxis * km,
                     eccentricity,
                     inclination,
@@ -361,6 +365,11 @@ public record KspSystemDefinition(
 
     private static double deg(double degrees) {
         return Math.toRadians(degrees);
+    }
+
+    private static SpaceVector rotationAxis(double tiltDegrees) {
+        double tilt = Math.toRadians(tiltDegrees);
+        return new SpaceVector(0.0, -Math.cos(tilt), Math.sin(tilt));
     }
 
     private record AbsoluteBodyState(SpaceVector position, SpaceVector velocity) {

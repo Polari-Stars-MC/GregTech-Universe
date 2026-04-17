@@ -5,14 +5,18 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.polaris2023.gtu.space.GregtechUniverseSpace;
 
 @EventBusSubscriber(modid = GregtechUniverseSpace.MOD_ID)
 public final class SpaceRuntimeEvents {
+    private static final int AUTO_SAVE_INTERVAL = 6000;
+    private static int tickCounter = 0;
+
     @SubscribeEvent
     public static void onServerAboutToStart(ServerAboutToStartEvent event) {
-        SpaceManager.get(event.getServer()).startSystems();
+        SpaceManager.get(event.getServer()).load();
     }
 
     @SubscribeEvent
@@ -22,7 +26,18 @@ public final class SpaceRuntimeEvents {
 
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Pre event) {
-        SpaceManager.get(event.getServer()).tick();
+        SpaceManager manager = SpaceManager.get(event.getServer());
+        manager.tick();
+        tickCounter++;
+        if (tickCounter >= AUTO_SAVE_INTERVAL) {
+            tickCounter = 0;
+            manager.save();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onServerStopping(ServerStoppingEvent event) {
+        SpaceManager.get(event.getServer()).save();
     }
 
     @SubscribeEvent

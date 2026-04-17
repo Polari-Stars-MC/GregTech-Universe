@@ -11,6 +11,7 @@ public record KspSnapshot(
         KspUniverseState universe,
         Map<String, KspBodyState> bodies,
         Map<String, List<SpaceVector>> bodyHistory,
-        Map<String, KspVesselState> vessels
+        Map<String, KspVesselState> vessels,
+        List<RocheViolation> rocheViolations
 ) {
 }

@@ -1,31 +1,48 @@
 package org.polaris2023.gtu.space.runtime;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.storage.LevelResource;
 import org.polaris2023.gtu.space.runtime.ksp.KspBackgroundSystem;
+import org.polaris2023.gtu.space.runtime.ksp.KspSaveData;
 import org.polaris2023.gtu.space.runtime.ksp.KspSnapshot;
 import org.polaris2023.gtu.space.runtime.ksp.KspSystemDefinition;
 import org.polaris2023.gtu.space.runtime.math.SpaceCoordinate;
+import org.polaris2023.gtu.space.runtime.math.SpaceVector;
 import org.polaris2023.gtu.space.runtime.math.UniverseVector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class SpaceManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpaceManager.class);
+    private static final LevelResource KSP_RESOURCE = new LevelResource("gtu_ksp");
+    private static final String SAVE_FILE = "ksp_state.json";
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
     private static SpaceManager INSTANCES = null;
 
+    private final MinecraftServer server;
     private final SpacePhysicsEngine physicsEngine = new SpacePhysicsEngine();
     private final KspBackgroundSystem kspSystem = new KspBackgroundSystem(KspSystemDefinition.solarSystem());
     private final Map<UUID, SpacePlayerState> playerStates = new ConcurrentHashMap<>();
 
-    private SpaceManager() {
+    private SpaceManager(MinecraftServer server) {
+        this.server = server;
     }
 
     public static SpaceManager get(MinecraftServer server) {
         if (INSTANCES == null) {
-            INSTANCES = new SpaceManager();
+            INSTANCES = new SpaceManager(server);
         }
         return INSTANCES;
     }
@@ -37,16 +54,21 @@ public final class SpaceManager {
         INSTANCES = null;
     }
 
-    public void startSystems() {
-        kspSystem.ensureStarted();
-    }
-
     public void tick() {
         physicsEngine.stepSimulation(1.0f / 20.0f);
+        kspSystem.tick();
     }
 
     public KspSnapshot latestKspSnapshot() {
         return kspSystem.latestSnapshot();
+    }
+
+    public void applyBodyThrust(String bodyId, SpaceVector thrustAcceleration) {
+        kspSystem.applyBodyThrust(bodyId, thrustAcceleration);
+    }
+
+    public void clearBodyThrust(String bodyId) {
+        kspSystem.clearBodyThrust(bodyId);
     }
 
     public SpacePlayerState getOrCreate(ServerPlayer player) {
@@ -97,6 +119,91 @@ public final class SpaceManager {
         );
         playerStates.put(player.getUUID(), next);
         return next;
+    }
+
+    public void save() {
+        try {
+            Path dir = server.getWorldPath(KSP_RESOURCE);
+            Files.createDirectories(dir);
+            Path file = dir.resolve(SAVE_FILE);
+            KspSaveData data = kspSystem.exportState();
+            data.playerStates = exportPlayerStates();
+            Files.writeString(file, GSON.toJson(data));
+            LOGGER.info("KSP state saved to {}", file);
+        } catch (IOException e) {
+            LOGGER.error("Failed to save KSP state", e);
+        }
+    }
+
+    public void load() {
+        Path file = server.getWorldPath(KSP_RESOURCE).resolve(SAVE_FILE);
+        if (!Files.exists(file)) {
+            LOGGER.info("No KSP save file found, starting fresh");
+            return;
+        }
+        try {
+            KspSaveData data = GSON.fromJson(Files.readString(file), KspSaveData.class);
+            kspSystem.importState(data);
+            importPlayerStates(data.playerStates);
+            LOGGER.info("KSP state loaded from {}", file);
+        } catch (IOException e) {
+            LOGGER.error("Failed to load KSP state", e);
+        }
+    }
+
+    private Map<String, KspSaveData.PlayerStateData> exportPlayerStates() {
+        Map<String, KspSaveData.PlayerStateData> result = new java.util.LinkedHashMap<>();
+        for (Map.Entry<UUID, SpacePlayerState> entry : playerStates.entrySet()) {
+            SpacePlayerState ps = entry.getValue();
+            KspSaveData.PlayerStateData psd = new KspSaveData.PlayerStateData();
+            psd.mode = ps.mode().name();
+            psd.anchorDimension = ps.anchorDimension();
+            psd.universeId = ps.universeId();
+            psd.galaxyId = ps.galaxyId();
+            psd.systemId = ps.systemId();
+            UniverseVector uv = ps.universeAnchorPosition();
+            psd.universeAnchorPosition = new String[]{
+                    uv.x().toPlainString(), uv.y().toPlainString(), uv.z().toPlainString()
+            };
+            psd.coordinate = new double[]{
+                    ps.coordinate().sectorX(), ps.coordinate().sectorY(), ps.coordinate().sectorZ(),
+                    ps.coordinate().local().x(), ps.coordinate().local().y(), ps.coordinate().local().z()
+            };
+            psd.vesselId = ps.vesselId() != null ? ps.vesselId().toString() : null;
+            result.put(entry.getKey().toString(), psd);
+        }
+        return result;
+    }
+
+    private void importPlayerStates(Map<String, KspSaveData.PlayerStateData> data) {
+        if (data == null) return;
+        for (Map.Entry<String, KspSaveData.PlayerStateData> entry : data.entrySet()) {
+            UUID uuid = UUID.fromString(entry.getKey());
+            KspSaveData.PlayerStateData psd = entry.getValue();
+            UniverseVector uv = psd.universeAnchorPosition != null
+                    ? new UniverseVector(
+                    new java.math.BigDecimal(psd.universeAnchorPosition[0]),
+                    new java.math.BigDecimal(psd.universeAnchorPosition[1]),
+                    new java.math.BigDecimal(psd.universeAnchorPosition[2]))
+                    : UniverseVector.zero();
+            SpaceCoordinate coord = psd.coordinate != null && psd.coordinate.length >= 6
+                    ? new SpaceCoordinate(
+                    (long) psd.coordinate[0], (long) psd.coordinate[1], (long) psd.coordinate[2],
+                    new SpaceVector(psd.coordinate[3], psd.coordinate[4], psd.coordinate[5]))
+                    : SpaceCoordinate.origin();
+            UUID vesselId = psd.vesselId != null ? UUID.fromString(psd.vesselId) : null;
+            SpacePlayerState ps = new SpacePlayerState(
+                    SpacePlayerState.Mode.valueOf(psd.mode),
+                    psd.anchorDimension,
+                    psd.universeId,
+                    psd.galaxyId,
+                    psd.systemId,
+                    uv,
+                    coord,
+                    vesselId
+            );
+            playerStates.put(uuid, ps);
+        }
     }
 
     private void close() {

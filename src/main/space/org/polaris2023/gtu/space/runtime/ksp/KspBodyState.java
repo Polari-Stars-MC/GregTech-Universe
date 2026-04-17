@@ -6,6 +6,9 @@ public record KspBodyState(
         KspBodyDefinition definition,
         String referenceBodyId,
         SpaceVector absolutePosition,
-        SpaceVector absoluteVelocity
+        SpaceVector absoluteVelocity,
+        boolean perturbed,
+        SpaceVector thrustAcceleration,
+        double rotationPhaseRadians
 ) {
 }

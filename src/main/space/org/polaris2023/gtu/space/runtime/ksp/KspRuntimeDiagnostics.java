@@ -8,10 +8,11 @@ public final class KspRuntimeDiagnostics {
 
     public static void main(String[] args) throws InterruptedException {
         KspBackgroundSystem backgroundSystem = new KspBackgroundSystem(KspSystemDefinition.solarSystem());
-        backgroundSystem.ensureStarted();
 
         for (int sample = 0; sample < 6; sample++) {
-            Thread.sleep(200L);
+            for (int i = 0; i < 20; i++) {
+                backgroundSystem.tick();
+            }
             KspSnapshot snapshot = backgroundSystem.latestSnapshot();
 
             KspBodyState earth = snapshot.bodies().get("earth");

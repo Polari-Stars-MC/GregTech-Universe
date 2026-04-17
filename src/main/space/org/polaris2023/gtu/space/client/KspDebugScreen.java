@@ -46,6 +46,15 @@ public final class KspDebugScreen extends Screen {
             return true;
         }
 
+        if (keyCode == GLFW.GLFW_KEY_EQUAL || keyCode == GLFW.GLFW_KEY_KP_ADD) {
+            KspDebugWindow.adjustBodyScale(1.25);
+            return true;
+        }
+        if (keyCode == GLFW.GLFW_KEY_MINUS || keyCode == GLFW.GLFW_KEY_KP_SUBTRACT) {
+            KspDebugWindow.adjustBodyScale(1.0 / 1.25);
+            return true;
+        }
+
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
