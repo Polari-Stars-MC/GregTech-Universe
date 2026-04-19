@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "org.polaris2023.gtu.space.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "MixinClientChunkCacheEarthProjection"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

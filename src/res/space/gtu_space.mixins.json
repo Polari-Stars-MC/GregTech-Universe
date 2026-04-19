@@ -3,6 +3,9 @@
   "package": "org.polaris2023.gtu.space.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "MixinNoiseBasedChunkGeneratorEarthProjection",
+    "MixinServerChunkCacheEarthProjection",
+    "MixinWorldGenRegionEarthProjection"
   ],
   "injectors": {
     "defaultRequire": 1
