@@ -10,7 +10,7 @@ import org.joml.Vector3f;
 import org.polaris2023.gtu.space.GregtechUniverseSpace;
 import org.polaris2023.gtu.space.network.SpaceSnapshotPacket;
 import org.polaris2023.gtu.space.network.SpaceStateSyncPacket;
-import org.polaris2023.gtu.space.runtime.ksp.KspBodyKind;
+import org.polaris2023.gtu.space.simulation.ksp.KspBodyKind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

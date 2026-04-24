@@ -8,7 +8,7 @@ import org.joml.Vector3f;
 import org.polaris2023.gtu.space.network.ClientSpaceCache;
 import org.polaris2023.gtu.space.network.SpaceSnapshotPacket;
 import org.polaris2023.gtu.space.network.SpaceStateSyncPacket;
-import org.polaris2023.gtu.space.runtime.SpacePlayerState;
+import org.polaris2023.gtu.space.simulation.SpacePlayerState;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -215,7 +215,7 @@ public final class SpaceRenderRuntime implements IPhysicsProvider, IEntityProvid
         Vector3d camera = getCameraPosition();
         List<PlanetRenderInfo> result = new ArrayList<>();
         for (SpaceSnapshotPacket.BodyData body : snapshot.bodies()) {
-            if (body.kind() == org.polaris2023.gtu.space.runtime.ksp.KspBodyKind.STAR) {
+            if (body.kind() == org.polaris2023.gtu.space.simulation.ksp.KspBodyKind.STAR) {
                 continue;
             }
             Vector3d absolutePosition = new Vector3d(body.posX(), body.posY(), body.posZ());
@@ -247,7 +247,7 @@ public final class SpaceRenderRuntime implements IPhysicsProvider, IEntityProvid
             return null;
         }
         for (SpaceSnapshotPacket.BodyData body : snapshot.bodies()) {
-            if (body.kind() == org.polaris2023.gtu.space.runtime.ksp.KspBodyKind.STAR) {
+            if (body.kind() == org.polaris2023.gtu.space.simulation.ksp.KspBodyKind.STAR) {
                 return new SunRenderInfo(
                         body.id(),
                         new Vector3d(body.posX(), body.posY(), body.posZ()),

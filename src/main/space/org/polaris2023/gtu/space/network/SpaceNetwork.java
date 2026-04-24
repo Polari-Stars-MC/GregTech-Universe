@@ -1,21 +1,21 @@
 package org.polaris2023.gtu.space.network;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.polaris2023.gtu.space.client.portal.ClientPortalCache;
-import org.polaris2023.gtu.space.runtime.SpaceManager;
+import org.polaris2023.gtu.space.network.payload.KspDebugSnapshotPacket;
+import org.polaris2023.gtu.space.network.payload.KspDebugSnapshotRequestPacket;
+import org.polaris2023.gtu.space.network.payload.KspOverviewPacket;
+import org.polaris2023.gtu.space.simulation.SpaceManager;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public final class SpaceNetwork {
     private SpaceNetwork() {
     }
 
-    @SubscribeEvent
     public static void registerPayloads(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1");
+
         registrar.playToClient(
                 SpaceStateSyncPacket.TYPE,
                 SpaceStateSyncPacket.STREAM_CODEC,
@@ -48,8 +48,27 @@ public final class SpaceNetwork {
                     if (!(context.player() instanceof ServerPlayer player)) {
                         return;
                     }
-                    SpaceManager manager = SpaceManager.get(player.server);
-                    manager.setLandingDescent(player, packet.descending());
+                    SpaceManager.get(player.server).setLandingDescent(player, packet.descending());
+                })
+        );
+
+        registrar.playToClient(
+                KspOverviewPacket.TYPE,
+                KspOverviewPacket.STREAM_CODEC,
+                (packet, context) -> context.enqueueWork(() -> KspClientSyncState.updateOverview(packet))
+        );
+        registrar.playToClient(
+                KspDebugSnapshotPacket.TYPE,
+                KspDebugSnapshotPacket.STREAM_CODEC,
+                (packet, context) -> context.enqueueWork(() -> KspClientSyncState.updateDebugSnapshot(packet.snapshot()))
+        );
+        registrar.playToServer(
+                KspDebugSnapshotRequestPacket.TYPE,
+                KspDebugSnapshotRequestPacket.STREAM_CODEC,
+                (packet, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof ServerPlayer player) {
+                        KspPacketSender.syncDebugSnapshot(player);
+                    }
                 })
         );
     }

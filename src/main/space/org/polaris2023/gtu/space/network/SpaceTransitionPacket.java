@@ -5,8 +5,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.polaris2023.gtu.space.GregtechUniverseSpace;
-import org.polaris2023.gtu.space.runtime.SpaceDomain;
-import org.polaris2023.gtu.space.runtime.SpaceTransitionDirection;
+import org.polaris2023.gtu.space.simulation.SpaceDomain;
+import org.polaris2023.gtu.space.simulation.SpaceTransitionDirection;
 
 import java.util.UUID;
 

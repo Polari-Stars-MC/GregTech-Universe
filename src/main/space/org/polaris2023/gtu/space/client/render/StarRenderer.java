@@ -6,8 +6,8 @@ import org.joml.Quaterniond;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.polaris2023.gtu.space.client.SpaceShaderManager;
-import org.polaris2023.gtu.space.runtime.ksp.KspBodyState;
-import org.polaris2023.gtu.space.runtime.math.SpaceVector;
+import org.polaris2023.gtu.space.simulation.ksp.KspBodyState;
+import org.polaris2023.gtu.space.simulation.math.SpaceVector;
 
 public class StarRenderer {
 

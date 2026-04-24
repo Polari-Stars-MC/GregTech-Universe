@@ -10,7 +10,7 @@ import org.polaris2023.gtu.space.GregtechUniverseSpace;
 import org.polaris2023.gtu.space.network.ClientSpaceCache;
 import org.polaris2023.gtu.space.network.SpaceLandingRequestPacket;
 import org.polaris2023.gtu.space.network.SpaceStateSyncPacket;
-import org.polaris2023.gtu.space.runtime.SpacePlayerState;
+import org.polaris2023.gtu.space.simulation.SpacePlayerState;
 
 @EventBusSubscriber(modid = GregtechUniverseSpace.MOD_ID, value = Dist.CLIENT)
 public final class SpaceRenderEvents {

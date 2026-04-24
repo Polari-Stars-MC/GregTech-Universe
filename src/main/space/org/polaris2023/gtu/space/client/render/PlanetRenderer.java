@@ -5,8 +5,8 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.*;
 import org.polaris2023.gtu.space.client.SpaceShaderManager;
-import org.polaris2023.gtu.space.runtime.ksp.KspBodyState;
-import org.polaris2023.gtu.space.runtime.math.SpaceVector;
+import org.polaris2023.gtu.space.simulation.ksp.KspBodyState;
+import org.polaris2023.gtu.space.simulation.math.SpaceVector;
 
 public class PlanetRenderer {
 

@@ -5,7 +5,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.polaris2023.gtu.space.GregtechUniverseSpace;
-import org.polaris2023.gtu.space.runtime.ksp.KspBodyKind;
+import org.polaris2023.gtu.space.simulation.ksp.KspBodyKind;
 
 import java.util.ArrayList;
 import java.util.List;

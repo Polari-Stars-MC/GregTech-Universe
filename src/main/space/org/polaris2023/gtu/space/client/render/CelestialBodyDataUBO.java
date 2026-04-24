@@ -4,10 +4,10 @@ import org.joml.Quaterniond;
 import org.joml.Vector3d;
 import org.lwjgl.system.MemoryUtil;
 import org.polaris2023.gtu.space.network.SpaceSnapshotPacket;
-import org.polaris2023.gtu.space.runtime.ksp.KspBodyKind;
-import org.polaris2023.gtu.space.runtime.ksp.KspBodyState;
-import org.polaris2023.gtu.space.runtime.ksp.KspSnapshot;
-import org.polaris2023.gtu.space.runtime.math.SpaceVector;
+import org.polaris2023.gtu.space.simulation.ksp.KspBodyKind;
+import org.polaris2023.gtu.space.simulation.ksp.KspBodyState;
+import org.polaris2023.gtu.space.simulation.ksp.KspSnapshot;
+import org.polaris2023.gtu.space.simulation.math.SpaceVector;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

@@ -7,8 +7,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.polaris2023.gtu.space.network.SpaceTransitionPacket;
 import org.polaris2023.gtu.space.portal.ISyncManager;
 import org.polaris2023.gtu.space.portal.TransitionState;
-import org.polaris2023.gtu.space.runtime.SpaceDomain;
-import org.polaris2023.gtu.space.runtime.SpaceTransitionDirection;
+import org.polaris2023.gtu.space.simulation.SpaceDomain;
+import org.polaris2023.gtu.space.simulation.SpaceTransitionDirection;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;

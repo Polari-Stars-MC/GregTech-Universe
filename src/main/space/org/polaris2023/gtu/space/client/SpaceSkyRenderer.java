@@ -24,7 +24,7 @@ import org.polaris2023.gtu.space.client.render.CosmicShapeRenderer;
 import org.polaris2023.gtu.space.network.ClientSpaceCache;
 import org.polaris2023.gtu.space.network.SpaceSnapshotPacket;
 import org.polaris2023.gtu.space.network.SpaceStateSyncPacket;
-import org.polaris2023.gtu.space.runtime.PlanetDomainDefinition;
+import org.polaris2023.gtu.space.simulation.PlanetDomainDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

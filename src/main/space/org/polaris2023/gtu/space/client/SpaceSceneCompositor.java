@@ -4,9 +4,9 @@ import net.minecraft.client.Minecraft;
 import org.polaris2023.gtu.space.network.ClientSpaceCache;
 import org.polaris2023.gtu.space.network.SpaceStateSyncPacket;
 import org.polaris2023.gtu.space.network.SpaceTransitionPacket;
-import org.polaris2023.gtu.space.runtime.PlanetDomainDefinition;
-import org.polaris2023.gtu.space.runtime.SpacePlayerState;
-import org.polaris2023.gtu.space.runtime.SpaceTransitionDirection;
+import org.polaris2023.gtu.space.simulation.PlanetDomainDefinition;
+import org.polaris2023.gtu.space.simulation.SpacePlayerState;
+import org.polaris2023.gtu.space.simulation.SpaceTransitionDirection;
 
 public record SpaceSceneCompositor(
         boolean active,
