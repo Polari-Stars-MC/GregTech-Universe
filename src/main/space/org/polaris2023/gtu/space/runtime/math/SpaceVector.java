@@ -17,6 +17,14 @@ public record SpaceVector(double x, double y, double z) {
         return new SpaceVector(x - other.x, y - other.y, z - other.z);
     }
 
+    public SpaceVector cross(SpaceVector other) {
+        return new SpaceVector(
+                y * other.z - z * other.y,
+                z * other.x - x * other.z,
+                x * other.y - y * other.x
+        );
+    }
+
     public double dot(SpaceVector other) {
         return x * other.x + y * other.y + z * other.z;
     }

@@ -1,0 +1,17 @@
+{
+    "targets": [ "swap" ],
+    "passes": [
+        {
+            "name": "gtu_space:buffer_switch",
+            "intarget": "minecraft:main",
+            "outtarget": "swap",
+            "uniforms": []
+        },
+        {
+            "name": "gtu_space:depth_blit",
+            "intarget": "swap",
+            "outtarget": "minecraft:main",
+            "uniforms": []
+        }
+    ]
+}

@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * </ul>
  */
 public class PhysicsManager {
+    public static final float MAX_SAFE_NATIVE_COORDINATE = 1_000_000.0f;
 
     private static final Map<Level, PhysicsWorld> worldMap = new ConcurrentHashMap<>();
 
@@ -216,6 +217,7 @@ public class PhysicsManager {
 
         for (Entity entity : level.getAllEntities()) {
             if (entity.level().isClientSide()) continue;
+            if (!isSafeForNativePhysics(entity.getX(), entity.getY(), entity.getZ())) continue;
 
             PhysicsRigidBody body = physicsWorld.getEntityBody(entity.getId());
             if (body == null) continue;
@@ -254,6 +256,7 @@ public class PhysicsManager {
 
         for (Entity entity : level.getAllEntities()) {
             if (entity.level().isClientSide()) continue;
+            if (!isSafeForNativePhysics(entity.getX(), entity.getY(), entity.getZ())) continue;
 
             PhysicsRigidBody body = physicsWorld.getEntityBody(entity.getId());
             if (body == null) continue;
@@ -285,6 +288,7 @@ public class PhysicsManager {
     public static void syncEntityToPhysics(Entity entity) {
         PhysicsWorld physicsWorld = getOrCreatePhysicsWorld(entity.level());
         if (physicsWorld == null) return;
+        if (!isSafeForNativePhysics(entity.getX(), entity.getY(), entity.getZ())) return;
 
         var body = physicsWorld.getEntityBody(entity.getId());
         if (body != null) {
@@ -307,6 +311,7 @@ public class PhysicsManager {
     public static void syncPhysicsToEntity(Entity entity) {
         PhysicsWorld physicsWorld = getOrCreatePhysicsWorld(entity.level());
         if (physicsWorld == null) return;
+        if (!isSafeForNativePhysics(entity.getX(), entity.getY(), entity.getZ())) return;
 
         var body = physicsWorld.getEntityBody(entity.getId());
         if (body != null) {
@@ -323,6 +328,19 @@ public class PhysicsManager {
     /**
      * 添加方块碰撞体
      */
+    public static boolean isSafeForNativePhysics(double x, double y, double z) {
+        return Double.isFinite(x)
+                && Double.isFinite(y)
+                && Double.isFinite(z)
+                && Math.abs(x) <= MAX_SAFE_NATIVE_COORDINATE
+                && Math.abs(y) <= MAX_SAFE_NATIVE_COORDINATE
+                && Math.abs(z) <= MAX_SAFE_NATIVE_COORDINATE;
+    }
+
+    public static boolean isSafeForNativePhysics(Vector3f vector) {
+        return vector != null && isSafeForNativePhysics(vector.x, vector.y, vector.z);
+    }
+
     public static void addBlockCollision(Level level, BlockPos pos) {
         PhysicsWorld physicsWorld = getOrCreatePhysicsWorld(level);
         if (physicsWorld == null) return;

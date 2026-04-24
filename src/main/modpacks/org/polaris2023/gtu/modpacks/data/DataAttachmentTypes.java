@@ -17,7 +17,7 @@ public class DataAttachmentTypes {
             DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, GregtechUniverseModPacks.MOD_ID);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> WATER_SPEED = REGISTER.register("water_speed", () -> AttachmentType
-                .builder(() -> 0)
+                .builder(() -> 2)
                 .serialize(Codec.INT)
                 .sync(ByteBufCodecs.INT)
                 .build());//水流速的一个动量

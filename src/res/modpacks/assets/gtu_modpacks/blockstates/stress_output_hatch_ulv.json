@@ -1,0 +1,10 @@
+﻿{
+  "variants": {
+    "facing=north": { "model": "gtceu:block/ulv_machine_casing" },
+    "facing=south": { "model": "gtceu:block/ulv_machine_casing" },
+    "facing=east": { "model": "gtceu:block/ulv_machine_casing" },
+    "facing=west": { "model": "gtceu:block/ulv_machine_casing" },
+    "facing=up": { "model": "gtceu:block/ulv_machine_casing" },
+    "facing=down": { "model": "gtceu:block/ulv_machine_casing" }
+  }
+}

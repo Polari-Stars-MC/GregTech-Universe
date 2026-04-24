@@ -1,0 +1,17 @@
+{
+    "targets": [ "swap" ],
+    "passes": [
+        {
+            "name": "gtu_space:black_hole/black_hole_gravitational_lens",
+            "intarget": "minecraft:main",
+            "outtarget": "swap",
+            "uniforms": []
+        },
+        {
+            "name": "minecraft:blit",
+            "intarget": "swap",
+            "outtarget": "minecraft:main",
+            "uniforms": []
+        }
+    ]
+}

@@ -1,6 +1,7 @@
 package org.polaris2023.gtu.space.runtime;
 
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
@@ -24,7 +25,7 @@ public final class SpaceRuntimeEvents {
         SpaceManager.get(event.getServer());
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onServerTick(ServerTickEvent.Pre event) {
         SpaceManager manager = SpaceManager.get(event.getServer());
         manager.tick();

@@ -223,6 +223,12 @@ public class RigidBodyCollisionDetector {
         Vector3f position = body.getPhysicsLocation(null);
         Vector3f velocity = body.getLinearVelocity(null);
 
+        if (!PhysicsManager.isSafeForNativePhysics(entity.getX(), entity.getY(), entity.getZ())
+                || !PhysicsManager.isSafeForNativePhysics(position)
+                || !PhysicsManager.isSafeForNativePhysics(velocity)) {
+            return null;
+        }
+
         // 如果实体在上升，不需要检测
         if (velocity.y > 0.01f) return null;
 
@@ -230,6 +236,10 @@ public class RigidBodyCollisionDetector {
         float entityHeight = entity.getBbHeight();
         Vector3f rayStart = new Vector3f(position.x, position.y - entityHeight / 2, position.z);
         Vector3f rayEnd = new Vector3f(position.x, position.y - entityHeight / 2 - STACKING_DETECT_DISTANCE, position.z);
+
+        if (!PhysicsManager.isSafeForNativePhysics(rayStart) || !PhysicsManager.isSafeForNativePhysics(rayEnd)) {
+            return null;
+        }
 
         // 使用 Bullet 射线检测
         List<PhysicsRayTestResult> results = physicsSpace.rayTest(rayStart, rayEnd);

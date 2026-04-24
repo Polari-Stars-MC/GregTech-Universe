@@ -1,0 +1,10 @@
+﻿{
+  "variants": {
+    "facing=north": { "model": "gtu_modpacks:block/stress_output_hatch_primitive" },
+    "facing=south": { "model": "gtu_modpacks:block/stress_output_hatch_primitive" },
+    "facing=east": { "model": "gtu_modpacks:block/stress_output_hatch_primitive" },
+    "facing=west": { "model": "gtu_modpacks:block/stress_output_hatch_primitive" },
+    "facing=up": { "model": "gtu_modpacks:block/stress_output_hatch_primitive" },
+    "facing=down": { "model": "gtu_modpacks:block/stress_output_hatch_primitive" }
+  }
+}

@@ -18,6 +18,7 @@ public final class Physics {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("physics.init");
     private static final String LIB_VERSION = "23.0.0";
+    private static final String BULLET_INIT_PROPERTY = "gtu.libbulletjme.initialized";
     private static boolean initialized;
 
     private Physics() {
@@ -27,12 +28,18 @@ public final class Physics {
         if (initialized) {
             return;
         }
+        if (Boolean.getBoolean(BULLET_INIT_PROPERTY)) {
+            initialized = true;
+            LOGGER.info("Reusing previously initialized bulletjme native library");
+            return;
+        }
 
         try {
             NativeBundle bundle = NativeBundle.detect();
             Path libraryPath = extractNativeLibrary(bundle);
             loadWithLibbulletjmeClassLoader(bundle, libraryPath);
             initialized = true;
+            System.setProperty(BULLET_INIT_PROPERTY, Boolean.TRUE.toString());
             LOGGER.info("Loaded bulletjme native library from {}", libraryPath);
         } catch (Exception e) {
             LOGGER.error("Fail init bulletjme.", e);

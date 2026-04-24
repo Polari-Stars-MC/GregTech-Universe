@@ -1,0 +1,34 @@
+{
+    "targets": [
+        { "name": "atmosphere", "scale": 1 },
+        { "name": "smooth", "scale": 1 },
+        { "name": "smooth_save", "scale": 1 },
+        { "name": "swap", "scale": 1 }
+    ],
+    "passes": [
+        {
+            "name": "gtu_space:planet/planet_atmosphere",
+            "intarget": "minecraft:main",
+            "outtarget": "smooth",
+            "uniforms": []
+        },
+        {
+            "name": "minecraft:blit",
+            "intarget": "smooth",
+            "outtarget": "smooth_save",
+            "uniforms": []
+        },
+        {
+            "name": "gtu_space:planet/smooth_atmosphere",
+            "intarget": "smooth_save",
+            "outtarget": "swap",
+            "uniforms": []
+        },
+        {
+            "name": "minecraft:blit",
+            "intarget": "swap",
+            "outtarget": "minecraft:main",
+            "uniforms": []
+        }
+    ]
+}

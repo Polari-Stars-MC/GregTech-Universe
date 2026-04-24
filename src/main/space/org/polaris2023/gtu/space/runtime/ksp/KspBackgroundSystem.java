@@ -36,6 +36,16 @@ public final class KspBackgroundSystem implements AutoCloseable {
         runtime.clearBodyThrust(bodyId);
     }
 
+    public void upsertVessel(KspVesselState vesselState) {
+        runtime.upsertVessel(vesselState);
+        latestSnapshot.set(runtime.snapshot());
+    }
+
+    public void removeVessel(String vesselId) {
+        runtime.removeVessel(vesselId);
+        latestSnapshot.set(runtime.snapshot());
+    }
+
     public KspSaveData exportState() {
         return runtime.exportState();
     }

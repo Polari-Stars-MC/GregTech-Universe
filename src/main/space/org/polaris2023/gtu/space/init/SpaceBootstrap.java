@@ -17,6 +17,7 @@ import java.util.zip.ZipInputStream;
 
 public final class SpaceBootstrap {
     private static final String LIB_VERSION = "23.0.0";
+    private static final String BULLET_INIT_PROPERTY = "gtu.libbulletjme.initialized";
     private static boolean initialized;
 
     private SpaceBootstrap() {
@@ -26,6 +27,12 @@ public final class SpaceBootstrap {
         if (initialized) {
             return;
         }
+        if (Boolean.getBoolean(BULLET_INIT_PROPERTY)) {
+            PhysicsRigidBody.logger2.setLevel(Level.OFF);
+            PhysicsSpace.logger.setLevel(Level.OFF);
+            initialized = true;
+            return;
+        }
 
         try {
             NativeBundle bundle = NativeBundle.detect();
@@ -33,6 +40,7 @@ public final class SpaceBootstrap {
             loadWithLibbulletjmeClassLoader(bundle, libraryPath);
             PhysicsRigidBody.logger2.setLevel(Level.OFF);
             PhysicsSpace.logger.setLevel(Level.OFF);
+            System.setProperty(BULLET_INIT_PROPERTY, Boolean.TRUE.toString());
             initialized = true;
         } catch (Exception exception) {
             throw new IllegalStateException("Failed to initialize GTU Space Bullet runtime", exception);

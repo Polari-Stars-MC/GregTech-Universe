@@ -1,12 +1,8 @@
 {
   "variants": {
-    "facing=north,formed=false": { "model": "gtu_modpacks:block/water_dam_controller" },
-    "facing=east,formed=false": { "model": "gtu_modpacks:block/water_dam_controller", "y": 90 },
-    "facing=south,formed=false": { "model": "gtu_modpacks:block/water_dam_controller", "y": 180 },
-    "facing=west,formed=false": { "model": "gtu_modpacks:block/water_dam_controller", "y": 270 },
-    "facing=north,formed=true": { "model": "gtu_modpacks:block/water_dam_controller_formed" },
-    "facing=east,formed=true": { "model": "gtu_modpacks:block/water_dam_controller_formed", "y": 90 },
-    "facing=south,formed=true": { "model": "gtu_modpacks:block/water_dam_controller_formed", "y": 180 },
-    "facing=west,formed=true": { "model": "gtu_modpacks:block/water_dam_controller_formed", "y": 270 }
+    "facing=north": { "model": "gtu_modpacks:block/machine/water_dam_controller" },
+    "facing=east": { "model": "gtu_modpacks:block/machine/water_dam_controller", "y": 90 },
+    "facing=south": { "model": "gtu_modpacks:block/machine/water_dam_controller", "y": 180 },
+    "facing=west": { "model": "gtu_modpacks:block/machine/water_dam_controller", "y": 270 }
   }
 }

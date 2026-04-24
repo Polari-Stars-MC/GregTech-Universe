@@ -5,6 +5,7 @@ dependencies {
         exclude("info.journeymap")
         exclude("mezz.jei")
     }
+    implementation("net.createmod.ponder:ponder-neoforge:1.0.82+mc1.21.1")
     implementation("com.gregtechceu.gtceu:gtceu-1.21.1:7.0.2") {
         exclude("dev.toma.configuration")
     }

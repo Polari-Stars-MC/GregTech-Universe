@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "org.polaris2023.gtu.space.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "client.MixinMinecraft",
+    "client.MixinReceivingLevelScreen",
+    "client.MixinClientPacketListener",
+    "client.MixinLevelRenderer",
+    "client.MixinGameRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

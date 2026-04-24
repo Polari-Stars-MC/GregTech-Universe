@@ -81,6 +81,40 @@ public final class RiverCurrentSampler {
         return samples == 0 ? 0.0 : total / samples;
     }
 
+    public static double sampleWheelFrontFlow(Level level, BlockPos axisPos, Direction front) {
+        Direction right = switch (front) {
+            case NORTH -> Direction.EAST;
+            case SOUTH -> Direction.WEST;
+            case WEST -> Direction.NORTH;
+            default -> Direction.SOUTH;
+        };
+
+        double weightedTotal = 0.0;
+        double weightSum = 0.0;
+        for (int depth = 1; depth <= 2; depth++) {
+            for (int horizontal = -2; horizontal <= 2; horizontal++) {
+                for (int vertical = -2; vertical <= 2; vertical++) {
+                    BlockPos samplePos = axisPos.relative(front, depth)
+                            .relative(right, horizontal)
+                            .above(vertical);
+                    double speed = sampleSpeed(level, samplePos);
+                    if (speed <= 0.0) {
+                        continue;
+                    }
+
+                    double weight = depth == 1 ? 1.0 : 0.85;
+                    if (vertical < 0) {
+                        weight += 0.15;
+                    }
+
+                    weightedTotal += speed * weight;
+                    weightSum += weight;
+                }
+            }
+        }
+        return weightSum == 0.0 ? 0.0 : weightedTotal / weightSum;
+    }
+
     private static int span(Level level, BlockPos origin, Direction direction) {
         int span = 0;
         for (int i = 1; i <= MAX_SCAN; i++) {

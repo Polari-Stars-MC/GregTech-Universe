@@ -424,6 +424,14 @@ public final class KspSystemRuntime implements AutoCloseable {
         return bodyThrust.containsKey(bodyId);
     }
 
+    public synchronized void upsertVessel(KspVesselState vesselState) {
+        vesselStates.put(vesselState.id(), vesselState);
+    }
+
+    public synchronized void removeVessel(String vesselId) {
+        vesselStates.remove(vesselId);
+    }
+
     public synchronized void redirectReferenceBody(String bodyId, String nextReferenceBodyId) {
         DynamicBodyState current = bodyStates.get(bodyId);
         if (current == null) {
