@@ -4,6 +4,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
+import org.polaris2023.gtu.core.GregtechUniverseCore;
 
 public final class CraftingTableModels {
     private CraftingTableModels() {
@@ -22,6 +23,7 @@ public final class CraftingTableModels {
                                                    String name) {
         return new ModelFile.UncheckedModelFile(
                 provider.models().getBuilder("block/" + name + "_template")
+                        .parent(provider.models().getExistingFile(GregtechUniverseCore.mid("block/block")))
                         .renderType("cutout")
                         .texture("east_south", "gtu_core:block/minecraft/empty_crafting_table_side")
                         .texture("north_west", "gtu_core:block/minecraft/empty_crafting_table_front")

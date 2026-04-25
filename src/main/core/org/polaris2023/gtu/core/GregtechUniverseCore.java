@@ -5,11 +5,12 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.polaris2023.gtu.core.block.ClayCauldronInteractions;
+import org.polaris2023.gtu.core.api.multiblock.runtime.cache.StructureTemplateServices;
 import org.polaris2023.gtu.core.init.AttachmentRegistries;
+import org.polaris2023.gtu.core.init.BlockEntityRegistries;
 import org.polaris2023.gtu.core.init.BlockRegistries;
 import org.polaris2023.gtu.core.init.ClayCauldronFluidRegistries;
 import org.polaris2023.gtu.core.init.CreativeTabRegistries;
-import org.polaris2023.gtu.core.init.FeatureRegistries;
 import org.polaris2023.gtu.core.init.GLMRegistries;
 import org.polaris2023.gtu.core.init.ItemRegistries;
 import org.polaris2023.gtu.core.init.MenuRegistries;
@@ -17,6 +18,8 @@ import org.polaris2023.gtu.core.init.MenuRegistries;
 @Mod(GregtechUniverseCore.MOD_ID)
 public class GregtechUniverseCore {
     public static final String MOD_ID = "gtu_core";
+
+
 
     public static ResourceLocation id(String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
@@ -32,6 +35,7 @@ public class GregtechUniverseCore {
 
     public GregtechUniverseCore(IEventBus modBus) {
         AttachmentRegistries.register(modBus);
+        BlockEntityRegistries.register(modBus);
         BlockRegistries.register(modBus);
         ItemRegistries.register(modBus);
         modBus.addListener(GregtechUniverseCore::commonSetup);
@@ -42,6 +46,9 @@ public class GregtechUniverseCore {
     }
 
     private static void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(ClayCauldronInteractions::bootstrap);
+        event.enqueueWork(() -> {
+            ClayCauldronInteractions.bootstrap();
+            StructureTemplateServices.bootstrapDefaults();
+        });
     }
 }

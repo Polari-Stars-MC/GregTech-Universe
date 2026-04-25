@@ -55,6 +55,8 @@ public class ItemRegistries {
             REGISTER.registerSimpleBlockItem(BlockRegistries.FLINT_CRAFTING_TABLE);
     public static final DeferredItem<BlockItem> CLAY_CAULDRON =
             REGISTER.registerSimpleBlockItem(BlockRegistries.CLAY_CAULDRON);
+    public static final DeferredItem<BlockItem> TEST_MULTIBLOCK_CONTROLLER =
+            REGISTER.registerSimpleBlockItem(BlockRegistries.TEST_MULTIBLOCK_CONTROLLER);
 
 
 

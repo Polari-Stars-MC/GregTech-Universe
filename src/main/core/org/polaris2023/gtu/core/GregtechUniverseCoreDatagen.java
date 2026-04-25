@@ -18,8 +18,6 @@ import java.util.concurrent.atomic.AtomicReference;
 @EventBusSubscriber(modid = GregtechUniverseCore.MOD_ID)
 public class GregtechUniverseCoreDatagen {
 
-
-
     @SubscribeEvent
     public static void datagen(GatherDataEvent event) {
         

@@ -39,7 +39,9 @@ public final class OreModels {
     private static ModelFile oreGravelModel(BlockStateProvider provider,
                                             String name) {
         return new ModelFile.UncheckedModelFile(
-                provider.models().getBuilder("block/" + name + "_template")
+                provider.models()
+                        .getBuilder("block/" + name + "_template")
+                        .parent(provider.models().getExistingFile(GregtechUniverseCore.mid("block/block")))
                         .renderType("cutout")
                         .element()
                         .from(0, 0, 0).to(16, 16, 16)

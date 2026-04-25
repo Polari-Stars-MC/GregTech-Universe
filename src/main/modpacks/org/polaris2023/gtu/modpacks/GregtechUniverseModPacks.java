@@ -7,6 +7,7 @@ import org.polaris2023.gtu.modpacks.data.DataAttachmentTypes;
 import org.polaris2023.gtu.modpacks.init.BiomeModifiers;
 import org.polaris2023.gtu.modpacks.init.BlockEntityRegistries;
 import org.polaris2023.gtu.modpacks.init.BlockRegistries;
+import org.polaris2023.gtu.modpacks.init.FeatureRegistries;
 import org.polaris2023.gtu.modpacks.init.ItemRegistries;
 import org.polaris2023.gtu.modpacks.init.MachineRegistries;
 import org.polaris2023.gtu.modpacks.init.MenuRegistries;
@@ -19,6 +20,7 @@ public class GregtechUniverseModPacks {
         MachineRegistries.init();
         BlockRegistries.register(modEventBus);
         ItemRegistries.register(modEventBus);
+        FeatureRegistries.register(modEventBus);
         BlockEntityRegistries.register(modEventBus);
         MenuRegistries.register(modEventBus);
         BiomeModifiers.register(modEventBus);

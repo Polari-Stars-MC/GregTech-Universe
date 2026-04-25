@@ -4,6 +4,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.polaris2023.gtu.core.GregtechUniverseCore;
@@ -39,6 +40,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         registerTinOre(BlockRegistries.GRAVEL_TIN_ORE.get(), "gravel_tin_ore");
         registerIronOre(BlockRegistries.GRAVEL_IRON_ORE.get(), "gravel_iron_ore");
         registerClayCauldrons();
+        registerTestMultiblockController();
     }
 
     private void registerCraftingTable(Block block, String name, ResourceLocation texture) {
@@ -63,14 +65,15 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     }
 
     private void registerClayCauldrons() {
-        ModelFile emptyModel = models().withExistingParent("block/clay_cauldron", mcLoc("block/cauldron"))
+        ModelFile emptyModel = models()
+                .withExistingParent("block/clay_cauldron", mcLoc("block/cauldron"))
                 .texture("particle", GregtechUniverseCore.id("block/clay_cauldron_side"))
                 .texture("top", GregtechUniverseCore.id("block/clay_cauldron_top"))
                 .texture("bottom", GregtechUniverseCore.id("block/clay_cauldron_bottom"))
                 .texture("side", GregtechUniverseCore.id("block/clay_cauldron_side"))
                 .texture("inside", GregtechUniverseCore.id("block/clay_cauldron_inner"));
-        simpleBlockWithItem(BlockRegistries.CLAY_CAULDRON.get(), emptyModel);
-
+        simpleBlock(BlockRegistries.CLAY_CAULDRON.get(), emptyModel);
+        itemModels().basicItem(BlockRegistries.CLAY_CAULDRON.asItem());
         ModelFile level1 = waterCauldronModel("block/water_clay_cauldron_level1", mcLoc("block/template_cauldron_level1"));
         ModelFile level2 = waterCauldronModel("block/water_clay_cauldron_level2", mcLoc("block/template_cauldron_level2"));
         ModelFile level3 = waterCauldronModel("block/water_clay_cauldron_full", mcLoc("block/template_cauldron_full"));
@@ -98,5 +101,14 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
                 .texture("bottom", GregtechUniverseCore.id("block/unfired_clay_cauldron_bottom"))
                 .texture("side", GregtechUniverseCore.id("block/unfired_clay_cauldron_side"))
                 .texture("inside", GregtechUniverseCore.id("block/unfired_clay_cauldron_inner"));
+    }
+
+    private void registerTestMultiblockController() {
+        ModelFile off = models().cubeAll("test_multiblock_controller", mcLoc("block/iron_block"));
+        ModelFile on = models().cubeAll("test_multiblock_controller_on", mcLoc("block/gold_block"));
+        getVariantBuilder(BlockRegistries.TEST_MULTIBLOCK_CONTROLLER.get())
+                .partialState().with(BlockStateProperties.LIT, false).modelForState().modelFile(off).addModel()
+                .partialState().with(BlockStateProperties.LIT, true).modelForState().modelFile(on).addModel();
+        itemModels().withExistingParent("test_multiblock_controller", modLoc("block/test_multiblock_controller"));
     }
 }

@@ -3,8 +3,14 @@ package org.polaris2023.gtu.core.datagen.glm;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
 import org.polaris2023.gtu.core.GregtechUniverseCore;
 import org.polaris2023.gtu.core.loot.GrassFiberModifier;
@@ -55,6 +61,7 @@ public class GregtechUniverseCoreLootModifierProvider extends GlobalLootModifier
                                 .build()
                 }
         ));
+
         add("gravel_flint", new GravelFlintModifier(
                 new LootItemCondition[] {
                         LootItemBlockStatePropertyCondition

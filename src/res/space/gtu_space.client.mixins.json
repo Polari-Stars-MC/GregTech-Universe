@@ -7,8 +7,7 @@
     "client.MixinReceivingLevelScreen",
     "client.MixinClientPacketListener",
     "client.MixinLevelRenderer",
-    "client.MixinGameRenderer",
-    "MixinClientChunkCacheEarthProjection"
+    "client.MixinGameRenderer"
 
   ],
   "injectors": {

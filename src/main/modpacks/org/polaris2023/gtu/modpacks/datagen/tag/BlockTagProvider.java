@@ -9,6 +9,7 @@ import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.polaris2023.gtu.core.init.tag.BlockTags;
 import org.polaris2023.gtu.modpacks.GregtechUniverseModPacks;
 import org.polaris2023.gtu.modpacks.init.BlockRegistries;
 
@@ -34,5 +35,7 @@ public class BlockTagProvider extends BlockTagsProvider {
         tag.addTag(net.minecraft.tags.BlockTags.NEEDS_DIAMOND_TOOL);
         tag.addTag(net.minecraft.tags.BlockTags.NEEDS_IRON_TOOL);
         tag.addTag(net.minecraft.tags.BlockTags.NEEDS_STONE_TOOL);
+        IntrinsicTagAppender<Block> place = tag(BlockTags.PLACE);
+        place.add(Blocks.GRAVEL);
     }
 }

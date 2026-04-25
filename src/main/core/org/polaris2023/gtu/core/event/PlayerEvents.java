@@ -4,21 +4,29 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import org.polaris2023.gtu.core.GregtechUniverseCore;
 import org.polaris2023.gtu.core.block.ClayCauldronInteractions;
+import org.polaris2023.gtu.core.init.AttachmentRegistries;
 import org.polaris2023.gtu.core.init.BlockRegistries;
 import org.polaris2023.gtu.core.init.ItemRegistries;
+import org.polaris2023.gtu.core.init.ModProperties;
+import org.polaris2023.gtu.core.init.tag.BlockTags;
 
 @EventBusSubscriber(modid = GregtechUniverseCore.MOD_ID)
 public class PlayerEvents {
@@ -50,6 +58,22 @@ public class PlayerEvents {
             stack.shrink(1);
 
             level.addFreshEntity(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), result));
+        }
+    }
+
+    @SubscribeEvent
+    public static void place(BlockEvent.EntityPlaceEvent event) {
+        BlockState placedBlock = event.getPlacedBlock();
+        if (!placedBlock.is(BlockTags.PLACE) || !placedBlock.hasProperty(ModProperties.PLACE)) {
+            return;
+        }
+        if (placedBlock.getValue(ModProperties.PLACE)) {
+            return;
+        }
+
+        BlockState updatedState = placedBlock.setValue(ModProperties.PLACE, true);
+        if (updatedState != placedBlock) {
+            event.getLevel().setBlock(event.getPos(), updatedState, Block.UPDATE_ALL);
         }
     }
 

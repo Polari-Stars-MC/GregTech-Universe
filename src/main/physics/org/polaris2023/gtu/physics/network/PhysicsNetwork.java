@@ -5,11 +5,14 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import org.polaris2023.gtu.physics.GregtechUniversePhysics;
+
+import java.net.CacheRequest;
 
 /**
  * 网络包注册
  */
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = GregtechUniversePhysics.MOD_ID)
 public class PhysicsNetwork {
 
     @SubscribeEvent

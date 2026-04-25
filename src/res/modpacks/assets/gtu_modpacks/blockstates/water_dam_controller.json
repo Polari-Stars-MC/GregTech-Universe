@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model": "gtu_modpacks:block/machine/water_dam_controller" },
-    "facing=east": { "model": "gtu_modpacks:block/machine/water_dam_controller", "y": 90 },
-    "facing=south": { "model": "gtu_modpacks:block/machine/water_dam_controller", "y": 180 },
-    "facing=west": { "model": "gtu_modpacks:block/machine/water_dam_controller", "y": 270 }
-  }
-}

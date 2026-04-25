@@ -11,6 +11,7 @@ import org.polaris2023.gtu.core.block.ClayCauldronBlock;
 import org.polaris2023.gtu.core.GregtechUniverseCore;
 import org.polaris2023.gtu.core.block.FlintCraftingTableBlock;
 import org.polaris2023.gtu.core.block.GravelOreBlock;
+import org.polaris2023.gtu.core.block.TestMultiblockControllerBlock;
 import org.polaris2023.gtu.core.block.WaterClayCauldronBlock;
 
 public class BlockRegistries {
@@ -59,6 +60,14 @@ public class BlockRegistries {
                     BlockBehaviour.Properties.ofLegacyCopy(Blocks.WATER_CAULDRON)
                             .sound(SoundType.DECORATED_POT)
                             .strength(1.8F)
+            );
+    public static final DeferredBlock<TestMultiblockControllerBlock> TEST_MULTIBLOCK_CONTROLLER =
+            REGISTER.registerBlock(
+                    "test_multiblock_controller",
+                    TestMultiblockControllerBlock::new,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)
+                            .strength(3.0F)
+                            .requiresCorrectToolForDrops()
             );
 
     public static void register(IEventBus bus) {

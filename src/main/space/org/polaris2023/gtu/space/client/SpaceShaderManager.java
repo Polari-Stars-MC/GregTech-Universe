@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.function.Supplier;
 
-@EventBusSubscriber(modid = GregtechUniverseSpace.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = GregtechUniverseSpace.MOD_ID, value = Dist.CLIENT)
 public final class SpaceShaderManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpaceShaderManager.class);
 
