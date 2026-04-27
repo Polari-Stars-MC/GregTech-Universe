@@ -1,7 +1,6 @@
 package org.polaris2023.gtu.core.api.multiblock.storage;
 
 import net.minecraft.server.level.ServerLevel;
-import org.polaris2023.gtu.core.api.multiblock.StructureIds;
 import org.polaris2023.gtu.core.api.multiblock.network.StructureMemberType;
 import org.polaris2023.gtu.core.api.multiblock.network.StructureNetwork;
 import org.polaris2023.gtu.core.api.multiblock.runtime.execution.StructureDelta;
@@ -17,13 +16,15 @@ import java.util.UUID;
 public class StructureNetworkManager {
     private static final Map<ServerLevel, StructureNetworkManager> INSTANCES = new IdentityHashMap<>();
 
+    private final StructureNetworkFileStorage storage;
     private final StructureSavedData savedData;
     private final StructureIndex index;
     private final StructureRuntime runtime;
     private final StructureRuntimeThread runtimeThread;
 
-    private StructureNetworkManager(StructureSavedData savedData) {
-        this.savedData = savedData;
+    private StructureNetworkManager(StructureNetworkFileStorage storage) {
+        this.storage = storage;
+        this.savedData = storage.data();
         this.index = new StructureIndex();
         rebuildIndex();
         this.runtime = new StructureRuntime(savedData.networks(), index);
@@ -32,8 +33,7 @@ public class StructureNetworkManager {
 
     public static synchronized StructureNetworkManager get(ServerLevel level) {
         return INSTANCES.computeIfAbsent(level, serverLevel -> {
-            StructureSavedData savedData = serverLevel.getDataStorage().computeIfAbsent(StructureSavedData.FACTORY, StructureIds.SAVED_DATA_NAME);
-            return new StructureNetworkManager(savedData);
+            return new StructureNetworkManager(StructureNetworkFileStorage.load(serverLevel));
         });
     }
 
@@ -67,6 +67,7 @@ public class StructureNetworkManager {
         StructureNetwork network = new StructureNetwork(id, machineId, controllerPos);
         savedData.put(network);
         index.put(controllerPos, id);
+        storage.saveIfDirty();
         return network;
     }
 
@@ -78,6 +79,7 @@ public class StructureNetworkManager {
         network.addMember(pos, type);
         savedData.setDirty();
         index.put(pos, networkId);
+        storage.saveIfDirty();
     }
 
     public void removeMember(long pos) {
@@ -92,6 +94,7 @@ public class StructureNetworkManager {
         network.removeMember(pos);
         index.remove(pos);
         savedData.setDirty();
+        storage.saveIfDirty();
     }
 
     public UUID findNetworkId(long pos) {
@@ -112,7 +115,12 @@ public class StructureNetworkManager {
     }
 
     public void stopRuntime() {
+        storage.saveIfDirty();
         runtimeThread.stop();
+    }
+
+    public void saveIfDirty() {
+        storage.saveIfDirty();
     }
 
     private void rebuildIndex() {

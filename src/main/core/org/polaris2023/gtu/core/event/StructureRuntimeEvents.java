@@ -8,13 +8,26 @@ import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.polaris2023.gtu.core.GregtechUniverseCore;
 import org.polaris2023.gtu.core.api.multiblock.storage.StructureNetworkManager;
+import org.polaris2023.gtu.core.api.multiblock.storage.StructureStoragePaths;
+
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @EventBusSubscriber(modid = GregtechUniverseCore.MOD_ID)
 public class StructureRuntimeEvents {
     @SubscribeEvent
     public static void onServerStarting(ServerStartingEvent event) {
+
         for (ServerLevel level : event.getServer().getAllLevels()) {
+            Path levelPath = StructureStoragePaths.getLevelDirectory(level);
+            try {
+                Files.createDirectories(levelPath);
+            } catch (IOException ignored) {}
             StructureNetworkManager manager = StructureNetworkManager.get(level);
+
+            manager.saveIfDirty();
             String threadName = "gtu-structure-runtime-" + level.dimension().location();
             manager.startRuntime(threadName.replace(':', '_'));
         }
@@ -25,6 +38,7 @@ public class StructureRuntimeEvents {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             StructureNetworkManager manager = StructureNetworkManager.get(level);
             manager.flushRuntimeDelta(manager.runtime().drainOutput());
+            manager.saveIfDirty();
         }
     }
 

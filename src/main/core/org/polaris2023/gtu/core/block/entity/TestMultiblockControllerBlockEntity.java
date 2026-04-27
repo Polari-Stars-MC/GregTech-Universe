@@ -24,6 +24,7 @@ import org.polaris2023.gtu.core.api.multiblock.runtime.access.StructureMemberSto
 import org.polaris2023.gtu.core.api.multiblock.runtime.cache.StructureTemplateServices;
 import org.polaris2023.gtu.core.api.multiblock.runtime.check.StructureValidationResult;
 import org.polaris2023.gtu.core.init.BlockEntityRegistries;
+import org.polaris2023.gtu.core.init.BlockRegistries;
 import org.polaris2023.gtu.core.menu.TestMultiblockMenu;
 
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class TestMultiblockControllerBlockEntity extends BlockEntity implements 
         StructureValidationResult result = StructureTemplateServices.validation().validate(
                 level,
                 worldPosition,
-                GregtechUniverseCore.id("test_multiblock"),
+                BlockRegistries.TEST_MULTIBLOCK_CONTROLLER.getId(),
                 level.getGameTime()
         );
 
@@ -76,7 +77,7 @@ public class TestMultiblockControllerBlockEntity extends BlockEntity implements 
     private void syncNetwork(ServerLevel level, UUID id, StructureValidationResult result) {
         StructureNetwork network = StructureAccess.manager(level).networks().get(id);
         if (network == null) {
-            network = StructureAccess.manager(level).createNetwork(id, GregtechUniverseCore.id("test_multiblock"), worldPosition.asLong());
+            network = StructureAccess.manager(level).createNetwork(id, BlockRegistries.TEST_MULTIBLOCK_CONTROLLER.getId(), worldPosition.asLong());
         }
 
         clearMembers(level, network);
@@ -89,7 +90,7 @@ public class TestMultiblockControllerBlockEntity extends BlockEntity implements 
         }
 
         CompiledStructureTemplate template = StructureTemplateServices.cache().getOrCompile(
-                GregtechUniverseCore.id("test_multiblock"),
+                BlockRegistries.TEST_MULTIBLOCK_CONTROLLER.getId(),
                 level.getGameTime()
         );
 

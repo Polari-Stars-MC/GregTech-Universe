@@ -26,6 +26,7 @@ public class BlockLoot extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
+        dropSelf(BlockRegistries.TEST_MULTIBLOCK_CONTROLLER.get());
         dropSelf(BlockRegistries.FLINT_CRAFTING_TABLE.get());
         dropSelf(BlockRegistries.STONE_CRAFTING_TABLE.get());
         dropSelf(BlockRegistries.CLAY_CAULDRON.get());

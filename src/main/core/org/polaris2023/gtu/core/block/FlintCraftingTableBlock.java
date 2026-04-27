@@ -17,9 +17,9 @@ import net.minecraft.world.level.block.CraftingTableBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import org.polaris2023.gtu.core.GregtechUniverseCore;
 import org.polaris2023.gtu.core.api.multiblock.runtime.cache.StructureTemplateServices;
 import org.polaris2023.gtu.core.api.multiblock.runtime.check.StructureValidationResult;
+import org.polaris2023.gtu.core.init.BlockRegistries;
 import org.polaris2023.gtu.core.menu.FlintCraftingMenu;
 
 public class FlintCraftingTableBlock extends CraftingTableBlock {
@@ -50,7 +50,7 @@ public class FlintCraftingTableBlock extends CraftingTableBlock {
             StructureValidationResult result = StructureTemplateServices.validation().validate(
                     level,
                     pos,
-                    GregtechUniverseCore.id("test_multiblock"),
+                    BlockRegistries.TEST_MULTIBLOCK_CONTROLLER.getId(),
                     level.getGameTime()
             );
             serverPlayer.displayClientMessage(Component.literal(

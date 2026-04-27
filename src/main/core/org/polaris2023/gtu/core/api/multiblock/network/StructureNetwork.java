@@ -21,6 +21,7 @@ public class StructureNetwork {
     private final Set<Long> outputParts;
     private final Set<Long> hatchParts;
     private final Set<Long> brokenPositions;
+    private Runnable mutationListener = () -> {};
 
     public StructureNetwork(UUID id, ResourceLocation machineId, long controllerPos) {
         this.id = id;
@@ -55,6 +56,7 @@ public class StructureNetwork {
 
     public void setControllerPos(long controllerPos) {
         this.controllerPos = controllerPos;
+        mutationListener.run();
     }
 
     public boolean formed() {
@@ -63,6 +65,7 @@ public class StructureNetwork {
 
     public void setFormed(boolean formed) {
         this.formed = formed;
+        mutationListener.run();
     }
 
     public boolean dirty() {
@@ -71,6 +74,7 @@ public class StructureNetwork {
 
     public void setDirty(boolean dirty) {
         this.dirty = dirty;
+        mutationListener.run();
     }
 
     public boolean removed() {
@@ -79,6 +83,7 @@ public class StructureNetwork {
 
     public void setRemoved(boolean removed) {
         this.removed = removed;
+        mutationListener.run();
     }
 
     public Direction facing() {
@@ -87,6 +92,7 @@ public class StructureNetwork {
 
     public void setFacing(Direction facing) {
         this.facing = facing;
+        mutationListener.run();
     }
 
     public Set<Long> members() {
@@ -122,6 +128,7 @@ public class StructureNetwork {
             default -> {
             }
         }
+        mutationListener.run();
     }
 
     public void removeMember(long pos) {
@@ -130,12 +137,14 @@ public class StructureNetwork {
         outputParts.remove(pos);
         hatchParts.remove(pos);
         brokenPositions.remove(pos);
+        mutationListener.run();
     }
 
     public void markBroken(long pos) {
         brokenPositions.add(pos);
         dirty = true;
         formed = false;
+        mutationListener.run();
     }
 
     public boolean isInput(long pos) {
@@ -144,5 +153,9 @@ public class StructureNetwork {
 
     public boolean isOutput(long pos) {
         return outputParts.contains(pos);
+    }
+
+    public void setMutationListener(Runnable mutationListener) {
+        this.mutationListener = mutationListener == null ? () -> {} : mutationListener;
     }
 }

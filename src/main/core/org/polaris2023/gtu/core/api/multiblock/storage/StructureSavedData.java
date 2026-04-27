@@ -1,45 +1,46 @@
 package org.polaris2023.gtu.core.api.multiblock.storage;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.saveddata.SavedData;
-import org.polaris2023.gtu.core.api.multiblock.StructureIds;
-import org.polaris2023.gtu.core.api.multiblock.network.StructureMemberType;
 import org.polaris2023.gtu.core.api.multiblock.network.StructureNetwork;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
-public class StructureSavedData extends SavedData {
-    public static final Factory<StructureSavedData> FACTORY = new Factory<>(StructureSavedData::new, StructureSavedData::load);
+public class StructureSavedData {
+    private static final int FORMAT_VERSION = 1;
 
     private final Map<UUID, StructureNetwork> networks = new HashMap<>();
+    private boolean dirty;
 
-    public static StructureSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
+    public static StructureSavedData load(DataInput input) throws IOException {
         StructureSavedData data = new StructureSavedData();
-        ListTag networksTag = tag.getList("networks", Tag.TAG_COMPOUND);
-        for (Tag networkTag : networksTag) {
-            if (!(networkTag instanceof CompoundTag compound)) {
-                continue;
-            }
-            UUID id = compound.getUUID("id");
-            ResourceLocation machineId = ResourceLocation.parse(compound.getString("machine_id"));
-            long controllerPos = compound.getLong("controller_pos");
+        int version = input.readInt();
+        if (version != FORMAT_VERSION) {
+            throw new IOException("Unsupported structure data version: " + version);
+        }
+        int networkCount = input.readInt();
+        for (int i = 0; i < networkCount; i++) {
+            UUID id = new UUID(input.readLong(), input.readLong());
+            ResourceLocation machineId = ResourceLocation.parse(input.readUTF());
+            long controllerPos = input.readLong();
             StructureNetwork network = new StructureNetwork(id, machineId, controllerPos);
-            network.setFormed(compound.getBoolean("formed"));
-            network.setDirty(compound.getBoolean("dirty"));
-            network.setRemoved(compound.getBoolean("removed"));
-            network.setFacing(net.minecraft.core.Direction.byName(compound.getString("facing")));
-            readLongSet(compound.getList("members", Tag.TAG_LONG), network.members());
-            readLongSet(compound.getList("inputs", Tag.TAG_LONG), network.inputParts());
-            readLongSet(compound.getList("outputs", Tag.TAG_LONG), network.outputParts());
-            readLongSet(compound.getList("hatches", Tag.TAG_LONG), network.hatchParts());
-            readLongSet(compound.getList("broken", Tag.TAG_LONG), network.brokenPositions());
-            data.networks.put(id, network);
+            network.setFormed(input.readBoolean());
+            network.setDirty(input.readBoolean());
+            network.setRemoved(input.readBoolean());
+            network.setFacing(Direction.from3DDataValue(input.readInt()));
+            readLongSet(input, network.members());
+            readLongSet(input, network.inputParts());
+            readLongSet(input, network.outputParts());
+            readLongSet(input, network.hatchParts());
+            readLongSet(input, network.brokenPositions());
+            data.track(network);
+            data.networks.put(network.id(), network);
         }
         return data;
     }
@@ -49,6 +50,7 @@ public class StructureSavedData extends SavedData {
     }
 
     public void put(StructureNetwork network) {
+        track(network);
         networks.put(network.id(), network);
         setDirty();
     }
@@ -58,42 +60,53 @@ public class StructureSavedData extends SavedData {
         setDirty();
     }
 
-    @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
-        ListTag networksTag = new ListTag();
+    public void save(DataOutput output) throws IOException {
+        output.writeInt(FORMAT_VERSION);
+        output.writeInt(networks.size());
         for (StructureNetwork network : networks.values()) {
-            CompoundTag networkTag = new CompoundTag();
-            networkTag.putUUID("id", network.id());
-            networkTag.putString("machine_id", network.machineId().toString());
-            networkTag.putLong("controller_pos", network.controllerPos());
-            networkTag.putBoolean("formed", network.formed());
-            networkTag.putBoolean("dirty", network.dirty());
-            networkTag.putBoolean("removed", network.removed());
-            networkTag.putString("facing", network.facing().getSerializedName());
-            networkTag.put("members", writeLongSet(network.members()));
-            networkTag.put("inputs", writeLongSet(network.inputParts()));
-            networkTag.put("outputs", writeLongSet(network.outputParts()));
-            networkTag.put("hatches", writeLongSet(network.hatchParts()));
-            networkTag.put("broken", writeLongSet(network.brokenPositions()));
-            networksTag.add(networkTag);
+            output.writeLong(network.id().getMostSignificantBits());
+            output.writeLong(network.id().getLeastSignificantBits());
+            output.writeUTF(network.machineId().toString());
+            output.writeLong(network.controllerPos());
+            output.writeBoolean(network.formed());
+            output.writeBoolean(network.dirty());
+            output.writeBoolean(network.removed());
+            output.writeInt(network.facing().get3DDataValue());
+            writeLongSet(output, network.members());
+            writeLongSet(output, network.inputParts());
+            writeLongSet(output, network.outputParts());
+            writeLongSet(output, network.hatchParts());
+            writeLongSet(output, network.brokenPositions());
         }
-        tag.put("networks", networksTag);
-        return tag;
     }
 
-    private static ListTag writeLongSet(Iterable<Long> values) {
-        ListTag listTag = new ListTag();
+    public void setDirty() {
+        dirty = true;
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void clearDirty() {
+        dirty = false;
+    }
+
+    private void track(StructureNetwork network) {
+        network.setMutationListener(this::setDirty);
+    }
+
+    private static void writeLongSet(DataOutput output, Set<Long> values) throws IOException {
+        output.writeInt(values.size());
         for (Long value : values) {
-            listTag.add(net.minecraft.nbt.LongTag.valueOf(value));
+            output.writeLong(value);
         }
-        return listTag;
     }
 
-    private static void readLongSet(ListTag listTag, java.util.Set<Long> target) {
-        for (Tag tag : listTag) {
-            if (tag instanceof net.minecraft.nbt.LongTag longTag) {
-                target.add(longTag.getAsLong());
-            }
+    private static void readLongSet(DataInput input, Set<Long> target) throws IOException {
+        int size = input.readInt();
+        for (int i = 0; i < size; i++) {
+            target.add(input.readLong());
         }
     }
 }
