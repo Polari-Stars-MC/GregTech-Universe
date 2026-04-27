@@ -13,6 +13,11 @@ public final class StructureValidator {
     }
 
     public static StructureValidationResult validate(LevelReader level, BlockPos controllerPos, CompiledStructureTemplate template) {
+        // Missing or empty definitions must never be treated as a formed multiblock.
+        if (template.totalRequired() <= 0) {
+            return new StructureValidationResult(false, false, false, 0, 0, Map.of());
+        }
+
         int matchedProbeCount = countMatches(level, controllerPos, template.quickProbeNodes(), null);
         boolean quickProbePassed = StructureQuickProbe.shouldRunFullCheck(matchedProbeCount, template.quickProbeNodes().size());
         if (!quickProbePassed) {

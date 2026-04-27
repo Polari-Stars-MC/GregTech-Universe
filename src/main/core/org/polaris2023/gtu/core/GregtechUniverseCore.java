@@ -5,7 +5,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.polaris2023.gtu.core.block.ClayCauldronInteractions;
-import org.polaris2023.gtu.core.api.multiblock.runtime.cache.StructureTemplateServices;
 import org.polaris2023.gtu.core.init.AttachmentRegistries;
 import org.polaris2023.gtu.core.init.BlockEntityRegistries;
 import org.polaris2023.gtu.core.init.BlockRegistries;
@@ -14,6 +13,7 @@ import org.polaris2023.gtu.core.init.CreativeTabRegistries;
 import org.polaris2023.gtu.core.init.GLMRegistries;
 import org.polaris2023.gtu.core.init.ItemRegistries;
 import org.polaris2023.gtu.core.init.MenuRegistries;
+import org.polaris2023.gtu.core.init.Registrykeys;
 
 @Mod(GregtechUniverseCore.MOD_ID)
 public class GregtechUniverseCore {
@@ -38,6 +38,7 @@ public class GregtechUniverseCore {
         BlockEntityRegistries.register(modBus);
         BlockRegistries.register(modBus);
         ItemRegistries.register(modBus);
+        Registrykeys.register(modBus);
         modBus.addListener(GregtechUniverseCore::commonSetup);
         modBus.addListener(ClayCauldronFluidRegistries::register);
         CreativeTabRegistries.register(modBus);
@@ -46,9 +47,6 @@ public class GregtechUniverseCore {
     }
 
     private static void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            ClayCauldronInteractions.bootstrap();
-            StructureTemplateServices.bootstrapDefaults();
-        });
+        event.enqueueWork(ClayCauldronInteractions::bootstrap);
     }
 }

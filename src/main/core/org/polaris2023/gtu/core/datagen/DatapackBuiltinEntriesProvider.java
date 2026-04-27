@@ -6,6 +6,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.polaris2023.gtu.core.GregtechUniverseCore;
+import org.polaris2023.gtu.core.api.multiblock.runtime.check.StructureDefinitionBootstrap;
+import org.polaris2023.gtu.core.init.Registrykeys;
 import org.polaris2023.gtu.core.worldgen.BiomeModifiers;
 import org.polaris2023.gtu.core.worldgen.ConfiguredFeatures;
 import org.polaris2023.gtu.core.worldgen.PlacedFeatures;
@@ -17,6 +19,7 @@ public class DatapackBuiltinEntriesProvider extends net.neoforged.neoforge.commo
     public DatapackBuiltinEntriesProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries,
                 new RegistrySetBuilder()
+                        .add(Registrykeys.DYNAMIC_STRUCTURE_TEMPLATE_REGISTRY_KEY, StructureDefinitionBootstrap::bootstrap)
                         .add(Registries.CONFIGURED_FEATURE, ConfiguredFeatures::bootstrap)
                         .add(Registries.PLACED_FEATURE, PlacedFeatures::bootstrap)
                         .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, BiomeModifiers::bootstrap)

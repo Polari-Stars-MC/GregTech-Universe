@@ -1,7 +1,5 @@
 package org.polaris2023.gtu.core.api.multiblock.runtime.cache;
 
-import org.polaris2023.gtu.core.api.multiblock.runtime.cache.StructureCacheService;
-import org.polaris2023.gtu.core.api.multiblock.runtime.check.StructureDefinitionBootstrap;
 import org.polaris2023.gtu.core.api.multiblock.runtime.check.StructureValidationService;
 import org.polaris2023.gtu.core.api.multiblock.runtime.check.StructureTemplateRegistry;
 
@@ -11,10 +9,6 @@ public final class StructureTemplateServices {
     private static final StructureValidationService VALIDATION = new StructureValidationService(CACHE);
 
     private StructureTemplateServices() {
-    }
-
-    public static void bootstrapDefaults() {
-        StructureDefinitionBootstrap.bootstrapDefaults(REGISTRY);
     }
 
     public static StructureTemplateRegistry registry() {

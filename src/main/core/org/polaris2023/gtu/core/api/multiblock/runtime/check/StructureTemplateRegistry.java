@@ -1,28 +1,23 @@
 package org.polaris2023.gtu.core.api.multiblock.runtime.check;
 
 import net.minecraft.resources.ResourceLocation;
-import org.polaris2023.gtu.core.api.multiblock.runtime.check.StructureNodeDefinition;
-import org.polaris2023.gtu.core.api.multiblock.runtime.check.StructureTemplateSource;
+import net.minecraft.world.level.Level;
+import org.polaris2023.gtu.core.init.Registrykeys;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class StructureTemplateRegistry implements StructureTemplateSource {
-    private final Map<ResourceLocation, Collection<StructureNodeDefinition>> definitions = new ConcurrentHashMap<>();
-
-    public void register(ResourceLocation machineId, Collection<StructureNodeDefinition> nodes) {
-        definitions.put(machineId, List.copyOf(nodes));
-    }
-
     public boolean contains(ResourceLocation machineId) {
-        return definitions.containsKey(machineId);
+        return false;
     }
 
     @Override
-    public Collection<StructureNodeDefinition> load(ResourceLocation machineId) {
-        Collection<StructureNodeDefinition> nodes = definitions.get(machineId);
-        return nodes == null ? List.of() : nodes;
+    public Collection<StructureNodeDefinition> load(Level level, ResourceLocation machineId) {
+        StructureTemplateDefinition definition = level.registryAccess()
+                .registry(Registrykeys.DYNAMIC_STRUCTURE_TEMPLATE_REGISTRY_KEY)
+                .map(registry -> registry.get(machineId))
+                .orElse(null);
+        return definition == null ? List.of() : definition.nodes();
     }
 }

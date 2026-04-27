@@ -2,7 +2,7 @@ package org.polaris2023.gtu.core.api.multiblock.runtime.check;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
 import org.polaris2023.gtu.core.api.multiblock.runtime.cache.StructureCacheService;
 
 public class StructureValidationService {
@@ -12,8 +12,8 @@ public class StructureValidationService {
         this.cacheService = cacheService;
     }
 
-    public StructureValidationResult validate(LevelReader level, BlockPos controllerPos, ResourceLocation machineId, long currentTick) {
-        CompiledStructureTemplate template = cacheService.getOrCompile(machineId, currentTick);
+    public StructureValidationResult validate(Level level, BlockPos controllerPos, ResourceLocation machineId, long currentTick) {
+        CompiledStructureTemplate template = cacheService.getOrCompile(level, machineId, currentTick);
         return StructureValidator.validate(level, controllerPos, template);
     }
 

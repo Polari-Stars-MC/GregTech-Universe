@@ -1,6 +1,7 @@
 package org.polaris2023.gtu.core.api.multiblock.runtime.cache;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import org.polaris2023.gtu.core.api.multiblock.runtime.check.CompiledStructureTemplate;
 import org.polaris2023.gtu.core.api.multiblock.runtime.check.StructureTemplateCompiler;
 import org.polaris2023.gtu.core.api.multiblock.runtime.check.StructureTemplateSource;
@@ -25,14 +26,14 @@ public class StructureCacheService {
         this.templateTtlTicks = templateTtlTicks;
     }
 
-    public CompiledStructureTemplate getOrCompile(ResourceLocation machineId, long currentTick) {
+    public CompiledStructureTemplate getOrCompile(Level level, ResourceLocation machineId, long currentTick) {
         CachedStructureTemplate cached = templateCache.get(machineId);
         if (cached != null) {
             templateCache.put(machineId, cached.touch(currentTick));
             return cached.template();
         }
 
-        CompiledStructureTemplate template = StructureTemplateCompiler.compile(machineId, templateSource.load(machineId));
+        CompiledStructureTemplate template = StructureTemplateCompiler.compile(machineId, templateSource.load(level, machineId));
         templateCache.put(machineId, new CachedStructureTemplate(template, currentTick));
         return template;
     }

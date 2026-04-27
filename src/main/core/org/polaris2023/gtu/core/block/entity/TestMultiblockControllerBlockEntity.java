@@ -90,6 +90,7 @@ public class TestMultiblockControllerBlockEntity extends BlockEntity implements 
         }
 
         CompiledStructureTemplate template = StructureTemplateServices.cache().getOrCompile(
+                level,
                 BlockRegistries.TEST_MULTIBLOCK_CONTROLLER.getId(),
                 level.getGameTime()
         );
