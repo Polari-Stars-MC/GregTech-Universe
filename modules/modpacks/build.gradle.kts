@@ -20,13 +20,13 @@ dependencies {
     implementation(project(":core"))
     localRuntime("dev.ftb.mods:ftb-quests-neoforge:2101.1.24")
     localRuntime("curse.maven:commandstructures-565119:6428806")
+    localRuntime("com.cosmichorizons.keplerian:cosmic-horizons-keplerian:0.1.0")
 
     implementation("curse.maven:lithostitched-936015:7832789")
     localRuntime("curse.maven:tectonic-686836:7903156")
     localRuntime("curse.maven:terralith-513688:6090387")
     // implementation("curse.maven:rhenium-1497566:7827201")
 
-//    implementation(project(":space"))
 //    implementation(project(":physics"))
 
 //    val system = DefaultNativePlatform.getCurrentOperatingSystem()

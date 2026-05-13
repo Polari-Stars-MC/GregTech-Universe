@@ -29,7 +29,7 @@ public abstract class MixinWaterFluid {
      * 原版值: 5 ticks
      */
     @Inject(method = "getTickDelay", at = @At("RETURN"), cancellable = true)
-    private void gtu_space$modifyTickDelay(LevelReader levelReader, CallbackInfoReturnable<Integer> cir) {
+    private void gtu_modpacks$modifyTickDelay(LevelReader levelReader, CallbackInfoReturnable<Integer> cir) {
         int waterSpeed = gtu_modpacks$getWaterSpeed(levelReader);
         if (waterSpeed <= 0) return;
         cir.setReturnValue(Math.max(1, cir.getReturnValue() - waterSpeed));
@@ -41,7 +41,7 @@ public abstract class MixinWaterFluid {
 //     * 值越小, 水流越远
 //     */
 //    @Inject(method = "getDropOff", at = @At("HEAD"), cancellable = true)
-//    private void gtu_space$modifyDropOff(CallbackInfoReturnable<Integer> cir) {
+//    private void gtu_modpacks$modifyDropOff(CallbackInfoReturnable<Integer> cir) {
 //        // 原版 1, 改为 0 让水流无限远 (或保持 1)
 //        cir.setReturnValue(1);
 //    }
