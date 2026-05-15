@@ -30,6 +30,8 @@ public class ConfiguredFeatures {
                 OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_TIN_ORE.get().defaultBlockState()),
                 OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_TIN_ORE.get().defaultBlockState()),
                 OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_IRON_ORE.get().defaultBlockState()),
+                OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_IRON_ORE.get().defaultBlockState()),
+                OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_IRON_ORE.get().defaultBlockState()),
                 OreConfiguration.target(gravelReplacement, BlockRegistries.GRAVEL_IRON_ORE.get().defaultBlockState())
         );
 

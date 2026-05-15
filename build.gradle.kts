@@ -117,7 +117,7 @@ allprojects {
                 programArguments.addAll(listOf(
                     "--mod", modId,
                     "--all",
-                    "--output", layout.buildDirectory.file("src/generated/").get().asFile.absolutePath,
+                    "--output", rootProject.file("src/generated/${project.name}").absolutePath,
                     "--existing", rootProject.file("src/res/${project.name}").absolutePath,
                 ))
             }
@@ -183,11 +183,11 @@ allprojects {
                 srcDir(rootProject.file("src/main/${project.name}"))
             }
             resources {
-                srcDir(layout.buildDirectory.file("src/generated/").get().asFile)
+                srcDir(rootProject.file("src/generated/${project.name}"))
                 srcDir(rootProject.file("src/res/${project.name}"))
                 srcDir(generateModMetadata.get())
                 exclude("**/*.bbmodel")
-                exclude("src/generated/**/.cache")
+                exclude("**/.cache/**")
             }
         }
     }

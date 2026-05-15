@@ -44,13 +44,14 @@ public class ItemRegistries {
     public static final DeferredItem<WaterClayBucketItem> WATER_CLAY_BUCKET =
             REGISTER.registerItem("water_clay_bucket", WaterClayBucketItem::new, new Item.Properties().stacksTo(1));
 
-
     public static final DeferredItem<BlockItem> STONE_CRAFTING_TABLE =
             REGISTER.registerSimpleBlockItem(BlockRegistries.STONE_CRAFTING_TABLE);
     public static final DeferredItem<BlockItem> GRAVEL_COPPER_ORE =
             REGISTER.registerSimpleBlockItem(BlockRegistries.GRAVEL_COPPER_ORE);
     public static final DeferredItem<BlockItem> GRAVEL_TIN_ORE =
             REGISTER.registerSimpleBlockItem(BlockRegistries.GRAVEL_TIN_ORE);
+    public static final DeferredItem<BlockItem> GRAVEL_IRON_ORE =
+            REGISTER.registerSimpleBlockItem(BlockRegistries.GRAVEL_IRON_ORE);
     public static final DeferredItem<BlockItem> FLINT_CRAFTING_TABLE =
             REGISTER.registerSimpleBlockItem(BlockRegistries.FLINT_CRAFTING_TABLE);
     public static final DeferredItem<BlockItem> CLAY_CAULDRON =

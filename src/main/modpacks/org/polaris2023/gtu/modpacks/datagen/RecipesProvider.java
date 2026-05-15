@@ -14,6 +14,8 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import org.polaris2023.gtu.core.init.ItemRegistries;
 import org.polaris2023.gtu.modpacks.GregtechUniverseModPacks;
+import org.polaris2023.gtu.modpacks.dam.DamTier;
+import org.polaris2023.gtu.modpacks.init.BlockRegistries;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -151,6 +153,94 @@ public class RecipesProvider extends RecipeProvider {
                 .unlockedBy("gtceu_unlock_fint_share_knife",has(ItemRegistries.FLINT_SHARD.get()))
                 .save(recipeOutput, GregtechUniverseModPacks.id("shaped/gtceu/flint_knife"));
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, gtceuItem(item, "copper_pickaxe"))
+                .pattern("III")
+                .pattern(" S ")
+                .pattern(" S ")
+                .define('I', Items.COPPER_INGOT)
+                .define('S', Items.STICK)
+                .unlockedBy("gtceu_unlock_copper_pickaxe", has(Items.COPPER_INGOT))
+                .save(recipeOutput, GregtechUniverseModPacks.id("shaped/gtceu/copper_pickaxe"));
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, gtceuItem(item, "copper_axe"))
+                .pattern("II ")
+                .pattern("IS ")
+                .pattern(" S ")
+                .define('I', Items.COPPER_INGOT)
+                .define('S', Items.STICK)
+                .unlockedBy("gtceu_unlock_copper_axe", has(Items.COPPER_INGOT))
+                .save(recipeOutput, GregtechUniverseModPacks.id("shaped/gtceu/copper_axe"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, gtceuItem(item, "copper_hoe"))
+                .pattern("II ")
+                .pattern(" S ")
+                .pattern(" S ")
+                .define('I', Items.COPPER_INGOT)
+                .define('S', Items.STICK)
+                .unlockedBy("gtceu_unlock_copper_hoe", has(Items.COPPER_INGOT))
+                .save(recipeOutput, GregtechUniverseModPacks.id("shaped/gtceu/copper_hoe"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, gtceuItem(item, "copper_sword"))
+                .pattern(" I ")
+                .pattern(" I ")
+                .pattern(" S ")
+                .define('I', Items.COPPER_INGOT)
+                .define('S', Items.STICK)
+                .unlockedBy("gtceu_unlock_copper_sword", has(Items.COPPER_INGOT))
+                .save(recipeOutput, GregtechUniverseModPacks.id("shaped/gtceu/copper_sword"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, gtceuItem(item, "copper_shovel"))
+                .pattern(" I ")
+                .pattern(" S ")
+                .pattern(" S ")
+                .define('I', Items.COPPER_INGOT)
+                .define('S', Items.STICK)
+                .unlockedBy("gtceu_unlock_copper_shovel", has(Items.COPPER_INGOT))
+                .save(recipeOutput, GregtechUniverseModPacks.id("shaped/gtceu/copper_shovel"));
+
+        Item createShaft = registryItem(item, "create", "shaft");
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, BlockRegistries.DAM_SHAFT.get())
+                .pattern("SSS")
+                .pattern("SSS")
+                .pattern("SSS")
+                .define('S', createShaft)
+                .unlockedBy("gtu_modpacks_unlock_create_shaft", has(createShaft))
+                .save(recipeOutput);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, BlockRegistries.WATER_DAM_CONTROLLER.get())
+                .pattern("SSS")
+                .pattern("PDP")
+                .pattern("PPP")
+                .define('S', Items.STONE_BRICKS)
+                .define('P', gtceuItem(item, "treated_wood_planks"))
+                .define('D', BlockRegistries.DAM_SHAFT.get())
+                .unlockedBy("gtu_modpacks_unlock_dam_shaft", has(BlockRegistries.DAM_SHAFT.get()))
+                .save(recipeOutput);
+
+        for (DamTier tier : DamTier.values()) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, BlockRegistries.getStressHatchByTier(tier).get())
+                    .pattern("DDD")
+                    .pattern("DCD")
+                    .pattern("DDD")
+                    .define('D', BlockRegistries.DAM_SHAFT.get())
+                    .define('C', tier.getCasingBlock())
+                    .unlockedBy("gtu_modpacks_unlock_dam_shaft", has(BlockRegistries.DAM_SHAFT.get()))
+                    .save(recipeOutput);
+        }
     }
+
+    private static Item gtceuItem(DefaultedRegistry<Item> items, String path) {
+        return registryItem(items, "gtceu", path);
+    }
+
+    private static Item registryItem(DefaultedRegistry<Item> items, String namespace, String path) {
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, path);
+        Item item = items.get(id);
+        if (item == Items.AIR) {
+            throw new IllegalStateException("Missing item: " + id);
+        }
+        return item;
+    }
+
 }

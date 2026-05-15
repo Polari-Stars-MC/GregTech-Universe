@@ -108,6 +108,14 @@
 				"17F22E69962911B3"
 			]
 			id: "6625912C131A8CC2"
+			rewards: [{
+				id: "12FBA3099CA91AEF"
+				item: {
+					count: 1
+					id: "gtceu:neutronium_knife"
+				}
+				type: "item"
+			}]
 			tasks: [{
 				id: "2CDE3E9EC5000963"
 				item: { count: 1, id: "farmersdelight:flint_knife" }
@@ -118,7 +126,6 @@
 		}
 		{
 			dependencies: [
-				"17F22E69962911B3"
 				"70B1146D820B4C5F"
 				"4C65AAA2A86A04B1"
 				"79B572D8F12A08DC"
@@ -184,20 +191,13 @@
 				type: "xp"
 				xp: 100
 			}]
-			tasks: [
-				{
-					id: "1AA7950B11E8B36E"
-					item: { count: 1, id: "gtu_core:gravely_iron" }
-					type: "item"
-				}
-				{
-					id: "2C15EFF7D537CD90"
-					item: { count: 1, id: "gtu_core:gravely_copper" }
-					type: "item"
-				}
-			]
+			tasks: [{
+				id: "2C15EFF7D537CD90"
+				item: { count: 1, id: "gtu_core:gravely_copper" }
+				type: "item"
+			}]
 			x: 4.5d
-			y: -1.5d
+			y: -0.5d
 		}
 		{
 			dependencies: ["2BCF18F0AE6EF29F"]
@@ -279,20 +279,356 @@
 				"1CABADF864BE3B17"
 			]
 			id: "3AEFF0D86B995012"
+			tasks: [{
+				id: "7075478039C9FDF8"
+				item: { count: 1, id: "gtu_core:washed_copper_concentrate" }
+				type: "item"
+			}]
+			x: 7.5d
+			y: 3.5d
+		}
+		{
+			dependencies: ["3AEFF0D86B995012"]
+			id: "4CD5F0CC3D41B545"
+			rewards: [{
+				count: 16
+				id: "4948678D562AD7DA"
+				item: {
+					count: 1
+					id: "minecraft:copper_ingot"
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "6D372EB87DD5B932"
+				item: { count: 1, id: "minecraft:copper_ingot" }
+				type: "item"
+			}]
+			x: 3.0d
+			y: 3.5d
+		}
+		{
+			dependencies: ["4CD5F0CC3D41B545"]
+			id: "75125F3AAC86906C"
+			rewards: [{
+				id: "159D84BD52C828AB"
+				item: {
+					components: {
+						"gtceu:energy_content": {
+							charge: 1000000000L
+							discharge_mode: 0b
+							infinite: 0b
+							max_charge: 1000000000L
+						}
+					}
+					count: 1
+					id: "gtceu:prospector.luv"
+				}
+				type: "item"
+			}]
 			tasks: [
 				{
-					id: "7D75757B5536AC96"
-					item: { count: 1, id: "gtu_core:washed_tin_concentrate" }
+					id: "28E26F2E196E9991"
+					item: { count: 1, id: "gtceu:copper_pickaxe" }
 					type: "item"
 				}
 				{
-					id: "7075478039C9FDF8"
-					item: { count: 1, id: "gtu_core:washed_copper_concentrate" }
+					id: "6DA5C589CA2D7A10"
+					item: { count: 1, id: "gtceu:copper_shovel" }
+					type: "item"
+				}
+				{
+					id: "50CCAFE06A09AD4E"
+					item: { count: 1, id: "gtceu:copper_axe" }
+					type: "item"
+				}
+				{
+					id: "3F7BA43C01E7F058"
+					item: { count: 1, id: "gtceu:copper_sword" }
+					type: "item"
+				}
+				{
+					id: "1EDBC2ED6E71B4AD"
+					item: { count: 1, id: "gtceu:copper_hoe" }
+					type: "item"
+				}
+			]
+			x: -0.5d
+			y: 3.5d
+		}
+		{
+			dependencies: ["75125F3AAC86906C"]
+			id: "3640DE28F81BC89C"
+			rewards: [{
+				count: 128
+				id: "65E79BF612713AED"
+				item: {
+					count: 1
+					id: "minecraft:iron_ingot"
+				}
+				type: "item"
+			}]
+			tasks: [{
+				count: 64L
+				id: "026D0F79396F925F"
+				item: { count: 1, id: "minecraft:iron_ingot" }
+				type: "item"
+			}]
+			x: -0.5d
+			y: 6.0d
+		}
+		{
+			dependencies: ["3640DE28F81BC89C"]
+			id: "2EF01B58F57CD3F2"
+			rewards: [{
+				id: "61AD56D32DE42AF6"
+				item: {
+					count: 1
+					id: "gtceu:neutronium_hammer"
+				}
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "4FADA2D5308276C2"
+					item: { count: 1, id: "gtceu:iron_hammer" }
+					type: "item"
+				}
+				{
+					id: "66DB8EDF81FFE92D"
+					item: { count: 1, id: "gtceu:iron_saw" }
+					type: "item"
+				}
+				{
+					id: "6F0A317FACFB53DC"
+					item: { count: 1, id: "gtceu:iron_file" }
+					type: "item"
+				}
+				{
+					id: "78A3EC424FE36270"
+					item: { count: 1, id: "gtceu:iron_screwdriver" }
+					type: "item"
+				}
+				{
+					id: "7E996573A24A92A1"
+					item: { count: 1, id: "gtceu:iron_wrench" }
+					type: "item"
+				}
+				{
+					id: "6DDB5BF0AD45E70D"
+					item: { count: 1, id: "gtceu:iron_wire_cutter" }
+					type: "item"
+				}
+				{
+					id: "52FCC02E71D47C7A"
+					item: { count: 1, id: "gtceu:wood_mallet" }
+					type: "item"
+				}
+			]
+			x: 3.0d
+			y: 6.0d
+		}
+		{
+			dependencies: ["75125F3AAC86906C"]
+			id: "4FCC5FE0BEE31E2E"
+			tasks: [
+				{
+					id: "130FD6229ECF2A63"
+					item: { count: 1, id: "minecraft:clay_ball" }
+					type: "item"
+				}
+				{
+					id: "74EC3B81596626F3"
+					item: { count: 1, id: "minecraft:sand" }
+					type: "item"
+				}
+			]
+			x: -3.5d
+			y: 3.5d
+		}
+		{
+			dependencies: ["2EF01B58F57CD3F2"]
+			id: "07F8CD467261F893"
+			tasks: [{
+				id: "68293AC99B2090FE"
+				item: { count: 1, id: "create:iron_sheet" }
+				type: "item"
+			}]
+			x: -0.5d
+			y: 9.0d
+		}
+		{
+			dependencies: [
+				"07F8CD467261F893"
+				"6AFAD8FF19AB4F9C"
+			]
+			id: "088BCB5541E43971"
+			tasks: [
+				{
+					id: "6AA793266CDC170D"
+					item: { count: 1, id: "gtceu:coke_oven_bricks" }
+					type: "item"
+				}
+				{
+					id: "75124A7A2BF30377"
+					item: { count: 1, id: "gtceu:coke_oven" }
+					type: "item"
+				}
+			]
+			x: -3.5d
+			y: 9.0d
+		}
+		{
+			dependencies: [
+				"4FCC5FE0BEE31E2E"
+				"3EBC20BD452AB832"
+			]
+			id: "6AFAD8FF19AB4F9C"
+			rewards: [{
+				count: 64
+				id: "2ECC13D321480F9D"
+				item: {
+					count: 1
+					id: "gtceu:coke_oven_brick"
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "1323101E88D06062"
+				item: { count: 1, id: "gtceu:compressed_coke_clay" }
+				type: "item"
+			}]
+			x: -3.5d
+			y: 6.0d
+		}
+		{
+			dependencies: ["14F3E474E48ABFA2"]
+			id: "3EBC20BD452AB832"
+			tasks: [{
+				id: "36F50C5C581BD392"
+				item: { count: 1, id: "gtceu:brick_wooden_form" }
+				type: "item"
+			}]
+			x: -6.0d
+			y: 6.0d
+		}
+		{
+			id: "14F3E474E48ABFA2"
+			tasks: [{
+				id: "77033F11B85264AC"
+				item: { count: 1, id: "gtceu:empty_wooden_form" }
+				type: "item"
+			}]
+			x: -6.0d
+			y: 3.5d
+		}
+		{
+			dependencies: ["088BCB5541E43971"]
+			id: "3F798FD1B300D20A"
+			tasks: [{
+				id: "7EB73D88CBCCE69A"
+				item: { count: 1, id: "gtceu:creosote_bucket" }
+				type: "item"
+			}]
+			x: -3.5d
+			y: 11.5d
+		}
+		{
+			dependencies: ["3F798FD1B300D20A"]
+			id: "0867C2ED62490A50"
+			tasks: [{
+				count: 64L
+				id: "4386868E4745C11B"
+				item: { count: 1, id: "gtceu:treated_wood_planks" }
+				type: "item"
+			}]
+			x: -0.5d
+			y: 11.5d
+		}
+		{
+			id: "7C8B70EB231A9F0B"
+			tasks: [
+				{
+					count: 64L
+					id: "1C34AF82A6D95B3F"
+					item: { count: 1, id: "minecraft:andesite" }
+					type: "item"
+				}
+				{
+					count: 64L
+					id: "1627F58A53975CF7"
+					item: { count: 1, id: "minecraft:iron_nugget" }
+					type: "item"
+				}
+			]
+			x: 12.0d
+			y: -0.5d
+		}
+		{
+			dependencies: ["7C8B70EB231A9F0B"]
+			id: "0766ED8285EBBC84"
+			tasks: [{
+				count: 16L
+				id: "0C9EF8E9E1C675E6"
+				item: { count: 1, id: "create:andesite_alloy" }
+				type: "item"
+			}]
+			x: 16.5d
+			y: -0.5d
+		}
+		{
+			dependencies: ["0766ED8285EBBC84"]
+			id: "226DE582421A207B"
+			tasks: [{
+				id: "0F4B39533CA4C29A"
+				item: { count: 1, id: "create:shaft" }
+				type: "item"
+			}]
+			x: 16.5d
+			y: 3.5d
+		}
+		{
+			dependencies: ["226DE582421A207B"]
+			id: "434F6BE1E40599EC"
+			tasks: [{
+				id: "21BF42C57FDD103D"
+				item: { count: 1, id: "gtu_modpacks:dam_shaft" }
+				type: "item"
+			}]
+			x: 12.0d
+			y: 3.5d
+		}
+		{
+			id: "292BD296BFEE267A"
+			tasks: [
+				{
+					id: "5181CA0A7552B304"
+					item: { count: 1, id: "minecraft:stone" }
+					type: "item"
+				}
+				{
+					id: "721CB055162A8B51"
+					item: { count: 1, id: "minecraft:stone_bricks" }
 					type: "item"
 				}
 			]
 			x: 7.5d
-			y: 3.5d
+			y: 6.0d
+		}
+		{
+			dependencies: [
+				"434F6BE1E40599EC"
+				"292BD296BFEE267A"
+				"0867C2ED62490A50"
+			]
+			id: "5C7819E229FFCCE5"
+			tasks: [{
+				id: "2B001A3B06B13D56"
+				item: { count: 1, id: "gtu_modpacks:water_dam_controller" }
+				type: "item"
+			}]
+			x: 7.5d
+			y: 11.5d
 		}
 	]
 }

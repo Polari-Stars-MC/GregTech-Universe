@@ -152,55 +152,55 @@ public enum DamTier {
     // 使用延迟加载避免类加载顺序问题
 
     private static Block gtCasingULV() {
-        return getGTBlock("machine_casing_ulv");
+        return getGTBlock("ulv_machine_casing");
     }
 
     private static Block gtCasingLV() {
-        return getGTBlock("machine_casing_lv");
+        return getGTBlock("lv_machine_casing");
     }
 
     private static Block gtCasingMV() {
-        return getGTBlock("machine_casing_mv");
+        return getGTBlock("mv_machine_casing");
     }
 
     private static Block gtCasingHV() {
-        return getGTBlock("machine_casing_hv");
+        return getGTBlock("hv_machine_casing");
     }
 
     private static Block gtCasingEV() {
-        return getGTBlock("machine_casing_ev");
+        return getGTBlock("ev_machine_casing");
     }
 
     private static Block gtCasingIV() {
-        return getGTBlock("machine_casing_iv");
+        return getGTBlock("iv_machine_casing");
     }
 
     private static Block gtCasingLuV() {
-        return getGTBlock("machine_casing_luv");
+        return getGTBlock("luv_machine_casing");
     }
 
     private static Block gtCasingZPM() {
-        return getGTBlock("machine_casing_zpm");
+        return getGTBlock("zpm_machine_casing");
     }
 
     private static Block gtCasingUV() {
-        return getGTBlock("machine_casing_uv");
+        return getGTBlock("uv_machine_casing");
     }
 
     private static Block gtCasingUHV() {
-        return getGTBlock("machine_casing_uhv");
+        return getGTBlock("uhv_machine_casing");
     }
 
     private static Block gtCasingUEV() {
-        return getGTBlock("machine_casing_uev");
+        return getGTBlock("uev_machine_casing");
     }
 
     private static Block gtCasingUIV() {
-        return getGTBlock("machine_casing_uiv");
+        return getGTBlock("uiv_machine_casing");
     }
 
     private static Block gtCasingUXV() {
-        return getGTBlock("machine_casing_uxv");
+        return getGTBlock("uxv_machine_casing");
     }
 
     private static Block getGTBlock(String name) {

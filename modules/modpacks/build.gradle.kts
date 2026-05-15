@@ -10,6 +10,7 @@ dependencies {
         exclude("info.journeymap")
         exclude("mezz.jei")
     }
+    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-1.21.1:1.0.6")
     implementation("net.createmod.ponder:ponder-neoforge:1.0.82+mc1.21.1")
     implementation("com.gregtechceu.gtceu:gtceu-1.21.1:7.0.2") {
         exclude("dev.toma.configuration")

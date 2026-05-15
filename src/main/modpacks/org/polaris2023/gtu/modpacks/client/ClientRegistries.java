@@ -10,6 +10,7 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import org.polaris2023.gtu.modpacks.GregtechUniverseModPacks;
 import org.polaris2023.gtu.modpacks.blockentity.WaterDamMachineBlockEntity;
 import org.polaris2023.gtu.modpacks.client.renderer.DamWheelRenderer;
+import org.polaris2023.gtu.modpacks.client.renderer.StressOutputHatchRenderer;
 import org.polaris2023.gtu.modpacks.client.screen.WaterDamScreen;
 import org.polaris2023.gtu.modpacks.init.BlockEntityRegistries;
 import org.polaris2023.gtu.modpacks.init.MachineRegistries;
@@ -31,6 +32,10 @@ public final class ClientRegistries {
         event.registerBlockEntityRenderer(
                 BlockEntityRegistries.DAM_SHAFT_BE.get(),
                 BracketedKineticBlockEntityRenderer::new
+        );
+        event.registerBlockEntityRenderer(
+                BlockEntityRegistries.STRESS_OUTPUT_HATCH_BE.get(),
+                StressOutputHatchRenderer::new
         );
     }
 

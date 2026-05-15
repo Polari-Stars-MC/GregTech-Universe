@@ -1,10 +1,11 @@
-﻿{
-  "variants": {
-    "facing=north": { "model": "gtceu:block/mv_machine_casing" },
-    "facing=south": { "model": "gtceu:block/mv_machine_casing" },
-    "facing=east": { "model": "gtceu:block/mv_machine_casing" },
-    "facing=west": { "model": "gtceu:block/mv_machine_casing" },
-    "facing=up": { "model": "gtceu:block/mv_machine_casing" },
-    "facing=down": { "model": "gtceu:block/mv_machine_casing" }
-  }
+{
+  "multipart": [
+    { "apply": { "model": "gtceu:block/mv_machine_casing" } },
+    { "when": { "facing": "north" }, "apply": { "model": "gtu_modpacks:block/stress_output_hatch_output_face" } },
+    { "when": { "facing": "south" }, "apply": { "model": "gtu_modpacks:block/stress_output_hatch_output_face", "y": 180 } },
+    { "when": { "facing": "east" }, "apply": { "model": "gtu_modpacks:block/stress_output_hatch_output_face", "y": 90 } },
+    { "when": { "facing": "west" }, "apply": { "model": "gtu_modpacks:block/stress_output_hatch_output_face", "y": 270 } },
+    { "when": { "facing": "up" }, "apply": { "model": "gtu_modpacks:block/stress_output_hatch_output_face", "x": 270 } },
+    { "when": { "facing": "down" }, "apply": { "model": "gtu_modpacks:block/stress_output_hatch_output_face", "x": 90 } }
+  ]
 }

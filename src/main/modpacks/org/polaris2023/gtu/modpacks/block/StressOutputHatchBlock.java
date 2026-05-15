@@ -41,7 +41,7 @@ public class StressOutputHatchBlock extends DirectionalKineticBlock implements I
 
     @Override
     public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
-        return face == state.getValue(FACING) || face == state.getValue(FACING).getOpposite();
+        return face == state.getValue(FACING);
     }
 
     @Override

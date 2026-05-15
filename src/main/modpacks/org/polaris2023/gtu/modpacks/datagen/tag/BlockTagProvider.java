@@ -22,9 +22,30 @@ public class BlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
-        tag(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE).add(BlockRegistries.WATER_DAM_CONTROLLER.get());
+        tag(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE).add(
+                BlockRegistries.WATER_DAM_CONTROLLER.get(),
+                BlockRegistries.WATER_DAM_CONTROLLER_LEGACY.get(),
+                BlockRegistries.DAM_SHAFT.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_PRIMITIVE.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_ULV.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_LV.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_MV.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_HV.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_EV.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_IV.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_LUV.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_ZPM.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_UV.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_UHV.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_UEV.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_UIV.get(),
+                BlockRegistries.STRESS_OUTPUT_HATCH_UXV.get()
+        );
         var white_list_break = tag(org.polaris2023.gtu.modpacks.init.tag.BlockTags.WHITE_LIST_BREAK);
         white_list_break.addTag(Tags.Blocks.GRAVELS);
+        white_list_break.addTag(Tags.Blocks.SANDS);
+        white_list_break.addTag(net.minecraft.tags.BlockTags.DIRT);
+        white_list_break.addTag(net.minecraft.tags.BlockTags.SAND);
         white_list_break.addTag(net.minecraft.tags.BlockTags.LEAVES);
         white_list_break.add(Blocks.FERN);
         white_list_break.add(Blocks.LARGE_FERN);

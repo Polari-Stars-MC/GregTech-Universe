@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import org.polaris2023.gtu.modpacks.data.DataAttachmentTypes;
+import org.polaris2023.gtu.modpacks.events.GTMaterialEvents;
 import org.polaris2023.gtu.modpacks.init.BiomeModifiers;
 import org.polaris2023.gtu.modpacks.init.BlockEntityRegistries;
 import org.polaris2023.gtu.modpacks.init.BlockRegistries;
@@ -17,6 +18,8 @@ public class GregtechUniverseModPacks {
     public static final String MOD_ID = "gtu_modpacks";
 
     public GregtechUniverseModPacks(IEventBus modEventBus) {
+        modEventBus.addListener(GTMaterialEvents::addCopperToolStats);
+        modEventBus.addListener(ModpacksNetwork::registerPayloads);
         MachineRegistries.init();
         BlockRegistries.register(modEventBus);
         ItemRegistries.register(modEventBus);

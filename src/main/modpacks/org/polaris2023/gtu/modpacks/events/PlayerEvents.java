@@ -1,8 +1,8 @@
 package org.polaris2023.gtu.modpacks.events;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Interaction;
@@ -10,13 +10,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import org.polaris2023.gtu.modpacks.CopperToolVeinMining;
 import org.polaris2023.gtu.modpacks.GregtechUniverseModPacks;
 import org.polaris2023.gtu.modpacks.init.tag.BlockTags;
 import org.polaris2023.gtu.modpacks.worldgen.feature.GroundStickDisplayFeature;
@@ -28,22 +29,41 @@ public class PlayerEvents {
 
     @SubscribeEvent
     public static void breakBlock(BlockEvent.BreakEvent event) {
-        BlockState state = event.getState();
-        Player player = event.getPlayer();
-        if (player.isCreative()) return;
-        ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        if (!stack.isDamageableItem()) return;
-        if (stack.isEmpty() && !state.is(BlockTags.WHITE_LIST_BREAK)) {
+        if (!canBreak(event.getPlayer(), event.getState())) {
+            event.setCanceled(true);
+            return;
+        }
+
+        if (event.getPlayer() instanceof ServerPlayer player
+                && event.getLevel() instanceof ServerLevel level
+                && CopperToolVeinMining.tryMine(player, level, event.getPos(), event.getState(),
+                state -> canBreak(player, state))) {
             event.setCanceled(true);
         }
-        if (!stack.isCorrectToolForDrops(state) && !state.is(BlockTags.WHITE_LIST_BREAK)) {
+    }
+
+    @SubscribeEvent
+    public static void logout(PlayerEvent.PlayerLoggedOutEvent event) {
+        CopperToolVeinMining.clear(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void breakSpeed(PlayerEvent.BreakSpeed event) {
+        if (!canBreak(event.getEntity(), event.getState())) {
+            event.setNewSpeed(0.0F);
             event.setCanceled(true);
         }
-        if (stack.getDamageValue() == stack.getMaxDamage()) {
-            stack.shrink(1);
-        } else {
-            stack.setDamageValue(stack.getDamageValue() + 1);
+    }
+
+    private static boolean canBreak(Player player, BlockState state) {
+        if (player.isCreative() || state.isAir()) {
+            return true;
         }
+        if (state.is(BlockTags.WHITE_LIST_BREAK)) {
+            return true;
+        }
+        ItemStack stack = player.getMainHandItem();
+        return !stack.isEmpty() && stack.isCorrectToolForDrops(state);
     }
 
     @SubscribeEvent
