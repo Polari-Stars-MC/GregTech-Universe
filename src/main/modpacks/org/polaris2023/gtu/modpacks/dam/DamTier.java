@@ -81,6 +81,10 @@ public enum DamTier {
     }
 
     public double getFlowFactor(double riverFlowSpeed) {
+        // No contacted river current means no dam output; the minimum multiplier only applies to real flow.
+        if (riverFlowSpeed <= 0.0D) {
+            return 0.0D;
+        }
         return Mth.clamp(riverFlowSpeed * 2.5, 0.1, 3.0);
     }
 

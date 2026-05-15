@@ -28,7 +28,6 @@ public class StressOutputHatchRenderer extends KineticBlockEntityRenderer<Stress
         SuperByteBuffer shaft = CachedBuffers.partialFacing(AllPartialModels.SHAFT_HALF, state, facing);
         kineticRotationTransform(shaft, blockEntity, axis,
                 getAngleForBe(blockEntity, blockEntity.getBlockPos(), axis), packedLight);
-        shaft.translate(facing.getStepX() * 0.1875F, facing.getStepY() * 0.1875F, facing.getStepZ() * 0.1875F);
         shaft.renderInto(poseStack, bufferSource.getBuffer(RenderType.solid()));
     }
 }

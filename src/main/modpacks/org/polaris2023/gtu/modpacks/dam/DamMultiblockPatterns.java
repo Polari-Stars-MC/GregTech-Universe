@@ -1,6 +1,5 @@
 package org.polaris2023.gtu.modpacks.dam;
 
-import com.gregtechceu.gtceu.api.block.IMachineBlock;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.multiblock.BlockPattern;
 import com.gregtechceu.gtceu.api.multiblock.FactoryBlockPattern;
@@ -8,14 +7,18 @@ import com.gregtechceu.gtceu.api.multiblock.MultiblockShapeInfo;
 import com.gregtechceu.gtceu.api.multiblock.MultiblockState;
 import com.gregtechceu.gtceu.api.multiblock.Predicates;
 import com.gregtechceu.gtceu.api.multiblock.TraceabilityPredicate;
+import com.lowdragmc.lowdraglib.utils.BlockInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
 import org.polaris2023.gtu.modpacks.init.BlockRegistries;
+import org.polaris2023.gtu.modpacks.block.StressOutputHatchBlock;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public final class DamMultiblockPatterns {
     private static final BlockPattern STACK_PATTERN = createStackPattern();
@@ -60,70 +63,38 @@ public final class DamMultiblockPatterns {
                 .build();
     }
 
-    public static MultiblockShapeInfo createMainShape(MultiblockMachineDefinition definition) {
-        Block treatedPlanks = DamStructureBlocks.treatedWoodPlanks();
-        Block treatedStairs = DamStructureBlocks.treatedWoodStairs();
-        Block treatedFrame = DamStructureBlocks.treatedWoodFrame();
+    public static List<MultiblockShapeInfo> createMainShapes(MultiblockMachineDefinition definition) {
+        BlockPattern pattern = createMainPattern(definition.getBlock());
+        int[] repetitions = Arrays.stream(pattern.aisleRepetitions)
+                .mapToInt(repetition -> repetition[0])
+                .toArray();
+        BlockInfo[][][] basePreview = pattern.getPreview(repetitions);
+        List<MultiblockShapeInfo> shapes = new ArrayList<>();
+        for (DamTier tier : DamTier.values()) {
+            shapes.add(new MultiblockShapeInfo(replaceStressHatch(basePreview, tier)));
+        }
+        return shapes;
+    }
 
-        return MultiblockShapeInfo.builder()
-                .aisle(
-                        "XSSSSSX",
-                        "SSXWXSS",
-                        "SXXWXXS",
-                        "SXXLXXS",
-                        "SXXWXXS",
-                        "SSXWXSS",
-                        "XSSSSSX"
-                )
-                .aisle(
-                        "SXXXXXC",
-                        "XXPPPXX",
-                        "XPTFTPX",
-                        "XPFIFPX",
-                        "XPTFTPX",
-                        "XXPPPXX",
-                        "XXXXXXX"
-                )
-                .aisle(
-                        "XSSSSSX",
-                        "SSXWXSS",
-                        "SXXWXXS",
-                        "SXXLXXS",
-                        "SXXWXXS",
-                        "SSXWXSS",
-                        "XSSSSSX"
-                )
-                .aisle(
-                        "XXXXXXX",
-                        "XXXXXXX",
-                        "XXXXXXX",
-                        "XXXDXXX",
-                        "XXXXXXX",
-                        "XXXXXXX",
-                        "XXXXXXX"
-                )
-                .aisle(
-                        "XXXXXXX",
-                        "XXXXXXX",
-                        "XXXXXXX",
-                        "XXXHXXX",
-                        "XXXXXXX",
-                        "XXXXXXX",
-                        "XXXXXXX"
-                )
-                .where('X', Blocks.AIR.defaultBlockState())
-                .where('S', Blocks.STONE_BRICKS.defaultBlockState())
-                .where('W', Blocks.ANDESITE_WALL.defaultBlockState())
-                .where('L', Blocks.OAK_LOG.defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Z))
-                .where('I', Blocks.IRON_BLOCK.defaultBlockState())
-                .where('P', treatedPlanks.defaultBlockState())
-                .where('T', treatedStairs.defaultBlockState())
-                .where('F', treatedFrame.defaultBlockState())
-                .where('D', BlockRegistries.DAM_SHAFT.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Z))
-                .where('H', BlockRegistries.STRESS_OUTPUT_HATCH_PRIMITIVE.get().defaultBlockState()
-                        .setValue(DirectionalBlock.FACING, Direction.NORTH))
-                .where('C', (IMachineBlock) definition.getBlock(), Direction.NORTH)
-                .build();
+    public static MultiblockShapeInfo createMainShape(MultiblockMachineDefinition definition) {
+        return createMainShapes(definition).get(0);
+    }
+
+    private static BlockInfo[][][] replaceStressHatch(BlockInfo[][][] source, DamTier tier) {
+        BlockInfo[][][] copy = new BlockInfo[source.length][][];
+        for (int x = 0; x < source.length; x++) {
+            copy[x] = new BlockInfo[source[x].length][];
+            for (int y = 0; y < source[x].length; y++) {
+                copy[x][y] = Arrays.copyOf(source[x][y], source[x][y].length);
+                for (int z = 0; z < copy[x][y].length; z++) {
+                    BlockInfo info = copy[x][y][z];
+                    if (info != null && info.getBlockState().getBlock() instanceof StressOutputHatchBlock) {
+                        copy[x][y][z] = BlockInfo.fromBlockState(BlockRegistries.getStressHatchByTier(tier).get().defaultBlockState());
+                    }
+                }
+            }
+        }
+        return copy;
     }
 
     private static boolean match(BlockPattern pattern, Level level, BlockPos controllerPos, Direction facing) {

@@ -1,7 +1,12 @@
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 dependencies {
+    implementation("org.jmonkeyengine:jme3-core:3.8.0-stable")
+    jarJar("org.jmonkeyengine:jme3-core:3.8.0-stable")
+    additionalRuntimeClasspath("org.jmonkeyengine:jme3-core:3.8.0-stable")
+
     implementation("com.github.stephengold:Libbulletjme-Windows64:23.0.0")
+    jarJar("com.github.stephengold:Libbulletjme-Windows64:23.0.0")
     jarJar("com.github.stephengold:Libbulletjme-Windows64:23.0.0:SpDebug")
     jarJar("com.github.stephengold:Libbulletjme-Linux64:23.0.0:SpDebug")
     jarJar("com.github.stephengold:Libbulletjme-MacOSX_ARM64:23.0.0:SpDebug")

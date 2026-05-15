@@ -31,6 +31,7 @@ allprojects {
         return@allprojects
     }
     repositories {
+        mavenCentral()
         maven { url = uri("https://repo.repsy.io/mvn/toma/public/") }
         maven { url = uri("https://maven.createmod.net:6085/") }
         maven { url = uri("https://mvn.devos.one/snapshots") }

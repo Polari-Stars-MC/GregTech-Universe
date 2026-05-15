@@ -29,11 +29,12 @@ public final class MachineRegistries {
             )
             .rotationState(RotationState.NON_Y_AXIS)
             .allowExtendedFacing(false)
+            .multiblockPreviewRenderer(true, true)
             .langValue("Water Dam Controller")
             .blockProp(properties -> properties.strength(3.5F, 6.0F).requiresCorrectToolForDrops())
             .appearance(Blocks.STONE_BRICKS::defaultBlockState)
             .pattern(definition -> DamMultiblockPatterns.createMainPattern(definition.getBlock()))
-            .shapeInfo(DamMultiblockPatterns::createMainShape)
+            .shapeInfos(DamMultiblockPatterns::createMainShapes)
             .blockModel((ctx, prov) -> {
                 VariantBlockStateBuilder builder = prov.getVariantBuilder(ctx.getEntry());
                 ModelFile.ExistingModelFile model = prov.models()

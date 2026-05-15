@@ -567,6 +567,14 @@
 		{
 			dependencies: ["7C8B70EB231A9F0B"]
 			id: "0766ED8285EBBC84"
+			rewards: [{
+				id: "74694049CD952F6B"
+				item: {
+					count: 1
+					id: "create:goggles"
+				}
+				type: "item"
+			}]
 			tasks: [{
 				count: 16L
 				id: "0C9EF8E9E1C675E6"
@@ -622,6 +630,14 @@
 				"0867C2ED62490A50"
 			]
 			id: "5C7819E229FFCCE5"
+			rewards: [{
+				id: "0F6A52038EF08CBD"
+				item: {
+					count: 1
+					id: "gtceu:terminal"
+				}
+				type: "item"
+			}]
 			tasks: [{
 				id: "2B001A3B06B13D56"
 				item: { count: 1, id: "gtu_modpacks:water_dam_controller" }
@@ -629,6 +645,44 @@
 			}]
 			x: 7.5d
 			y: 11.5d
+		}
+		{
+			dependencies: ["226DE582421A207B"]
+			id: "74D0B551BD9080D6"
+			rewards: [
+				{
+					count: 16
+					id: "75E61E03F65FC4D0"
+					item: {
+						count: 1
+						id: "create:gearbox"
+					}
+					type: "item"
+				}
+				{
+					count: 16
+					id: "7C7AB82BECF9EA7B"
+					item: {
+						count: 1
+						id: "create:encased_chain_drive"
+					}
+					type: "item"
+				}
+			]
+			tasks: [
+				{
+					id: "7FE0E93D8107FAD7"
+					item: { count: 1, id: "create:large_cogwheel" }
+					type: "item"
+				}
+				{
+					id: "400CA1C7EFCB8846"
+					item: { count: 1, id: "create:cogwheel" }
+					type: "item"
+				}
+			]
+			x: 16.5d
+			y: 6.0d
 		}
 	]
 }

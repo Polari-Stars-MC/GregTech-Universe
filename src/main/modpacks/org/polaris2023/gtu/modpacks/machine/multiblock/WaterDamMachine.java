@@ -52,7 +52,7 @@ import org.polaris2023.gtu.modpacks.dam.DamMultiblockPatterns;
 import org.polaris2023.gtu.modpacks.dam.DamSegmentState;
 import org.polaris2023.gtu.modpacks.dam.DamStructureBlocks;
 import org.polaris2023.gtu.modpacks.dam.DamTier;
-import org.polaris2023.gtu.modpacks.worldgen.river.RiverCurrentSampler;
+import org.polaris2023.gtu.physics.fluid.RiverFlowPhysics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -602,19 +602,23 @@ public class WaterDamMachine extends MultiblockControllerMachine implements IDis
 
     private void updateFlowAndStress(Direction facing) {
         double totalFlow = 0.0;
+        int activeSegments = 0;
         for (DamSegmentState segment : segments) {
             double flow = sampleSegmentFlow(segment, facing);
             segment.setFlowSpeed(flow);
-            totalFlow += flow;
+            if (canSegmentDrive(segment)) {
+                totalFlow += flow;
+                activeSegments++;
+            }
         }
 
-        riverFlowSpeed = segments.isEmpty() ? 0.0 : totalFlow / segments.size();
-        stressOutput = getTier().calculateTotalStress(segments.size(), riverFlowSpeed);
+        riverFlowSpeed = activeSegments == 0 ? 0.0 : totalFlow / activeSegments;
+        stressOutput = activeSegments == 0 ? 0.0 : getTier().calculateTotalStress(activeSegments, riverFlowSpeed);
         rotationSpeed = (float) getTier().calculateRpm(riverFlowSpeed);
 
-        double segmentStress = getTier().calculateSegmentStress(segments.size(), riverFlowSpeed);
+        double segmentStress = activeSegments == 0 ? 0.0 : stressOutput / activeSegments;
         for (DamSegmentState segment : segments) {
-            segment.setStressShare(segmentStress);
+            segment.setStressShare(canSegmentDrive(segment) ? segmentStress : 0.0);
         }
     }
 
@@ -625,7 +629,7 @@ public class WaterDamMachine extends MultiblockControllerMachine implements IDis
         for (DamSegmentState segment : segments) {
             if (getLevel().getBlockEntity(segment.hatchPos()) instanceof StressOutputHatchBlockEntity hatch) {
                 hatch.setOutputParameters(
-                        rotationSpeed,
+                        canSegmentDrive(segment) ? rotationSpeed : 0.0F,
                         segment.stressShare(),
                         getPos(),
                         segment.index(),
@@ -664,6 +668,11 @@ public class WaterDamMachine extends MultiblockControllerMachine implements IDis
         }
 
         for (DamSegmentState segment : segments) {
+            if (!canSegmentDrive(segment)) {
+                disassembleSegment(segment);
+                continue;
+            }
+
             Direction damFacing = getDamFacing();
             String stage = "find_existing_entity";
             DamWheelContraption contraption = null;
@@ -1326,13 +1335,17 @@ public class WaterDamMachine extends MultiblockControllerMachine implements IDis
 
         double bestFlow = 0.0;
         Direction preferredDirection = getSegmentOutputDirection(segment, fallbackFacing);
-        bestFlow = Math.max(bestFlow, RiverCurrentSampler.sampleWheelFrontFlow(getLevel(), segment.axisPos(), preferredDirection));
-        bestFlow = Math.max(bestFlow, RiverCurrentSampler.sampleWheelFrontFlow(getLevel(), segment.axisPos(), preferredDirection.getOpposite()));
+        bestFlow = Math.max(bestFlow, RiverFlowPhysics.sampleWheelFlow(getLevel(), segment.axisPos(), preferredDirection).speed());
+        bestFlow = Math.max(bestFlow, RiverFlowPhysics.sampleWheelFlow(getLevel(), segment.axisPos(), preferredDirection.getOpposite()).speed());
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            bestFlow = Math.max(bestFlow, RiverCurrentSampler.sampleWheelFrontFlow(getLevel(), segment.axisPos(), direction));
+            bestFlow = Math.max(bestFlow, RiverFlowPhysics.sampleWheelFlow(getLevel(), segment.axisPos(), direction).speed());
         }
         return bestFlow;
+    }
+
+    private boolean canSegmentDrive(DamSegmentState segment) {
+        return segment.hatchValid() && segment.flowSpeed() > RiverFlowPhysics.MIN_DRIVING_FLOW_SPEED;
     }
 
     private record DamSegmentGeometry(BlockPos axisPos, BlockPos shaftPos, BlockPos hatchPos) {

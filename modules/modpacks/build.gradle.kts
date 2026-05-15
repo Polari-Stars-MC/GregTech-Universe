@@ -28,7 +28,8 @@ dependencies {
     localRuntime("curse.maven:terralith-513688:6090387")
     // implementation("curse.maven:rhenium-1497566:7827201")
 
-//    implementation(project(":physics"))
+    implementation(project(":physics"))
+    additionalRuntimeClasspath("com.github.stephengold:Libbulletjme-Windows64:23.0.0")
 
 //    val system = DefaultNativePlatform.getCurrentOperatingSystem()
 //    if (system.isWindows()) {

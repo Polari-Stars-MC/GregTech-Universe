@@ -38,6 +38,7 @@ import org.polaris2023.gtu.modpacks.dam.DamStructureBlocks;
 import org.polaris2023.gtu.modpacks.dam.DamTier;
 import org.polaris2023.gtu.modpacks.init.BlockRegistries;
 import org.polaris2023.gtu.modpacks.worldgen.river.RiverCurrentSampler;
+import org.polaris2023.gtu.physics.fluid.RiverFlowPhysics;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -441,7 +442,7 @@ public class WaterDamControllerBlockEntity extends BlockEntity implements IHaveG
     private void updateStressOutput() {
         stressOutput = tier.calculateStress(connectedDamCount, riverFlowSpeed);
         // 旋转速度与流速和等级相关
-        rotationSpeed = (float) (riverFlowSpeed * 16.0 * (1 + tier.getIndex() * 0.5));
+        rotationSpeed = (float) tier.calculateRpm(riverFlowSpeed);
     }
 
     private void updateRotation() {
@@ -494,19 +495,23 @@ public class WaterDamControllerBlockEntity extends BlockEntity implements IHaveG
         }
 
         double totalFlow = 0.0;
+        int activeSegments = 0;
         for (DamSegmentState segment : segments) {
             double flow = RiverCurrentSampler.sampleWheelFrontFlow(level, segment.axisPos(), facing);
             segment.setFlowSpeed(flow);
-            totalFlow += flow;
+            if (canSegmentDrive(segment)) {
+                totalFlow += flow;
+                activeSegments++;
+            }
         }
 
-        riverFlowSpeed = segments.isEmpty() ? 0.0 : totalFlow / segments.size();
-        stressOutput = tier.calculateTotalStress(segments.size(), riverFlowSpeed);
+        riverFlowSpeed = activeSegments == 0 ? 0.0 : totalFlow / activeSegments;
+        stressOutput = activeSegments == 0 ? 0.0 : tier.calculateTotalStress(activeSegments, riverFlowSpeed);
         rotationSpeed = (float) tier.calculateRpm(riverFlowSpeed);
 
-        double segmentStress = tier.calculateSegmentStress(segments.size(), riverFlowSpeed);
+        double segmentStress = activeSegments == 0 ? 0.0 : stressOutput / activeSegments;
         for (DamSegmentState segment : segments) {
-            segment.setStressShare(segmentStress);
+            segment.setStressShare(canSegmentDrive(segment) ? segmentStress : 0.0);
         }
 
         assignOutputsToHatches();
@@ -559,7 +564,7 @@ public class WaterDamControllerBlockEntity extends BlockEntity implements IHaveG
             BlockEntity be = level.getBlockEntity(segment.hatchPos());
             if (be instanceof StressOutputHatchBlockEntity hatch) {
                 hatch.setOutputParameters(
-                        rotationSpeed,
+                        canSegmentDrive(segment) ? rotationSpeed : 0.0F,
                         segment.stressShare(),
                         worldPosition,
                         segment.index(),
@@ -591,6 +596,16 @@ public class WaterDamControllerBlockEntity extends BlockEntity implements IHaveG
 
         Direction facing = getBlockState().getValue(WaterDamControllerBlock.FACING);
         for (DamSegmentState segment : segments) {
+            if (!canSegmentDrive(segment)) {
+                ControlledContraptionEntity entity = findContraptionEntity(segment.contraptionId());
+                if (entity != null) {
+                    entity.disassemble();
+                }
+                segment.setContraptionId(null);
+                segment.setAssembled(false);
+                continue;
+            }
+
             if (findContraptionEntity(segment.contraptionId()) != null) {
                 segment.setAssembled(true);
                 continue;
@@ -619,6 +634,10 @@ public class WaterDamControllerBlockEntity extends BlockEntity implements IHaveG
             segment.setContraptionId(entity.getUUID());
             segment.setAssembled(true);
         }
+    }
+
+    private boolean canSegmentDrive(DamSegmentState segment) {
+        return segment.hatchValid() && segment.flowSpeed() > RiverFlowPhysics.MIN_DRIVING_FLOW_SPEED;
     }
 
     private void disassembleDamContraptions() {
