@@ -1,0 +1,32 @@
+{
+    "parent": "minecraft:recipes/root",
+    "criteria": {
+        "gtceu_unlock_fint_rope_sword": {
+            "conditions": {
+                "items": [
+                    {
+                        "items": "gtu_core:flint_shard"
+                    }
+                ]
+            },
+            "trigger": "minecraft:inventory_changed"
+        },
+        "has_the_recipe": {
+            "conditions": {
+                "recipe": "gtu_modpacks:flint_rope_sword"
+            },
+            "trigger": "minecraft:recipe_unlocked"
+        }
+    },
+    "requirements": [
+        [
+            "has_the_recipe",
+            "gtceu_unlock_fint_rope_sword"
+        ]
+    ],
+    "rewards": {
+        "recipes": [
+            "gtu_modpacks:flint_rope_sword"
+        ]
+    }
+}

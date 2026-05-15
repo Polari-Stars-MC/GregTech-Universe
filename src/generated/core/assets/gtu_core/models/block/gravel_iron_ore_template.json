@@ -1,0 +1,82 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#all"
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#all"
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#all"
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#all"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#all"
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#all"
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#ore_all"
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#ore_all"
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#ore_all"
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#ore_all"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#ore_all"
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#ore_all"
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout"
+}

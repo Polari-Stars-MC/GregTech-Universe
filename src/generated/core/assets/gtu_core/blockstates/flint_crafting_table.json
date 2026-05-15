@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "gtu_core:block/flint_crafting_table"
+    }
+  }
+}

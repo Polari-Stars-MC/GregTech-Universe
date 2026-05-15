@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "gtu_core:gravely_tin"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "gtu_core:blocks/gravel_tin_ore"
+}

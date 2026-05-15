@@ -1,0 +1,21 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "key": {
+        "C": {
+            "item": "gtceu:mv_machine_casing"
+        },
+        "D": {
+            "item": "gtu_modpacks:dam_shaft"
+        }
+    },
+    "pattern": [
+        "DDD",
+        "DCD",
+        "DDD"
+    ],
+    "result": {
+        "count": 1,
+        "id": "gtu_modpacks:stress_output_hatch_mv"
+    }
+}

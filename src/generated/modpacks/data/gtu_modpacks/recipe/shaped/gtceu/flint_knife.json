@@ -1,0 +1,20 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "equipment",
+    "key": {
+        "#": {
+            "item": "gtu_core:flint_shard"
+        },
+        "B": {
+            "item": "minecraft:stick"
+        }
+    },
+    "pattern": [
+        " #",
+        "B "
+    ],
+    "result": {
+        "count": 1,
+        "id": "gtceu:flint_knife"
+    }
+}

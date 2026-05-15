@@ -1,0 +1,55 @@
+{
+  "textures": {
+    "rim": "minecraft:block/polished_blackstone"
+  },
+  "elements": [
+    {
+      "from": [2, 2, -0.05],
+      "to": [14, 4, 0.75],
+      "faces": {
+        "north": { "texture": "#rim", "uv": [2, 12, 14, 14] },
+        "south": { "texture": "#rim", "uv": [2, 12, 14, 14] },
+        "east": { "texture": "#rim", "uv": [0, 12, 1, 14] },
+        "west": { "texture": "#rim", "uv": [0, 12, 1, 14] },
+        "up": { "texture": "#rim", "uv": [2, 0, 14, 1] },
+        "down": { "texture": "#rim", "uv": [2, 0, 14, 1] }
+      }
+    },
+    {
+      "from": [2, 12, -0.05],
+      "to": [14, 14, 0.75],
+      "faces": {
+        "north": { "texture": "#rim", "uv": [2, 2, 14, 4] },
+        "south": { "texture": "#rim", "uv": [2, 2, 14, 4] },
+        "east": { "texture": "#rim", "uv": [0, 2, 1, 4] },
+        "west": { "texture": "#rim", "uv": [0, 2, 1, 4] },
+        "up": { "texture": "#rim", "uv": [2, 0, 14, 1] },
+        "down": { "texture": "#rim", "uv": [2, 0, 14, 1] }
+      }
+    },
+    {
+      "from": [2, 4, -0.05],
+      "to": [4, 12, 0.75],
+      "faces": {
+        "north": { "texture": "#rim", "uv": [2, 4, 4, 12] },
+        "south": { "texture": "#rim", "uv": [2, 4, 4, 12] },
+        "east": { "texture": "#rim", "uv": [0, 4, 1, 12] },
+        "west": { "texture": "#rim", "uv": [0, 4, 1, 12] },
+        "up": { "texture": "#rim", "uv": [2, 0, 4, 1] },
+        "down": { "texture": "#rim", "uv": [2, 0, 4, 1] }
+      }
+    },
+    {
+      "from": [12, 4, -0.05],
+      "to": [14, 12, 0.75],
+      "faces": {
+        "north": { "texture": "#rim", "uv": [12, 4, 14, 12] },
+        "south": { "texture": "#rim", "uv": [12, 4, 14, 12] },
+        "east": { "texture": "#rim", "uv": [0, 4, 1, 12] },
+        "west": { "texture": "#rim", "uv": [0, 4, 1, 12] },
+        "up": { "texture": "#rim", "uv": [12, 0, 14, 1] },
+        "down": { "texture": "#rim", "uv": [12, 0, 14, 1] }
+      }
+    }
+  ]
+}

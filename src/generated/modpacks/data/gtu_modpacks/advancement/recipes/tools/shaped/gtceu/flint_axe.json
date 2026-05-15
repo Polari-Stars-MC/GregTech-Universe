@@ -1,0 +1,32 @@
+{
+    "parent": "minecraft:recipes/root",
+    "criteria": {
+        "gtceu_unlock_fint_shard_axe": {
+            "conditions": {
+                "items": [
+                    {
+                        "items": "gtu_core:flint_shard"
+                    }
+                ]
+            },
+            "trigger": "minecraft:inventory_changed"
+        },
+        "has_the_recipe": {
+            "conditions": {
+                "recipe": "gtu_modpacks:shaped/gtceu/flint_axe"
+            },
+            "trigger": "minecraft:recipe_unlocked"
+        }
+    },
+    "requirements": [
+        [
+            "has_the_recipe",
+            "gtceu_unlock_fint_shard_axe"
+        ]
+    ],
+    "rewards": {
+        "recipes": [
+            "gtu_modpacks:shaped/gtceu/flint_axe"
+        ]
+    }
+}

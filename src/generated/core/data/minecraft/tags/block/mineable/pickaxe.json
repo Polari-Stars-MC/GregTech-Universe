@@ -1,0 +1,8 @@
+{
+  "values": [
+    "gtu_core:stone_crafting_table",
+    "gtu_core:clay_cauldron",
+    "gtu_core:water_clay_cauldron",
+    "gtu_core:test_multiblock_controller"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "type": "gtu_core:grass_fiber",
+  "conditions": [
+    {
+      "block": "minecraft:large_fern",
+      "condition": "minecraft:block_state_property"
+    }
+  ]
+}

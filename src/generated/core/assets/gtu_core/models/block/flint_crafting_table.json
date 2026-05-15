@@ -1,0 +1,12 @@
+{
+  "parent": "gtu_core:block/flint_crafting_table_template",
+  "textures": {
+    "down": "minecraft:block/gravel",
+    "east": "minecraft:block/gravel",
+    "north": "minecraft:block/gravel",
+    "particle": "minecraft:block/gravel",
+    "south": "minecraft:block/gravel",
+    "up": "minecraft:block/gravel",
+    "west": "minecraft:block/gravel"
+  }
+}

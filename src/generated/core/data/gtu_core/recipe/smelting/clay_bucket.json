@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "gtu_core:unfired_clay_bucket"
+  },
+  "result": {
+    "count": 1,
+    "id": "gtu_core:clay_bucket"
+  }
+}

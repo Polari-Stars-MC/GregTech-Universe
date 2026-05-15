@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "F": {
+      "item": "minecraft:flint"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "FF",
+    "SS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gtu_core:flint_crafting_table"
+  },
+  "show_notification": false
+}

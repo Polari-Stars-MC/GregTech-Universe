@@ -1,0 +1,9 @@
+{
+  "type": "gtu_core:grass_fiber",
+  "conditions": [
+    {
+      "block": "minecraft:short_grass",
+      "condition": "minecraft:block_state_property"
+    }
+  ]
+}

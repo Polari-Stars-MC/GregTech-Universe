@@ -1,0 +1,8 @@
+{
+  "parent": "gtu_core:block/gravel_copper_ore_template",
+  "textures": {
+    "all": "minecraft:block/gravel",
+    "ore_all": "gtu_core:block/minecraft/copper_empty",
+    "particle": "minecraft:block/gravel"
+  }
+}

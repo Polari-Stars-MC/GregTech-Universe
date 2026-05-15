@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "gtu_core:block/gravel_iron_ore"
+    }
+  }
+}

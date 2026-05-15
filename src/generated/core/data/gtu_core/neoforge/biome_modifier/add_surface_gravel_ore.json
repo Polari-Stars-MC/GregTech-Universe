@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "gtu_core:placed_surface_gravel_ore",
+  "step": "top_layer_modification"
+}

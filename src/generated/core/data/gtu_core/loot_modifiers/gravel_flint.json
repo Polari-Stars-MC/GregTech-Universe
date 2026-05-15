@@ -1,0 +1,9 @@
+{
+  "type": "gtu_core:gravel_flint",
+  "conditions": [
+    {
+      "block": "minecraft:gravel",
+      "condition": "minecraft:block_state_property"
+    }
+  ]
+}

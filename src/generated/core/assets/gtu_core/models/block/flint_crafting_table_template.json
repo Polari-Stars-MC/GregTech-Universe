@@ -1,0 +1,93 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#down"
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#east"
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#north"
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#south"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#up"
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#west"
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#missing"
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#east_south"
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#north_west"
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#east_south"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#up_empty"
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#north_west"
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "down": "#missing",
+    "east": "#east_south",
+    "east_south": "gtu_core:block/minecraft/empty_crafting_table_side",
+    "north": "#north_west",
+    "north_west": "gtu_core:block/minecraft/empty_crafting_table_front",
+    "south": "#east_south",
+    "up": "#up_empty",
+    "up_empty": "gtu_core:block/minecraft/empty_crafting_table_top",
+    "west": "#north_west"
+  }
+}

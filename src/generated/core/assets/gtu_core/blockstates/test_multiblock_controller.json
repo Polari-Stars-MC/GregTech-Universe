@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "gtu_core:block/test_multiblock_controller"
+    },
+    "lit=true": {
+      "model": "gtu_core:block/test_multiblock_controller_on"
+    }
+  }
+}

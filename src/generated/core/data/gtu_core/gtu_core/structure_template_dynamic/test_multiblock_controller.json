@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "expected_state_id": 1,
+      "flags": 3,
+      "priority": 90,
+      "relative_pos": 274877906944
+    },
+    {
+      "expected_state_id": 1,
+      "flags": 3,
+      "priority": 90,
+      "relative_pos": -274877906944
+    },
+    {
+      "expected_state_id": 1,
+      "flags": 3,
+      "priority": 90,
+      "relative_pos": 4096
+    },
+    {
+      "expected_state_id": 1,
+      "flags": 3,
+      "priority": 90,
+      "relative_pos": 274877902848
+    },
+    {
+      "expected_state_id": 1,
+      "flags": 6,
+      "priority": 80,
+      "relative_pos": 1
+    },
+    {
+      "expected_state_id": 1,
+      "flags": 4,
+      "priority": 70,
+      "relative_pos": 2
+    }
+  ]
+}

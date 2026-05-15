@@ -1,0 +1,13 @@
+{
+    "values": [
+        "#c:gravels",
+        "#c:sands",
+        "#minecraft:dirt",
+        "#minecraft:sand",
+        "#minecraft:leaves",
+        "minecraft:fern",
+        "minecraft:large_fern",
+        "minecraft:short_grass",
+        "minecraft:tall_grass"
+    ]
+}

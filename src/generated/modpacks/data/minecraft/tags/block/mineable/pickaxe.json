@@ -1,0 +1,21 @@
+{
+    "values": [
+        "gtu_modpacks:water_dam_controller",
+        "gtu_modpacks:water_dam_controller_legacy",
+        "gtu_modpacks:dam_shaft",
+        "gtu_modpacks:stress_output_hatch_primitive",
+        "gtu_modpacks:stress_output_hatch_ulv",
+        "gtu_modpacks:stress_output_hatch_lv",
+        "gtu_modpacks:stress_output_hatch_mv",
+        "gtu_modpacks:stress_output_hatch_hv",
+        "gtu_modpacks:stress_output_hatch_ev",
+        "gtu_modpacks:stress_output_hatch_iv",
+        "gtu_modpacks:stress_output_hatch_luv",
+        "gtu_modpacks:stress_output_hatch_zpm",
+        "gtu_modpacks:stress_output_hatch_uv",
+        "gtu_modpacks:stress_output_hatch_uhv",
+        "gtu_modpacks:stress_output_hatch_uev",
+        "gtu_modpacks:stress_output_hatch_uiv",
+        "gtu_modpacks:stress_output_hatch_uxv"
+    ]
+}

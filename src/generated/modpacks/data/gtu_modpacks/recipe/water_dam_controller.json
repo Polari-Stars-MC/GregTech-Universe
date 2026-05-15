@@ -1,0 +1,24 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "key": {
+        "D": {
+            "item": "gtu_modpacks:dam_shaft"
+        },
+        "P": {
+            "item": "gtceu:treated_wood_planks"
+        },
+        "S": {
+            "item": "minecraft:stone_bricks"
+        }
+    },
+    "pattern": [
+        "SSS",
+        "PDP",
+        "PPP"
+    ],
+    "result": {
+        "count": 1,
+        "id": "gtu_modpacks:water_dam_controller"
+    }
+}

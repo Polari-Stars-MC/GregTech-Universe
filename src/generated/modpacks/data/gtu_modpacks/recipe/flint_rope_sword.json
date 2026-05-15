@@ -1,0 +1,24 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "equipment",
+    "key": {
+        "#": {
+            "item": "gtu_core:flint_shard"
+        },
+        "A": {
+            "item": "gtu_core:rope"
+        },
+        "B": {
+            "item": "minecraft:stick"
+        }
+    },
+    "pattern": [
+        "  #",
+        " A ",
+        "B  "
+    ],
+    "result": {
+        "count": 1,
+        "id": "gtu_modpacks:flint_rope_sword"
+    }
+}

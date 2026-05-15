@@ -1,0 +1,10 @@
+{
+  "entries": [
+    "gtu_core:grass_fiber_short_grass",
+    "gtu_core:grass_fiber_tall_grass",
+    "gtu_core:grass_fiber_fern",
+    "gtu_core:grass_fiber_large_fern",
+    "gtu_core:gravel_flint"
+  ],
+  "replace": false
+}
